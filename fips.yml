@@ -1,0 +1,27 @@
+#
+# imgui-editor
+#
+---
+imports:
+    fips-glfw:
+        git: https://github.com/fips-libs/fips-glfw.git
+    fips-imgui:
+        git: https://github.com/fips-libs/fips-imgui.git
+    fips-googletest:
+        git: https://github.com/fips-libs/fips-googletest.git
+#   exports:
+#       header-dirs:
+#           - RELATIVE HEADER SEARCH PATH
+#           - ...
+#       lib-dirs:
+#           - RELATIVE LIB SEARCH PATH
+#           - ...
+#       defines:
+#           KEY: VALUE (C preprocessor defines)
+#           ...: ...
+#       modules:
+#           NAME:   DIRECTORY WITH CMakeLists.txt of MODULE
+#           ...: ...
+# run:
+#     entry:
+#         cwd: ./entry

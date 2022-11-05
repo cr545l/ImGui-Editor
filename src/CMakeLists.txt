@@ -1,0 +1,51 @@
+fips_begin_sharedlib(editor cmdline)
+    fips_files(Editor/EditorMain.cpp)
+
+    fips_files(Editor/CrWindow.h)
+    fips_files(Editor/Private/CrWindow.cpp)
+    
+    include_directories(.)
+    # include_directories(..)
+    include_directories(GL)
+    include_directories(CR)
+    fips_src(GL GROUP_FOLDERS)
+    fips_deps(imgui glfw3)
+
+    if (FIPS_WINDOWS)
+        fips_libs(opengl32)
+    endif()
+
+    if (FIPS_LINUX)
+        fips_libs(X11 Xrandr Xi Xinerama Xxf86vm Xcursor GL m dl)
+    endif()
+
+    if (FIPS_MACOS)
+        fips_frameworks_osx(Cocoa CoreVideo OpenGL)
+        fips_libs(m dl)
+    endif()
+fips_end_sharedlib()
+
+fips_begin_app(entry cmdline)
+    fips_files(Entry/main.cpp)
+    include_directories(.)
+    # include_directories(..)
+    include_directories(GL)
+    include_directories(CR)
+    fips_src(GL GROUP_FOLDERS)
+    fips_deps(imgui glfw3)
+    # fips_deps(imgui glfw3 cr)
+    # fips_deps(imgui glfw3 cr)
+
+    if (FIPS_WINDOWS)
+        fips_libs(opengl32)
+    endif()
+
+    if (FIPS_LINUX)
+        fips_libs(X11 Xrandr Xi Xinerama Xxf86vm Xcursor GL m dl)
+    endif()
+
+    if (FIPS_MACOS)
+        fips_frameworks_osx(Cocoa CoreVideo OpenGL)
+        fips_libs(m dl)
+    endif()
+fips_end_app()
