@@ -1,9 +1,3 @@
-#include <sstream>
-#include <cstdint>
-#include <cstdio>
-#include <chrono>
-#include <thread>
-
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <GL/gl3w.h> // gl*
