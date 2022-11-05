@@ -32,7 +32,7 @@ fips_begin_app(entry cmdline)
     include_directories(CR)
 
     fips_src(GL GROUP_FOLDERS)
-    fips_deps(imgui glfw3)
+    fips_deps(editor imgui glfw3)
 
     if (FIPS_WINDOWS)
         fips_libs(opengl32)
@@ -49,7 +49,7 @@ fips_begin_app(entry cmdline)
 fips_end_app()
 
 if (FIPS_MSVC)
-    # vs2017 filesystem support
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT entry)
     set_target_properties(entry PROPERTIES COMPILE_FLAGS "/std:c++latest")
     set_target_properties(editor PROPERTIES COMPILE_FLAGS "/std:c++latest")
 endif()
