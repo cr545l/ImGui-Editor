@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    window = glfwCreateWindow(1024, 768, "IMGUI Reloadable", NULL, NULL);
+    window = glfwCreateWindow(1024, 768, "ImGui Editor", NULL, NULL);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
@@ -132,7 +132,9 @@ int main(int argc, char **argv) {
     cr_plugin ctx;
     ctx.userdata = &data;
     cr_plugin_open(ctx, plugin);
-
+    
+    char title[64];
+    
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
@@ -145,6 +147,8 @@ int main(int argc, char **argv) {
         memset(data.inputCharacters, 0, sizeof(data.inputCharacters));
         
         glfwSwapBuffers(window);
+        sprintf(title, "ImGui Editor %.1ffps", ImGui::GetIO().Framerate);
+        glfwSetWindowTitle(window, title);
     }
 
     cr_plugin_close(ctx);

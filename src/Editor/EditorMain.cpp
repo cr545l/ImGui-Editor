@@ -19,28 +19,28 @@
 // Data that comes from Host, mostly things that is managed by the host
 // or we don't own, so we be sure they're alive (ie. imgui context, so that
 // during reload we don't flick/reposition windows)
-struct HostData {
-    int w, h;
-    int display_w, display_h;
-    ImGuiContext *imgui_context = nullptr;
-    void *wndh = nullptr;
-
-    // GLFW input/time data feed to guest
-    double timestep = 0.0;
-    bool mousePressed[3] = {false, false, false};
-    float mouseWheel = 0.0f;
-    unsigned short inputCharacters[16 + 1] = {};
-
-    // glfw functions that imgui calls on guest side
-    GLFWwindow *window = nullptr;
-    const char* (*get_clipboard_fn)(void* user_data);
-    void(*set_clipboard_fn)(void* user_data, const char* text);
-    void(*set_cursor_pos_fn)(GLFWwindow* handle, double xpos, double ypos);
-    void(*get_cursor_pos_fn)(GLFWwindow* handle, double* xpos, double* ypos);
-    int(*get_window_attrib_fn)(GLFWwindow* handle, int attrib);
-    int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
-    void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
-};
+//struct HostData {
+//    int w, h;
+//    int display_w, display_h;
+//    ImGuiContext *imgui_context = nullptr;
+//    void *wndh = nullptr;
+//
+//    // GLFW input/time data feed to guest
+//    double timestep = 0.0;
+//    bool mousePressed[3] = {false, false, false};
+//    float mouseWheel = 0.0f;
+//    unsigned short inputCharacters[16 + 1] = {};
+//
+//    // glfw functions that imgui calls on guest side
+//    GLFWwindow *window = nullptr;
+//    const char* (*get_clipboard_fn)(void* user_data);
+//    void(*set_clipboard_fn)(void* user_data, const char* text);
+//    void(*set_cursor_pos_fn)(GLFWwindow* handle, double xpos, double ypos);
+//    void(*get_cursor_pos_fn)(GLFWwindow* handle, double* xpos, double* ypos);
+//    int(*get_window_attrib_fn)(GLFWwindow* handle, int attrib);
+//    int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
+//    void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
+//};
 
 static uint32_t     g_failure = 0;
 static HostData     *g_data = nullptr; // hold user data kept on host and received from host
@@ -429,7 +429,7 @@ void test_crash() {
     (void)i;
 }
 
-CrWindow s_window;
+CrWindow s_window(g_data);
 CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     assert(ctx);
     g_data = (HostData *)ctx->userdata;
