@@ -1,3 +1,5 @@
+#include "Precompiled.h"
+
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <GL/gl3w.h> // gl*
@@ -423,7 +425,7 @@ void test_crash() {
     (void)i;
 }
 
-CrWindow s_window(g_data);
+CrWindow CR_STATE s_window(g_data);
 CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     assert(ctx);
     g_data = (HostData *)ctx->userdata;
@@ -433,11 +435,13 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     switch (operation) {
         case CR_LOAD:
             imui_init();
+            s_window.Initialize();
             return 0;
         case CR_UNLOAD:
             // if needed, save stuff to pass over to next instance
             return 0;
         case CR_CLOSE:
+            s_window.Finalize();
             imui_shutdown();
             return 0;
         case CR_STEP:

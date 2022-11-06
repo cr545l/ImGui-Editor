@@ -1,5 +1,8 @@
 #ifndef __CR_WINDOW__
 #define __CR_WINDOW__
+
+#include "Editor/CrWidgetEditor.h"
+
 struct GLFWwindow;
 struct HostData {
     int w, h;
@@ -30,12 +33,23 @@ struct HostData {
 class CrWindow
 {
 public:
-    CrWindow(HostData* hostData):_hostData(hostData){}
-    
+    CrWindow(HostData* hostData);
+
+    void Initialize()
+    {
+        _editor.Initialize();
+    }
+
+    void Finalize()
+    {
+        _editor.Finalize();
+    }
     void OnGUI();
     
 private:
     HostData* _hostData;
+
+    CrWidgetEditor _editor;
 };
 
 #endif
