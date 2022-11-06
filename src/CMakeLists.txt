@@ -66,3 +66,6 @@ if (FIPS_MSVC)
     set_target_properties(entry PROPERTIES COMPILE_FLAGS "/std:c++latest")
     set_target_properties(editor PROPERTIES COMPILE_FLAGS "/std:c++latest")
 endif()
+
+target_compile_features(entry PRIVATE cxx_std_17)
+target_compile_features(editor PRIVATE cxx_std_17)
