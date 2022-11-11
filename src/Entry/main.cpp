@@ -12,6 +12,9 @@
 #define CR_HOST CR_UNSAFE
 #include <cr.h>
 
+#include <vector>
+#include "Editor/widget_editor.h"
+
 const char *plugin = DEPLOY_PATH "/" CR_PLUGIN("editor");
 
 // This HostData has too much stuff for the sample mostly because
@@ -20,6 +23,11 @@ const char *plugin = DEPLOY_PATH "/" CR_PLUGIN("editor");
 // we call linked into guest will be "not initialized".
 // imgui has some trouble with ImVector destructor that requires quite a lot
 // of boilerplate to workaround it.
+
+// 이 HostData에는 샘플에 대한 내용이 너무 많습니다. 대부분 glfw 및 imgui에 정적 전역 상태가 있기 때문입니다.
+// glfw의 경우 문제는 "초기화" 플래그이므로 guest에 연결된 glfw는 "초기화되지 않음"입니다.
+// imgui는 문제를 해결하기 위해 많은 상용구가 필요한 ImVector 소멸자에 문제가 있습니다.
+
 struct HostData {
     int w, h;
     int display_w, display_h;
@@ -41,15 +49,19 @@ struct HostData {
     int(*get_window_attrib_fn)(GLFWwindow* handle, int attrib);
     int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
     void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
+    
+    ie::widget_editor* ie_context = nullptr;
 };
 
 // some global data from our libs we keep in the host so we
 // do not need to care about storing/restoring them
+// lib의 일부 전역 데이터를 호스트에 보관하므로 저장/복원에 대해 신경 쓸 필요가 없습니다.
 static HostData data;
 static GLFWwindow *window;
 
 // GLFW callbacks
 // You can also handle inputs yourself and use those as a reference.
+// 입력을 직접 처리하고 이를 참조로 사용할 수도 있습니다.
 void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void ImGui_ImplGlfwGL3_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -94,13 +106,14 @@ void ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c) {
 }
 
 void glfw_funcs() {
-    // Setup time step
-    data.set_cursor_pos_fn = glfwSetCursorPos;
+    // Setup time stepØ    data.set_cursor_pos_fn = glfwSetCursorPos;
     data.get_cursor_pos_fn = glfwGetCursorPos;
     data.get_window_attrib_fn = glfwGetWindowAttrib;
     data.get_mouse_button_fn = glfwGetMouseButton;
     data.set_input_mode_fn = glfwSetInputMode;
 }
+
+ie::widget_editor we;
 
 int main(int argc, char **argv) {
     if (!glfwInit())
@@ -122,6 +135,8 @@ int main(int argc, char **argv) {
     data.window = window;
     data.imgui_context = ImGui::CreateContext();
 
+    data.ie_context = &we;
+    
     glfwSetMouseButtonCallback(window, ImGui_ImplGlfwGL3_MouseButtonCallback);
     glfwSetScrollCallback(window, ImGui_ImplGlfwGL3_ScrollCallback);
     glfwSetKeyCallback(window, ImGui_ImplGlfwGL3_KeyCallback);

@@ -12,14 +12,14 @@ void CrWidgetTool::OnGUI()
 	{
 		if (ImGui::BeginChild("Types", ImVec2(0.f, g_unitSize.y * 7)))
 		{
-			magic_enum::enum_for_each<CrWidget::Type>([&](CrWidget::Type t)
-				{
-					const auto name = std::string(magic_enum::enum_name(t));
-					if (ImGui::Selectable(name.c_str(), t == _type))
-					{
-						_type = t;
-					}
-				});
+//			magic_enum::enum_for_each<CrWidget::Type>([&](CrWidget::Type t)
+//				{
+//					const auto name = std::string(magic_enum::enum_name(t));
+//					if (ImGui::Selectable(name.c_str(), t == _type))
+//					{
+//						_type = t;
+//					}
+//				});
 			ImGui::EndChild();
 		}
 

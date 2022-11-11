@@ -16,6 +16,20 @@ fips_begin_sharedlib(editor cmdline)
     fips_files(Editor/CrWidgetEditor.h)
     fips_files(Editor/Private/CrWidgetEditor.cpp)
     
+    fips_files(Editor/widget_type.h)
+    
+    fips_files(Editor/widget.h)
+    fips_files(Editor/widget.cpp)
+    
+    fips_files(Editor/widget_editor.h)
+    fips_files(Editor/widget_editor.cpp)
+        
+    fips_files(Editor/history.h)
+    fips_files(Editor/history.cpp)
+    
+    fips_files(Editor/selection.h)
+    fips_files(Editor/selection.cpp)
+    
     include_directories(.)
     include_directories(GL)
     include_directories(CR)

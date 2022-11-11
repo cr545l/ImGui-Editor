@@ -1,5 +1,6 @@
 #ifndef __CR_WIDGET_H__
 #define __CR_WIDGET_H__
+
 #include "CrHistory.h"
 
 class CrWidgetValue

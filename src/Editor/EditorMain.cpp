@@ -7,49 +7,53 @@
 
 #include <cr.h>
 
-#include "Editor/CrWindow.h"
+#include "Editor/widget_editor.h"
 
-// To test imgui 100% guest side, enable this
+// imgui 100% 게스트 측을 테스트하려면 이것을 활성화하십시오.
 //#define IMGUI_GUEST_ONLY
 
-// Data that comes from Host, mostly things that is managed by the host
-// or we don't own, so we be sure they're alive (ie. imgui context, so that
-// during reload we don't flick/reposition windows)
-//struct HostData {
-//    int w, h;
-//    int display_w, display_h;
-//    ImGuiContext *imgui_context = nullptr;
-//    void *wndh = nullptr;
-//
-//    // GLFW input/time data feed to guest
-//    double timestep = 0.0;
-//    bool mousePressed[3] = {false, false, false};
-//    float mouseWheel = 0.0f;
-//    unsigned short inputCharacters[16 + 1] = {};
-//
-//    // glfw functions that imgui calls on guest side
-//    GLFWwindow *window = nullptr;
-//    const char* (*get_clipboard_fn)(void* user_data);
-//    void(*set_clipboard_fn)(void* user_data, const char* text);
-//    void(*set_cursor_pos_fn)(GLFWwindow* handle, double xpos, double ypos);
-//    void(*get_cursor_pos_fn)(GLFWwindow* handle, double* xpos, double* ypos);
-//    int(*get_window_attrib_fn)(GLFWwindow* handle, int attrib);
-//    int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
-//    void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
-//};
+// 호스트에서 오는 데이터, 대부분 호스트에서 관리하거나 소유하지 않은 것이므로 데이터가 살아 있는지 확인합니다
+// (예: imgui 컨텍스트, 다시 로드하는 동안 창을 플릭/재배치하지 않음)
+struct HostData {
+    int w, h;
+    int display_w, display_h;
+    ImGuiContext *imgui_context = nullptr;
+    void *wndh = nullptr;
+
+    // GLFW input/time data feed to guest
+    double timestep = 0.0;
+    bool mousePressed[3] = {false, false, false};
+    float mouseWheel = 0.0f;
+    unsigned short inputCharacters[16 + 1] = {};
+
+    // glfw functions that imgui calls on guest side
+    GLFWwindow *window = nullptr;
+    const char* (*get_clipboard_fn)(void* user_data);
+    void(*set_clipboard_fn)(void* user_data, const char* text);
+    void(*set_cursor_pos_fn)(GLFWwindow* handle, double xpos, double ypos);
+    void(*get_cursor_pos_fn)(GLFWwindow* handle, double* xpos, double* ypos);
+    int(*get_window_attrib_fn)(GLFWwindow* handle, int attrib);
+    int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
+    void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
+    
+    ie::widget_editor* ie_context = nullptr;
+};
 
 static uint32_t     g_failure = 0;
-static HostData     *g_data = nullptr; // hold user data kept on host and received from host
+static HostData     *g_data = nullptr; // 호스트에 유지되고 호스트에서 수신된 사용자 데이터를 보유합니다.
 
-// Some saved state between reloads
+// 리로드 사이의 일부 저장된 상태
 static auto         CR_STATE g_clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 static unsigned int CR_STATE g_version = 0;
+
 #if defined(IMGUI_GUEST_ONLY)
 static ImGuiContext CR_STATE *g_imgui_context = nullptr;
 static ImFontAtlas  CR_STATE *g_default_font_atlas = nullptr;
+static CrWindow     CR_STATE *s_crWindow = nullptr;
 #endif // #if defined(IMGUI_GUEST_ONLY)
 
 // From here on is the imgui sample stuff
+// 이제부터 imgui 샘플 자료입니다.
 static double       CR_STATE g_Time = 0.0f;
 static GLuint       CR_STATE g_FontTexture = 0;
 static int          CR_STATE g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
@@ -58,14 +62,19 @@ static int          CR_STATE g_AttribLocationPosition = 0, g_AttribLocationUV = 
 static unsigned int CR_STATE g_VboHandle = 0, g_VaoHandle = 0, g_ElementsHandle = 0;
 
 // Use if you want to reset your rendering device without losing ImGui state.
+// ImGui 상태를 잃지 않고 렌더링 장치를 재설정하려는 경우 사용합니다.
 void ImGui_ImplGlfwGL3_InvalidateDeviceObjects();
 bool ImGui_ImplGlfwGL3_CreateDeviceObjects();
 
 // This is the main rendering function that you have to implement and provide to ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
 // Note that this implementation is little overcomplicated because we are saving/setting up/restoring every OpenGL state explicitly, in order to be able to run within any OpenGL engine that doesn't do so.
 // If text or lines are blurry when integrating ImGui in your engine: in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
+// ImGui에 구현하고 제공해야 하는 주요 렌더링 기능입니다(ImGuiIO 구조에서 'RenderDrawListsFn' 설정을 통해).
+// 이 구현은 모든 OpenGL 상태를 명시적으로 저장/설정/복원하므로 그렇게 하지 않는 모든 OpenGL 엔진 내에서 실행될 수 있기 때문에 약간 지나치게 복잡합니다.
+// ImGui를 엔진에 통합할 때 텍스트나 선이 흐릿한 경우: Render 기능에서 투영 행렬을 (0.5f,0.5f) 또는 (0.375f,0.375f)로 변환해 보십시오.
 void ImGui_ImplGlfwGL3_RenderDrawLists(ImDrawData* draw_data) {
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
+    // 최소화할 때 렌더링을 피하고 망막 디스플레이의 좌표를 조정합니다(화면 좌표 != 프레임 버퍼 좌표).
     ImGuiIO& io = ImGui::GetIO();
     int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
     int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
@@ -97,6 +106,7 @@ void ImGui_ImplGlfwGL3_RenderDrawLists(ImDrawData* draw_data) {
     GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
 
     // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, polygon fill
+    // 렌더 상태 설정: 알파 블렌딩 활성화, 페이스 컬링 없음, 깊이 테스트 없음, 가위 활성화, 다각형 채우기
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -290,6 +300,9 @@ void ImGui_ImplGlfwGL3_InvalidateDeviceObjects() {
 // in the glfw case it is an internal static variable that indicates it
 // is already initialized, so we must call glfw functions on the host
 // otherwise it will say it is not initialized (true in the dll context).
+// 호스트의 데이터를 사용하기 위한 일부 사용자 정의는 glfw의 경우 glfw 함수를 호출하여
+// 이미 초기화되었음을 나타내는 내부 정적 변수이므로 호스트에서 glfw 함수를 호출해야 합니다.
+// 그렇지 않으면 초기화되지 않았다고 표시됩니다(dll에서 true 문맥).
 bool imui_init() {
     gl3wInit();
 
@@ -305,6 +318,9 @@ bool imui_init() {
     // this is needed because imgui has two statics (context and font atlas)
     // also ImVector has destructor that delete its contents, so we cannot
     // rely on imgui internal state, we must manage it.
+    // 이것은 호스트 측에서 생성된 imgui 컨텍스트를 사용합니다.
+    // imgui에는 두 개의 정적(컨텍스트 및 글꼴 아틀라스)이 있고 ImVector에는 내용을 삭제하는 소멸자가 있으므로
+    // imgui 내부 상태에 의존할 수 없으므로 이를 관리해야 하기 때문에 필요합니다.
     ImGui::SetCurrentContext(g_data->imgui_context);
 #endif
 
@@ -346,6 +362,7 @@ void imui_shutdown() {
     ImGui::Shutdown(g_imgui_context);
 
     // Trying to get imgui to be 100% in guest context, not working right now.
+    // imgui가 게스트 컨텍스트에서 100%가 되도록 하려고 하지만 지금은 작동하지 않습니다.
     delete g_default_font_atlas;
     g_default_font_atlas = nullptr;
 
@@ -371,6 +388,7 @@ void imui_frame_begin() {
     io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
     // Proxy things from glfw to imgui
+    // glfw에서 imgui로 프록시 작업
     for (int i = 0; g_data->inputCharacters[i]; ++i) {
         io.AddInputCharacter(g_data->inputCharacters[i]);
     }
@@ -425,7 +443,6 @@ void test_crash() {
     (void)i;
 }
 
-CrWindow CR_STATE s_window(g_data);
 CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     assert(ctx);
     g_data = (HostData *)ctx->userdata;
@@ -435,18 +452,17 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     switch (operation) {
         case CR_LOAD:
             imui_init();
-            s_window.Initialize();
+            ie::init_widget_editor(g_data->ie_context);
             return 0;
         case CR_UNLOAD:
             // if needed, save stuff to pass over to next instance
             return 0;
         case CR_CLOSE:
-            s_window.Finalize();
             imui_shutdown();
             return 0;
         case CR_STEP:
             imui_frame_begin();
-            s_window.OnGUI();
+            ie::draw_widget_editor(g_data->ie_context);
             imui_frame_end();
             return 0;
     }
