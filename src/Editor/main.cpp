@@ -8,6 +8,8 @@
 #include <cr.h>
 
 #include "Editor/widget_editor.h"
+#include "Editor/history.h"
+#include "Editor/selection.h"
 
 // imgui 100% 게스트 측을 테스트하려면 이것을 활성화하십시오.
 //#define IMGUI_GUEST_ONLY
@@ -36,7 +38,9 @@ struct HostData {
     int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
     void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
     
-    ie::widget_editor* ie_context = nullptr;
+    imgui_editor::widget_editor* widget_editor = nullptr;
+    imgui_editor::history* history= nullptr;
+    imgui_editor::selection_context* selection= nullptr;
 };
 
 static uint32_t     g_failure = 0;
@@ -49,7 +53,6 @@ static unsigned int CR_STATE g_version = 0;
 #if defined(IMGUI_GUEST_ONLY)
 static ImGuiContext CR_STATE *g_imgui_context = nullptr;
 static ImFontAtlas  CR_STATE *g_default_font_atlas = nullptr;
-static CrWindow     CR_STATE *s_crWindow = nullptr;
 #endif // #if defined(IMGUI_GUEST_ONLY)
 
 // From here on is the imgui sample stuff
@@ -452,7 +455,9 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     switch (operation) {
         case CR_LOAD:
             imui_init();
-            ie::init_widget_editor(g_data->ie_context);
+            imgui_editor::init_widget_editor(g_data->widget_editor);
+            imgui_editor::init_history(g_data->history);
+            imgui_editor::init_selection(g_data->selection);
             return 0;
         case CR_UNLOAD:
             // if needed, save stuff to pass over to next instance
@@ -462,7 +467,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
             return 0;
         case CR_STEP:
             imui_frame_begin();
-            ie::draw_widget_editor(g_data->ie_context);
+            imgui_editor::draw_widget_editor(g_data->widget_editor);
             imui_frame_end();
             return 0;
     }

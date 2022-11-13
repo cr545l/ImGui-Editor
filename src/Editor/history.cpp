@@ -1,56 +1,61 @@
 #include "Precompiled.h"
 #include "Editor/history.h"
 
-namespace ie
+namespace imgui_editor
 {
-static CR_STATE std::vector<command*> commands;
-static CR_STATE size_t index = SIZE_MAX;
+
+history* g_context = nullptr;
 
 void command_undo(command* ctx)
 {
-    ctx->undo(ctx->context);
+	ctx->undo(ctx->context);
 }
 
 void command_redo(command* ctx)
 {
-    ctx->undo(ctx->context);
+    ctx->redo(ctx->context);
+}
+
+void init_history(history* history)
+{
+    g_context = history;
 }
 
 void commit(command* ctx)
 {
-    for (size_t i = index + 1, max = commands.size(); i < max; ++i)
+    for (size_t i = g_context->index + 1, max = g_context->commands.size(); i < max; ++i)
     {
-        commands[i]->deconst(commands[i]->context);
-        delete commands[i];
+        g_context->commands[i]->destructor(g_context->commands[i]->context);
+        delete g_context->commands[i];
     }
-    if (commands.size() != index + 1)
+    if (g_context->commands.size() != g_context->index + 1)
     {
-        commands.resize(index + 1);
+        g_context->commands.resize(g_context->index + 1);
     }
 
     command_redo(ctx);
-    commands.push_back(ctx);
-    index = commands.size() - 1;
+    g_context->commands.push_back(ctx);
+    g_context->index = g_context->commands.size() - 1;
 }
 
 void undo()
 {
     if(has_undo_command())
     {
-        command_redo(commands[index]);
-        ++index;
+        command_undo(g_context->commands[g_context->index]);
+        --g_context->index;
     }
 }
 
 void redo()
 {
-    if(has_undo_command())
+    if(has_redo_command())
     {
-        command_undo(commands[index]);
-        --index;
+        ++g_context->index;
+        command_redo(g_context->commands[g_context->index]);
     }
 }
 
-bool has_undo_command(){ return SIZE_MAX != index; }
-bool has_redo_command(){ return commands.size() && index + 1 < commands.size(); }
+bool has_undo_command(){ return SIZE_MAX != g_context->index; }
+bool has_redo_command(){ return g_context->commands.size() && g_context->index + 1 < g_context->commands.size(); }
 }

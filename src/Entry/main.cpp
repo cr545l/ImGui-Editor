@@ -13,6 +13,9 @@
 #include <cr.h>
 
 #include <vector>
+
+#include "Editor/history.h"
+#include "Editor/selection.h"
 #include "Editor/widget_editor.h"
 
 const char *plugin = DEPLOY_PATH "/" CR_PLUGIN("editor");
@@ -50,7 +53,9 @@ struct HostData {
     int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
     void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
     
-    ie::widget_editor* ie_context = nullptr;
+    imgui_editor::widget_editor* widget_editor = nullptr;
+    imgui_editor::history* history = nullptr;
+    imgui_editor::selection_context* selection = nullptr;
 };
 
 // some global data from our libs we keep in the host so we
@@ -113,7 +118,9 @@ void glfw_funcs() {
     data.set_input_mode_fn = glfwSetInputMode;
 }
 
-ie::widget_editor we;
+imgui_editor::widget_editor we;
+imgui_editor::history history;
+imgui_editor::selection_context selection;
 
 int main(int argc, char **argv) {
     if (!glfwInit())
@@ -135,7 +142,9 @@ int main(int argc, char **argv) {
     data.window = window;
     data.imgui_context = ImGui::CreateContext();
 
-    data.ie_context = &we;
+    data.widget_editor = &we;
+    data.history = &history;
+    data.selection = &selection;
     
     glfwSetMouseButtonCallback(window, ImGui_ImplGlfwGL3_MouseButtonCallback);
     glfwSetScrollCallback(window, ImGui_ImplGlfwGL3_ScrollCallback);

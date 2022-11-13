@@ -1,24 +1,10 @@
 fips_begin_sharedlib(editor cmdline)
-    fips_files(Editor/EditorMain.cpp)
-
-    fips_files(Editor/CrWindow.h)
-    fips_files(Editor/Private/CrWindow.cpp)
-
-    fips_files(Editor/CrWidget.h)
-    fips_files(Editor/Private/CrWidget.cpp)
-
-    fips_files(Editor/CrSelection.h)
-    fips_files(Editor/Private/CrSelection.cpp)
-
-    fips_files(Editor/CrHistory.h)
-    fips_files(Editor/Private/CrHistory.cpp)
-
-    fips_files(Editor/CrWidgetEditor.h)
-    fips_files(Editor/Private/CrWidgetEditor.cpp)
+    fips_files(Editor/main.cpp)
     
     fips_files(Editor/widget_type.h)
     
     fips_files(Editor/widget.h)
+    fips_files(Editor/widget_data.h)
     fips_files(Editor/widget.cpp)
     
     fips_files(Editor/widget_editor.h)
@@ -29,11 +15,15 @@ fips_begin_sharedlib(editor cmdline)
     
     fips_files(Editor/selection.h)
     fips_files(Editor/selection.cpp)
+
+	
+    fips_files(imgui/imgui_stdlib.cpp)
     
     include_directories(.)
     include_directories(GL)
     include_directories(CR)
     include_directories(magic_enum)
+    include_directories(imgui)
 
     fips_src(GL GROUP_FOLDERS)
     fips_deps(imgui glfw3)

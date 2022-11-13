@@ -1,18 +1,25 @@
-#ifndef __IE_SELECTION_H__
-#define __IE_SELECTION_H__
+#ifndef __SELECTION_H__
+#define __SELECTION_H__
 
-namespace ie
+namespace imgui_editor
 {
-struct widget;
+	struct widget;
+	struct selection_context
+	{
+		widget* target;
+		std::vector<widget*> targets;
+	};
 
-namespace selection
-{
-void select(widget* target);
-void select(std::initializer_list<widget*> targets);
+	void init_selection(selection_context* ctx);
 
-widget* get_target();
-const std::vector<widget*> get_targets();
-}
+	namespace selection
+	{
+		void select(widget* target);
+		void select(std::initializer_list<widget*> targets);
+
+		widget* get_target();
+		const std::vector<widget*> get_targets();
+	}
 }
 
 #endif
