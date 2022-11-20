@@ -5,7 +5,7 @@
 
 namespace imgui_editor
 {
-	selection_context* g_context = nullptr;
+	static selection_context* g_context = nullptr;
 
 	void init_selection(selection_context* ctx)
 	{
@@ -55,7 +55,7 @@ namespace imgui_editor
 			ctx->original = target;
 			ctx->originals = g_context->targets;
 
-			cmd->context = ctx;
+			cmd->argument_data = ctx;
 			cmd->undo = command_select_undo;
 			cmd->redo = command_select_redo;
 			cmd->destructor = command_select_destructor;
@@ -77,7 +77,7 @@ namespace imgui_editor
 			ctx->original = g_context->target;
 			ctx->originals = targets;
 
-			cmd->context = ctx;
+			cmd->argument_data = ctx;
 			cmd->undo = command_select_undo;
 			cmd->redo = command_select_redo;
 			cmd->destructor = command_select_destructor;

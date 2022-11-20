@@ -30,16 +30,16 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_checkbox:
 		{
-			widget_checkbox* context = (widget_checkbox*)ctx->context;
+			widget_checkbox* args = (widget_checkbox*)ctx->args;
 
-			ImGui::Checkbox(ctx->label.c_str(), &context->check);
+			ImGui::Checkbox(ctx->label.c_str(), &args->check);
 		}
 		break;
 		case widget_type::widget_type_radio_button:
 		{
-			widget_radio_button* context = (widget_radio_button*)ctx->context;
+			widget_radio_button* args = (widget_radio_button*)ctx->args;
 
-			ImGui::RadioButton(ctx->label.c_str(), &context->active);
+			ImGui::RadioButton(ctx->label.c_str(), args->active);
 		}
 		break;
 		case widget_type::widget_type_small_button:
@@ -49,24 +49,24 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_checkbox_flags:
 		{
-			widget_checkbox_flags* context = (widget_checkbox_flags*)ctx->context;
-			ImGui::CheckboxFlags(ctx->label.c_str(), &context->flags, context->flags_value);
+			widget_checkbox_flags* args = (widget_checkbox_flags*)ctx->args;
+			ImGui::CheckboxFlags(ctx->label.c_str(), &args->flags, args->flags_value);
 		}
 		break;
 		case widget_type::widget_type_text:
 		{
-			ImGui::Text(ctx->label.c_str());
+			ImGui::Text("%s", ctx->label.c_str());
 		}
 		break;
 		case widget_type::widget_type_text_colored:
 		{
-			widget_text_colored* context = (widget_text_colored*)ctx->context;
-			ImGui::TextColored(context->color, ctx->label.c_str());
+			widget_text_colored* args = (widget_text_colored*)ctx->args;
+			ImGui::TextColored(args->color, "%s", ctx->label.c_str());
 		}
 		break;
 		case widget_type::widget_type_bullet_text:
 		{
-			ImGui::BulletText(ctx->label.c_str());
+			ImGui::BulletText("%s", ctx->label.c_str());
 		}
 		break;
 		case widget_type::widget_type_bullet:
@@ -76,111 +76,168 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_selectable:
 		{
-			widget_text_selectable* context = (widget_text_selectable*)ctx->context;
-			ImGui::Selectable(ctx->label.c_str(), context->selected, context->flags, ctx->size);
+			widget_text_selectable* args = (widget_text_selectable*)ctx->args;
+			ImGui::Selectable(ctx->label.c_str(), args->selected, args->flags, ctx->size);
 		}
 		break;
 		case widget_type::widget_type_label_text:
 		{
-			widget_label_text* context = (widget_label_text*)ctx->context;
-			ImGui::LabelText(ctx->label.c_str(), context->text.c_str());
+			widget_label_text* args = (widget_label_text*)ctx->args;
+			ImGui::LabelText(ctx->label.c_str(), "%s", args->text.c_str());
 		}
 		break;
 		case widget_type::widget_type_input_text:
 		{
-			widget_input_text* context = (widget_input_text*)ctx->context;
-			ImGui::InputText(ctx->label.c_str(), &context->text);
+			widget_input_text* args = (widget_input_text*)ctx->args;
+			ImGui::InputText(ctx->label.c_str(), &args->text);
 		}
 		break;
 		case widget_type::widget_type_input_text_with_hint:
 		{
-			widget_input_text_with_hint* context = (widget_input_text_with_hint*)ctx->context;
-			ImGui::InputTextWithHint(ctx->label.c_str(), context->hint.c_str(), &context->text, context->flags);
+			widget_input_text_with_hint* args = (widget_input_text_with_hint*)ctx->args;
+			ImGui::InputTextWithHint(ctx->label.c_str(), args->hint.c_str(), &args->text, args->flags);
 		}
 		break;
 		case widget_type::widget_type_input_int:
 		{
-			widget_input_int* context = (widget_input_int*)ctx->context;
-			ImGui::InputInt(ctx->label.c_str(), &context->value, context->step, context->step_fast, context->flags);
+			widget_input_int* args = (widget_input_int*)ctx->args;
+			ImGui::InputInt(ctx->label.c_str(), &args->value, args->step, args->step_fast, args->flags);
 		}
 		break;
 		case widget_type::widget_type_input_int2:
 		{
-			widget_input_int2* context = (widget_input_int2*)ctx->context;
-			ImGui::InputInt2(ctx->label.c_str(), context->value, context->flags);
+			widget_input_int2* args = (widget_input_int2*)ctx->args;
+			ImGui::InputInt2(ctx->label.c_str(), args->value, args->flags);
 		}
 		break;
 		case widget_type::widget_type_input_int3:
 		{
-			widget_input_int3* context = (widget_input_int3*)ctx->context;
-			ImGui::InputInt3(ctx->label.c_str(), context->value, context->flags);
+			widget_input_int3* args = (widget_input_int3*)ctx->args;
+			ImGui::InputInt3(ctx->label.c_str(), args->value, args->flags);
 		}
 		break;
 		case widget_type::widget_type_input_int4:
 		{
-			widget_input_int4* context = (widget_input_int4*)ctx->context;
-			ImGui::InputInt4(ctx->label.c_str(), context->value, context->flags);
+			widget_input_int4* args = (widget_input_int4*)ctx->args;
+			ImGui::InputInt4(ctx->label.c_str(), args->value, args->flags);
 		}
 		break;
 		case widget_type::widget_type_input_float:
 		{
-			widget_input_float* context = (widget_input_float*)ctx->context;
-			ImGui::InputFloat(ctx->label.c_str(), &context->value, context->step, context->step_fast, context->format.c_str(), context->flags);
+			widget_input_float* args = (widget_input_float*)ctx->args;
+			ImGui::InputFloat(ctx->label.c_str(), &args->value, args->step, args->step_fast,args->format.c_str(), args->flags);
 		}
 		break;
 		case widget_type::widget_type_input_double:
 		{
-
+            widget_input_double* args = (widget_input_double*)ctx->args;
+            ImGui::InputDouble(ctx->label.c_str(), &args->value);
 		}
 		break;
 		case widget_type::widget_type_input_float3:
 		{
-
+            widget_input_float3* args = (widget_input_float3*)ctx->args;
+            ImGui::InputFloat3(ctx->label.c_str(), args->value);
 		}
 		break;
 		case widget_type::widget_type_drag_int:
 		{
-
+            widget_drag_int* args = (widget_drag_int*)ctx->args;
+            ImGui::DragInt(ctx->label.c_str(), &args->value);
 		}
 		break;
 		case widget_type::widget_type_drag_float:
 		{
-
+            widget_drag_float* args = (widget_drag_float*)ctx->args;
+            ImGui::DragFloat(ctx->label.c_str(), &args->value);
 		}
 		break;
 		case widget_type::widget_type_slider_int:
 		{
-
+            widget_slider_int* args = (widget_slider_int*)ctx->args;
+            ImGui::SliderInt(ctx->label.c_str(), &args->value, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_slider_int2:
+		{
+            widget_slider_int2* args = (widget_slider_int2*)ctx->args;
+            ImGui::SliderInt2(ctx->label.c_str(), args->value, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_slider_int3:
+		{
+            widget_slider_int3* args = (widget_slider_int3*)ctx->args;
+            ImGui::SliderInt3(ctx->label.c_str(), args->value, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_slider_int4:
+		{
+            widget_slider_int4* args = (widget_slider_int4*)ctx->args;
+            ImGui::SliderInt4(ctx->label.c_str(), args->value, args->min, args->max, args->format.c_str(), args->flags);
 		}
 		break;
 		case widget_type::widget_type_slider_float:
 		{
-
+            widget_slider_float* args = (widget_slider_float*)ctx->args;
+            ImGui::SliderFloat(ctx->label.c_str(), &args->value, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_slider_float2:
+		{
+			widget_slider_float2* args = (widget_slider_float2*)ctx->args;
+			ImGui::SliderFloat2(ctx->label.c_str(), args->value, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_slider_float3:
+		{
+			widget_slider_float3* args = (widget_slider_float3*)ctx->args;
+			ImGui::SliderFloat3(ctx->label.c_str(), args->value, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_slider_float4:
+		{
+			widget_slider_float4* args = (widget_slider_float4*)ctx->args;
+			ImGui::SliderFloat4(ctx->label.c_str(), args->value, args->min, args->max, args->format.c_str(), args->flags);
 		}
 		break;
 		case widget_type::widget_type_slider_angle:
 		{
-
+			widget_slider_angle* args = (widget_slider_angle*)ctx->args;
+			ImGui::SliderAngle(ctx->label.c_str(), &args->value, args->min, args->max, args->format.c_str(), args->flags);
 		}
 		break;
 		case widget_type::widget_type_color_edit3:
 		{
-
+			widget_color_edit3* args = (widget_color_edit3*)ctx->args;
+			ImGui::ColorEdit3(ctx->label.c_str(), args->value, args->flags);
 		}
 		break;
 		case widget_type::widget_type_color_edit4:
 		{
-
+			widget_color_edit4* args = (widget_color_edit4*)ctx->args;
+			ImGui::ColorEdit4(ctx->label.c_str(), args->value, args->flags);
 		}
 		break;
 		case widget_type::widget_type_list_box:
 		{
+   			widget_list_box* args = (widget_list_box*)ctx->args;
 
+			auto items = new const char*[args->items.size()];
+
+			for(size_t i = 0, max = args->items.size(); i < max; ++i)
+			{
+				items[i] = args->items[i].c_str();
+			}
+
+			ImGui::ListBox(ctx->label.c_str(), &args->current_item, items, args->items.size(), args->height_in_items);
+
+			delete[] items;
 		}
 		break;
 		case widget_type::widget_type_collapsing_header:
 		{
-
+			widget_collapsing_header* args = (widget_collapsing_header*)ctx->args;
+			ImGui::CollapsingHeader(ctx->label.c_str(), args->flags);
 		}
 		break;
 		case widget_type::widget_type_separator:
@@ -265,8 +322,8 @@ namespace imgui_editor
 		case widget_type::widget_type_begin_end_combo:
 		{
 			begin_type = true;
-			widget_begin_end_combo* context = (widget_begin_end_combo*)ctx->context;
-			if (ImGui::BeginCombo(ctx->label.c_str(), context->preview_value.c_str()))
+			widget_begin_end_combo* args = (widget_begin_end_combo*)ctx->args;
+			if (ImGui::BeginCombo(ctx->label.c_str(), args->preview_value.c_str()))
 			{
 				draw_children(ctx);
 				ImGui::EndCombo();
@@ -292,18 +349,18 @@ namespace imgui_editor
 		}
 	}
 
-	void draw_inspector_widget(widget* context)
+	void draw_inspector_widget(widget* args)
 	{
 		std::string temp;
-		temp.reserve(context->label.capacity() * 2);
-		temp = context->label;
-		if (ImGui::InputText("label", const_cast<char*>(temp.c_str()), temp.capacity(), context->label.capacity()))
+		temp.reserve(args->label.capacity() * 2);
+		temp = args->label;
+		if (ImGui::InputText("label", const_cast<char*>(temp.c_str()), temp.capacity(), args->label.capacity()))
 		{
-			if (context->label.capacity() < temp.length())
+			if (args->label.capacity() < temp.length())
 			{
-				context->label.reserve(temp.capacity());
+				args->label.reserve(temp.capacity());
 			}
-			context->label = temp.c_str();
+			args->label = temp.c_str();
 		}
 	}
 
@@ -319,12 +376,12 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_checkbox:
 		{
-			w->context = new widget_checkbox();
+			w->args = new widget_checkbox();
 		}
 		break;
 		case widget_type::widget_type_radio_button:
 		{
-			w->context = new widget_radio_button();
+			w->args = new widget_radio_button();
 		}
 		break;
 		case widget_type::widget_type_small_button:
@@ -403,7 +460,7 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_drag_float:
 		{
-			w->context = new widget_drag_float();
+			w->args = new widget_drag_float();
 		}
 		break;
 		case widget_type::widget_type_slider_int:
@@ -492,7 +549,7 @@ namespace imgui_editor
 		}
 		case widget_type::widget_type_begin_end_combo:
 		{
-			w->context = new widget_begin_end_combo();
+			w->args = new widget_begin_end_combo();
 		}
 		break;
 		default:
@@ -538,7 +595,7 @@ namespace imgui_editor
 		ctx->parent = parent;
 		ctx->child = child;
 
-		cmd->context = ctx;
+		cmd->argument_data = ctx;
 		cmd->undo = command_attach_child_undo;
 		cmd->redo = command_attach_child_redo;
 		cmd->destructor = command_attach_child_destructor;

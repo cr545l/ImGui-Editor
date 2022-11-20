@@ -13,7 +13,7 @@ namespace imgui_editor
 		ImVec2 size;
 
 		widget_type type = widget_type::widget_type_none;
-		void* context = nullptr;
+		void* args = nullptr;
 		void(*draw)(widget*) = nullptr;
 		void(*draw_inspector)(widget*) = nullptr;
 	};

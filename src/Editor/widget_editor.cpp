@@ -14,9 +14,9 @@ namespace imgui_editor
 {
 	void draw_widget_tool(widget_tool* ctx)
 	{
-		if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unitSize.y * 45), true))
+		if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unitSize.y * 25), true))
 		{
-			if (ImGui::BeginChild("Types", ImVec2(0.f, g_unitSize.y * 40)))
+			if (ImGui::BeginChild("Types", ImVec2(0.f, g_unitSize.y * 20)))
 			{
 				magic_enum::enum_for_each<widget_type>([&](widget_type t)
 					{

@@ -35,7 +35,13 @@ namespace imgui_editor
 		widget_type_drag_float,
 
 		widget_type_slider_int,
+		widget_type_slider_int2,
+		widget_type_slider_int3,
+		widget_type_slider_int4,
 		widget_type_slider_float,
+		widget_type_slider_float2,
+		widget_type_slider_float3,
+		widget_type_slider_float4,
 		widget_type_slider_angle,
 
 		widget_type_color_edit3,

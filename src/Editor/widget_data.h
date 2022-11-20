@@ -86,23 +86,18 @@ namespace imgui_editor
 		float value;
 		float step;
 		float step_fast;
-		int decimal_precision;
+		std::string format;
 		ImGuiInputTextFlags flags;
 	};
 
-	struct widget_slider_float
+	struct widget_input_double
 	{
-		float value = 0.0f;
+		double value;
 	};
 
-	struct widget_slider_angle
+	struct widget_input_float3
 	{
-		float value = 0.0f;
-	};
-
-	struct widget_slider_int
-	{
-		int value = 0;
+		float value[3];
 	};
 
 	struct widget_drag_int
@@ -113,6 +108,110 @@ namespace imgui_editor
 	struct widget_drag_float
 	{
 		float value = 0.0f;
+	};
+
+	struct widget_slider_int
+	{
+		int value = 0;
+		int min = 0;
+		int max = 0;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_slider_int2
+	{
+		int value[2] = {0,};
+		int min = 0;
+		int max = 0;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_slider_int3
+	{
+		int value[3] = {0,};
+		int min = 0;
+		int max = 0;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_slider_int4
+	{
+		int value[4] = {0,};
+		int min = 0;
+		int max = 0;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_slider_float
+	{
+		float value = 0.0f;
+		float min = 0.0f;
+		float max = 0.0f;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_slider_float2
+	{
+		float value[2] = {0.0f,};
+		float min = 0.0f;
+		float max = 0.0f;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_slider_float3
+	{
+		float value[3] = {0.0f,};
+		float min = 0.0f;
+		float max = 0.0f;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_slider_float4
+	{
+		float value[4] = {0.0f,};
+		float min = 0.0f;
+		float max = 0.0f;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_slider_angle
+	{
+		float value = 0.0f;
+		float min = 0.0f;
+		float max = 0.0f;
+		std::string format;
+		ImGuiSliderFlags flags = ImGuiSliderFlags_None;
+	};
+
+	struct widget_color_edit3
+	{
+		float value[3] = {0.0f,};
+		ImGuiColorEditFlags flags = ImGuiColorEditFlags_None;
+	};
+
+	struct widget_color_edit4
+	{
+		float value[4] = {0.0f,};
+		ImGuiColorEditFlags flags = ImGuiColorEditFlags_None;
+	};
+
+	struct widget_list_box
+	{
+		int current_item = 0;
+		std::vector<std::string> items;
+		int height_in_items = -1;
+	};
+	struct widget_collapsing_header
+	{
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 	};
 
 	struct widget_begin_end_combo

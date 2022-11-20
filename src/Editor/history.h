@@ -6,7 +6,7 @@ namespace imgui_editor
 	struct command
 	{
 		const char* label = "empty";
-		void* context;
+		void* argument_data;
 		void(*undo)(void*);
 		void(*redo)(void*);
 		void(*destructor)(void*);
