@@ -15,7 +15,7 @@ namespace imgui_editor
 		{
 		case widget_type::widget_type_button:
 		{
-			// w->args = new widget_button();
+			w->args = new widget_button();
 		}
 		break;
 		case widget_type::widget_type_checkbox:
@@ -30,7 +30,7 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_small_button:
 		{
-			// w->args = new widget_small_button();
+			w->args = new widget_small_button();
 		}
 		break;
 		case widget_type::widget_type_checkbox_flags:
@@ -40,7 +40,7 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_text:
 		{
-			// w->args = new widget_text();
+			w->args = new widget_text();
 		}
 		break;
 		case widget_type::widget_type_text_colored:
@@ -50,17 +50,17 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_bullet_text:
 		{
-			// w->args = new widget_bullet_text();
+			w->args = new widget_bullet_text();
 		}
 		break;
 		case widget_type::widget_type_bullet:
 		{
-			// w->args = new widget_bullet();
+			w->args = new widget_bullet();
 		}
 		break;
 		case widget_type::widget_type_selectable:
 		{
-			// w->args = new widget_selectable();
+			w->args = new widget_selectable();
 		}
 		break;
 		case widget_type::widget_type_label_text:
@@ -190,12 +190,12 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_same_line:
 		{
-			// w->args = new widget_same_line();
+			w->args = new widget_same_line();
 		}
 		break;
 		case widget_type::widget_type_spacing:
 		{
-			// w->args = new widget_spacing();
+			w->args = new widget_spacing();
 		}
 		break;
 		case widget_type::widget_type_dummy:
@@ -242,9 +242,8 @@ namespace imgui_editor
 			w->args = new widget_begin_end_combo();
 		}
 		break;
-		default:
 		case widget_type::widget_type_none:
-			break;
+			w->args = new widget_type_none();
 		}
 		return w;
 	}

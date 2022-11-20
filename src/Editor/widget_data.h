@@ -3,6 +3,9 @@
 
 namespace imgui_editor
 {	
+	struct widget_type_none {};
+	
+	struct widget_button { };
 	struct widget_checkbox
 	{
 		bool check = false;
@@ -14,16 +17,23 @@ namespace imgui_editor
 		int flags_value = 0;
 	};
 
+	struct widget_text {};
+
 	struct widget_radio_button
 	{
 		bool active = false;
 	};
+
+	struct widget_small_button { };
 
 	struct widget_text_colored
 	{
 		ImColor color;
 	};
 
+	struct widget_bullet_text { };
+
+	struct widget_bullet { };
 	struct widget_selectable
 	{
 		bool selected = false;
@@ -251,6 +261,10 @@ namespace imgui_editor
 		float spacing = -1.0f;
 	};
 
+	struct widget_separator { };
+
+	struct widget_spacing { };
+
 	struct widget_dummy
 	{
 		ImVec2 size;
@@ -270,6 +284,8 @@ namespace imgui_editor
 	{
 		ImGuiTreeNodeFlags_ flags;
 	};
+
+	
 
 	struct widget_begin_end_window
 	{

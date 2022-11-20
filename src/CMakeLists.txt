@@ -18,7 +18,6 @@ fips_begin_sharedlib(editor cmdline)
     
     fips_files(Editor/selection.h)
     fips_files(Editor/selection.cpp)
-
 	
     fips_files(imgui/imgui_stdlib.cpp)
     
@@ -44,6 +43,35 @@ fips_begin_sharedlib(editor cmdline)
         fips_libs(m dl)
     endif()
 fips_end_sharedlib()
+
+#-------------------------------------------------------------------------------
+#   gtest_begin(name)
+#   Begin defining a unit test.
+#
+macro(gtest_begin2 name)
+    set(options NO_TEMPLATE)
+    set(oneValueArgs TEMPLATE)
+    set(multiValueArgs)
+    cmake_parse_arguments(_gt "${options}" "${oneValueArgs}" "" ${ARGN})
+
+    if (_gt_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "gtest_begin(): called with invalid args '${_gt_UNPARSED_ARGUMENTS}'")
+    endif()
+
+    set(FipsAddFilesEnabled 1)
+    fips_reset(${CurTargetName}Test)
+    set(CurAppType "cmdline")
+endmacro()
+
+gtest_begin2(editor)
+	fips_dir(tests)
+	fips_files(
+		test.cpp
+		enum_test.h
+		enum_test.cpp
+	)
+	fips_deps(editor)
+gtest_end()
 
 fips_begin_app(entry cmdline)
     fips_files(Entry/main.cpp)
