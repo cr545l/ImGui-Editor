@@ -1,11 +1,14 @@
 fips_begin_sharedlib(editor cmdline)
     fips_files(Editor/main.cpp)
     
+    fips_files(Editor/imgui.h)
     fips_files(Editor/widget_type.h)
     
     fips_files(Editor/widget.h)
     fips_files(Editor/widget_data.h)
     fips_files(Editor/widget.cpp)
+    fips_files(Editor/widget_draw.cpp)
+    fips_files(Editor/widget_draw_inspector.cpp)
     
     fips_files(Editor/widget_editor.h)
     fips_files(Editor/widget_editor.cpp)

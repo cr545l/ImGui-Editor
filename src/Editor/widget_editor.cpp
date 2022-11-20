@@ -12,6 +12,7 @@ ImVec2 g_unitSize;
 
 namespace imgui_editor
 {
+
 	void draw_widget_tool(widget_tool* ctx)
 	{
 		if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unitSize.y * 25), true))
@@ -105,7 +106,7 @@ namespace imgui_editor
 	void draw_widget_inspector(widget_inspector* context)
 	{
 		auto selected = selection::get_targets();
-		ImGui::Text("Selected %d", selected.size());
+		ImGui::Text("Selected %lu", selected.size());
 
 		ImGui::Separator();
 

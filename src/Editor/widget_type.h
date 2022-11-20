@@ -22,14 +22,17 @@ namespace imgui_editor
 
 		widget_type_label_text,
 		widget_type_input_text,
+		widget_type_input_text_multiline,
 		widget_type_input_text_with_hint,
 		widget_type_input_int,
 		widget_type_input_int2,
 		widget_type_input_int3,
 		widget_type_input_int4,
 		widget_type_input_float,
-		widget_type_input_double,
+		widget_type_input_float2,
 		widget_type_input_float3,
+		widget_type_input_float4,
+		widget_type_input_double,
 
 		widget_type_drag_int,
 		widget_type_drag_float,
@@ -46,6 +49,9 @@ namespace imgui_editor
 
 		widget_type_color_edit3,
 		widget_type_color_edit4,
+		widget_type_color_picker3,
+		widget_type_color_picker4,
+		widget_type_color_button,
 
 		widget_type_list_box,
 
@@ -60,10 +66,12 @@ namespace imgui_editor
 
 		widget_type_begin_end_window,
 		widget_type_begin_end_child,
+		widget_type_begin_end_popup,
 		widget_type_begin_end_list_box,
 		widget_type_begin_end_table,
 		widget_type_begin_end_group,
 		widget_type_begin_end_combo,
+		widget_type_begin_end_menu,
 
 		widget_type_push_pop_tree_node,
 
