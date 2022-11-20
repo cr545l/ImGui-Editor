@@ -247,7 +247,8 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_same_line:
 		{
-			ImGui::SameLine();
+			widget_same_line* args = (widget_same_line*)ctx->args;
+			ImGui::SameLine(args->offset_from_start_x, args->spacing);
 		}
 		break;
 		case widget_type::widget_type_spacing:
@@ -257,33 +258,38 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_dummy:
 		{
-			// ImGui::Dummy();
+			widget_dummy* args = (widget_dummy*)ctx->args;
+			ImGui::Dummy(args->size);
 		}
 		break;
 		case widget_type::widget_type_indent:
 		{
-			ImGui::Indent();
+			widget_indent* args = (widget_indent*)ctx->args;
+			ImGui::Indent(args->indent_w);
 		}
 		break;
 		case widget_type::widget_type_unindent:
 		{
-			ImGui::Unindent();
+			widget_unindent* args = (widget_unindent*)ctx->args;
+			ImGui::Unindent(args->unindent_w);
 		}
 		break;
 		case widget_type::widget_type_begin_end_window:
 		{
 			begin_type = true;
-			if (ImGui::Begin(ctx->label.c_str()))
+			widget_begin_end_window* args = (widget_begin_end_window*)ctx->args;
+			if (ImGui::Begin(ctx->label.c_str(), &args->open, args->flags))
 			{
 				draw_children(ctx);
-				ImGui::End();
 			}
+			ImGui::End();
 		}
 		break;
 		case widget_type::widget_type_begin_end_child:
 		{
 			begin_type = true;
-			if (ImGui::BeginChild(ctx->label.c_str()))
+			widget_begin_end_child* args = (widget_begin_end_child*)ctx->args;
+			if (ImGui::BeginChild(ctx->label.c_str(), args->size, args->border, args->flags))
 			{
 				draw_children(ctx);
 			}
@@ -293,7 +299,8 @@ namespace imgui_editor
 		case widget_type::widget_type_begin_end_list_box:
 		{
 			begin_type = true;
-			if (ImGui::BeginListBox(ctx->label.c_str()))
+			widget_begin_end_list_box* args = (widget_begin_end_list_box*)ctx->args;
+			if (ImGui::BeginListBox(ctx->label.c_str(), args->size))
 			{
 				draw_children(ctx);
 				ImGui::EndListBox();
@@ -303,8 +310,10 @@ namespace imgui_editor
 		case widget_type::widget_type_begin_end_table:
 		{
 			begin_type = true;
-			if(ImGui::BeginTable(ctx->label.c_str(), 2))
+			widget_begin_end_table* args = (widget_begin_end_table*)ctx->args;
+			if(ImGui::BeginTable(ctx->label.c_str(), args->columns, args->flags, args->outer_size, args->inner_width))
 			{
+				draw_children(ctx);
 				ImGui::EndTable();
 			}
 		}
@@ -323,7 +332,7 @@ namespace imgui_editor
 		{
 			begin_type = true;
 			widget_begin_end_combo* args = (widget_begin_end_combo*)ctx->args;
-			if (ImGui::BeginCombo(ctx->label.c_str(), args->preview_value.c_str()))
+			if (ImGui::BeginCombo(ctx->label.c_str(), args->preview_value.c_str(), args->flags))
 			{
 				draw_children(ctx);
 				ImGui::EndCombo();
@@ -372,6 +381,7 @@ namespace imgui_editor
 		{
 		case widget_type::widget_type_button:
 		{
+			// w->args = new widget_button();
 		}
 		break;
 		case widget_type::widget_type_checkbox:
@@ -386,76 +396,77 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_small_button:
 		{
+			// w->args = new widget_small_button();
 		}
 		break;
 		case widget_type::widget_type_checkbox_flags:
 		{
-
+			w->args = new widget_checkbox_flags();
 		}
 		break;
 		case widget_type::widget_type_text:
 		{
-
+			// w->args = new widget_text();
 		}
 		break;
 		case widget_type::widget_type_text_colored:
 		{
-
+			w->args = new widget_text_colored();
 		}
 		break;
 		case widget_type::widget_type_bullet_text:
 		{
-
+			// w->args = new widget_bullet_text();
 		}
 		break;
 		case widget_type::widget_type_bullet:
 		{
-
+			// w->args = new widget_bullet();
 		}
 		break;
 		case widget_type::widget_type_selectable:
 		{
-
+			// w->args = new widget_selectable();
 		}
 		break;
 		case widget_type::widget_type_label_text:
 		{
-
+			w->args = new widget_label_text();
 		}
 		break;
 		case widget_type::widget_type_input_text:
 		{
-
+			w->args = new widget_input_text();
 		}
 		break;
 		case widget_type::widget_type_input_text_with_hint:
 		{
-
+			w->args = new widget_input_text_with_hint();
 		}
 		break;
 		case widget_type::widget_type_input_int:
 		{
-
+			w->args = new widget_input_int();
 		}
 		break;
 		case widget_type::widget_type_input_float:
 		{
-
+			w->args = new widget_input_float();
 		}
 		break;
 		case widget_type::widget_type_input_double:
 		{
-
+			w->args = new widget_input_double();
 		}
 		break;
 		case widget_type::widget_type_input_float3:
 		{
-
+			w->args = new widget_input_float3();
 		}
 		break;
 		case widget_type::widget_type_drag_int:
 		{
-
+			w->args = new widget_drag_int();
 		}
 		break;
 		case widget_type::widget_type_drag_float:
@@ -465,87 +476,117 @@ namespace imgui_editor
 		break;
 		case widget_type::widget_type_slider_int:
 		{
-
+			w->args = new widget_slider_int();
+		}
+		break;
+		case widget_type::widget_type_slider_int2:
+		{
+			w->args = new widget_slider_int2();
+		}
+		break;
+		case widget_type::widget_type_slider_int3:
+		{
+			w->args = new widget_slider_int3();
+		}
+		break;
+		case widget_type::widget_type_slider_int4:
+		{
+			w->args = new widget_slider_int4();
 		}
 		break;
 		case widget_type::widget_type_slider_float:
 		{
-
+			w->args = new widget_slider_float();
+		}
+		break;
+		case widget_type::widget_type_slider_float2:
+		{
+			w->args = new widget_slider_float2();
+		}
+		break;
+		case widget_type::widget_type_slider_float3:
+		{
+			w->args = new widget_slider_float3();
+		}
+		break;
+		case widget_type::widget_type_slider_float4:
+		{
+			w->args = new widget_slider_float4();
 		}
 		break;
 		case widget_type::widget_type_slider_angle:
 		{
-
+			w->args = new widget_slider_angle();
 		}
 		break;
 		case widget_type::widget_type_color_edit3:
 		{
-
+			w->args = new widget_color_edit3();
 		}
 		break;
 		case widget_type::widget_type_color_edit4:
 		{
-
+			w->args = new widget_color_edit4();
 		}
 		break;
 		case widget_type::widget_type_list_box:
 		{
-
+			w->args = new widget_list_box();
 		}
 		break;
 		case widget_type::widget_type_collapsing_header:
 		{
-
+			w->args = new widget_collapsing_header();
 		}
 		break;
 		case widget_type::widget_type_same_line:
 		{
-
+			// w->args = new widget_same_line();
 		}
 		break;
 		case widget_type::widget_type_spacing:
 		{
-
+			// w->args = new widget_spacing();
 		}
 		break;
 		case widget_type::widget_type_dummy:
 		{
-
+			w->args = new widget_dummy();
 		}
 		break;
 		case widget_type::widget_type_indent:
 		{
-
+			w->args = new widget_indent();
 		}
 		break;
 		case widget_type::widget_type_unindent:
 		{
-
+			w->args = new widget_unindent();
 		}
 		break;
 		case widget_type::widget_type_begin_end_window:
 		{
-
+			w->args = new widget_begin_end_window();
 		}
 		break;
 		case widget_type::widget_type_begin_end_child:
 		{
-
+			w->args = new widget_begin_end_child();
 		}
 		break;
 		case widget_type::widget_type_begin_end_list_box:
 		{
-
+			w->args = new widget_begin_end_list_box();
 		}
 		break;
 		case widget_type::widget_type_begin_end_table:
 		{
-
+			w->args = new widget_begin_end_table();
 		}
 		break;
 		case widget_type::widget_type_push_pop_tree_node:
 		{
-
+			// w->args = new widget_push_pop_tree_node();
 		}
 		case widget_type::widget_type_begin_end_combo:
 		{

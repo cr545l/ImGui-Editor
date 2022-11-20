@@ -3,6 +3,7 @@
 
 namespace imgui_editor
 {
+	
 	struct widget_checkbox
 	{
 		bool check = false;
@@ -28,7 +29,7 @@ namespace imgui_editor
 	{
 		std::string text;
 		bool selected = false;
-		ImGuiSelectableFlags flags = 0;
+		ImGuiSelectableFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_label_text
@@ -39,20 +40,20 @@ namespace imgui_editor
 	struct widget_input_text
 	{
 		std::string text;
-		ImGuiInputTextFlags flags;
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_input_text_multiline
 	{
 		std::string text;
-		ImGuiInputTextFlags flags;
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_input_text_with_hint
 	{
 		std::string text;
 		std::string hint;
-		ImGuiInputTextFlags flags;
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_input_int
@@ -60,25 +61,25 @@ namespace imgui_editor
 		int value;
 		int step;
 		int step_fast;
-		ImGuiInputTextFlags flags;
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_input_int2
 	{
 		int value[2];
-		ImGuiInputTextFlags flags;
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_input_int3
 	{
 		int value[3];
-		ImGuiInputTextFlags flags;
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_input_int4
 	{
 		int value[4];
-		ImGuiInputTextFlags flags;
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_input_float
@@ -87,7 +88,7 @@ namespace imgui_editor
 		float step;
 		float step_fast;
 		std::string format;
-		ImGuiInputTextFlags flags;
+		ImGuiInputTextFlags flags = ImGuiInputTextFlags_None;
 	};
 
 	struct widget_input_double
@@ -209,14 +210,67 @@ namespace imgui_editor
 		std::vector<std::string> items;
 		int height_in_items = -1;
 	};
+
+	struct widget_same_line
+	{
+		float offset_from_start_x = 0.0f;
+		float spacing = -1.0f;
+	};
+
+	struct widget_dummy
+	{
+		ImVec2 size;
+	};
+
+	struct widget_indent
+	{
+		float indent_w = 0.0f;
+	};
+
+	struct widget_unindent
+	{
+		float unindent_w = 0.0f;
+	};
+
 	struct widget_collapsing_header
 	{
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 	};
 
+	struct widget_begin_end_window
+	{
+		bool open = true;
+		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
+	};
+
+	struct widget_begin_end_child
+	{
+		ImVec2 size;
+		bool border = 1;
+		ImGuiWindowFlags flags = ImGuiWindowFlags_None;
+	};
+	
+	// widget_type_begin_end_table
+	struct widget_begin_end_table
+	{
+		std::string name;
+		int columns = 1;
+		ImGuiTableFlags flags =	ImGuiTableFlags_None;
+		ImVec2 outer_size;
+		float inner_width = 0;
+	};
+
+	struct widget_begin_end_list_box
+	{
+		ImVec2 size;
+		int items_count;
+		int items_height;
+	};
+
 	struct widget_begin_end_combo
 	{
 		std::string preview_value;
+		ImGuiComboFlags flags =	ImGuiComboFlags_None;
 	};
 }
 

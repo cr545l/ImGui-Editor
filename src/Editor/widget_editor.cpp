@@ -74,7 +74,7 @@ namespace imgui_editor
 		auto selected = selection::get_targets();
 		std::function<void(widget*)> drawNode = [&](widget* _widget) {
 
-			ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_None;
+			ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
 			if (std::any_of(selected.begin(), selected.end(), [&](widget* w) { return w == _widget; }))
 			{
