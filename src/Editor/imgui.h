@@ -46,30 +46,40 @@ namespace ImGui
     }
 
     template <typename T>
-    bool Combo(const char* label, T* value)
+    bool Combo(const char* label, T* value, bool bit_flag = true)
     {
         constexpr std::string_view type_name =  magic_enum::enum_type_name<T>();
 
         bool result = false;
         std::string name = "";
-        magic_enum::enum_for_each<T>([&](T t) {
-            if (static_cast<int>(t) & static_cast<int>(*value))
-            {
-                if (name.length())
+        if(bit_flag)
+        {
+            magic_enum::enum_for_each<T>([&](T t) {
+                if (static_cast<int>(t) & static_cast<int>(*value))
                 {
-                    name += "|";
+                    if (name.length())
+                    {
+                        name += "|";
+                    }
+                    std::string n = std::string(magic_enum::enum_name(t));
+                    n = n.substr(type_name.length(), n.length() - type_name.length());
+                    std::replace(n.begin(), n.end(), '_', ' ');
+                    name += n;
                 }
-                std::string n = std::string(magic_enum::enum_name(t));
-                n = n.substr(type_name.length(), n.length() - type_name.length());
-                std::replace(n.begin(), n.end(), '_', ' ');
-                name += n;
-            }
 
             std::string name = std::string(magic_enum::enum_name(t));
             // name = name.substr(12, name.length() - 12);
             std::replace(name.begin(), name.end(), '_', ' ');
             
             });
+        }
+        else
+        {
+            std::string n = std::string(magic_enum::enum_name(*value));
+            n = n.substr(type_name.length(), n.length() - type_name.length());
+            std::replace(n.begin(), n.end(), '_', ' ');
+            name = n;
+        }
 
         if (ImGui::BeginCombo(label, name.c_str()))
         {
@@ -78,9 +88,9 @@ namespace ImGui
                 name = name.substr(type_name.length(), name.length() - type_name.length());
                 // name replace _ to space
                 std::replace(name.begin(), name.end(), '_', ' ');
-                if (ImGui::Selectable(name.c_str(), static_cast<int>(t) & static_cast<int>(*value)))
+                if (ImGui::Selectable(name.c_str(), bit_flag?static_cast<int>(t) & static_cast<int>(*value) : t == *value))
                 {
-                    if (ImGui::GetIO().KeyCtrl)
+                    if (bit_flag && ImGui::GetIO().KeyCtrl)
                     {
                         *value = static_cast<T>(static_cast<int>(*value) | static_cast<int>(t));
                     }

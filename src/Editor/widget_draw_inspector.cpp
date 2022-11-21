@@ -5,6 +5,43 @@
 
 #include "Editor/imgui.h"
 
+struct ImGuiStyleVarInfo
+{
+    ImGuiDataType   Type;
+    ImU32           Count;
+    ImU32           Offset;
+    void*           GetVarPtr(ImGuiStyle* style) const { return (void*)((unsigned char*)style + Offset); }
+};
+
+static const ImGuiStyleVarInfo GStyleVarInfo[] =
+{
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, Alpha) },               // ImGuiStyleVar_Alpha
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, DisabledAlpha) },       // ImGuiStyleVar_DisabledAlpha
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowPadding) },       // ImGuiStyleVar_WindowPadding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowRounding) },      // ImGuiStyleVar_WindowRounding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowBorderSize) },    // ImGuiStyleVar_WindowBorderSize
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowMinSize) },       // ImGuiStyleVar_WindowMinSize
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowTitleAlign) },    // ImGuiStyleVar_WindowTitleAlign
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, ChildRounding) },       // ImGuiStyleVar_ChildRounding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, ChildBorderSize) },     // ImGuiStyleVar_ChildBorderSize
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, PopupRounding) },       // ImGuiStyleVar_PopupRounding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, PopupBorderSize) },     // ImGuiStyleVar_PopupBorderSize
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, FramePadding) },        // ImGuiStyleVar_FramePadding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, FrameRounding) },       // ImGuiStyleVar_FrameRounding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, FrameBorderSize) },     // ImGuiStyleVar_FrameBorderSize
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, ItemSpacing) },         // ImGuiStyleVar_ItemSpacing
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, ItemInnerSpacing) },    // ImGuiStyleVar_ItemInnerSpacing
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, IndentSpacing) },       // ImGuiStyleVar_IndentSpacing
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, CellPadding) },         // ImGuiStyleVar_CellPadding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, ScrollbarSize) },       // ImGuiStyleVar_ScrollbarSize
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, ScrollbarRounding) },   // ImGuiStyleVar_ScrollbarRounding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, GrabMinSize) },         // ImGuiStyleVar_GrabMinSize
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, GrabRounding) },        // ImGuiStyleVar_GrabRounding
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, TabRounding) },         // ImGuiStyleVar_TabRounding
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, ButtonTextAlign) },     // ImGuiStyleVar_ButtonTextAlign
+    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, SelectableTextAlign) }, // ImGuiStyleVar_SelectableTextAlign
+};
+
 namespace imgui_editor
 {
     void draw_inspector_widget(widget *ctx)
@@ -493,5 +530,110 @@ namespace imgui_editor
 			debug_break();
             break;
         }
+
+        ImGui::Separator();
+
+        ImGui::PushID("style_colors");
+        {
+            int size =ctx->style_colors.size();
+            if(ImGui::InputInt("style_colors", (int*)&size))
+            {
+                if (size < 0)
+                {
+                    size = 0;
+                }
+
+                if ((int)ctx->style_colors.size() < size)
+                {
+                    ctx->style_colors.push_back({});
+                }
+                else
+                {
+                    ctx->style_colors.resize(size);
+                }
+            }
+            for(size_t i =0, max = ctx->style_colors.size(); i < max; ++i)
+            {
+                ImGui::PushID(i);
+                ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_colors[i].idx, false);
+                ImGui::ColorEdit4(string_format("%s[%u]", "col", i).c_str(), &ctx->style_colors[i].col.Value.x);
+                ImGui::PopID();
+            }
+        }        
+        ImGui::PopID(); 
+
+
+        ImGui::PushID("style_var_floats");
+        {
+            int size =ctx->style_var_floats.size();
+            if(ImGui::InputInt("style_var_floats", (int*)&size))
+            {
+                if (size < 0)
+                {
+                    size = 0;
+                }
+
+                if ((int)ctx->style_var_floats.size() < size)
+                {
+                    ctx->style_var_floats.push_back({});
+                }
+                else
+                {
+                    ctx->style_var_floats.resize(size);
+                }
+            }
+
+            for(size_t i =0, max = ctx->style_var_floats.size(); i < max; ++i)
+            {
+                ImGui::PushID(i);
+                auto old = ctx->style_var_floats[i].idx;
+                if(ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_var_floats[i].idx, false))
+                {
+                    if(GStyleVarInfo[ctx->style_var_floats[i].idx].Count != 1)
+                    {
+                        ctx->style_var_floats[i].idx = old;
+                    }
+                }
+                ImGui::DragFloat(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_floats[i].val);
+                ImGui::PopID();
+            }
+        }      
+        ImGui::PopID();
+        
+        ImGui::PushID("style_var_vec2s");
+        {
+            int size =ctx->style_var_vec2s.size();
+            if(ImGui::InputInt("style_var_vec2s", (int*)&size))
+            {
+                if (size < 0)
+                {
+                    size = 0;
+                }
+
+                if ((int)ctx->style_var_vec2s.size() < size)
+                {
+                    ctx->style_var_vec2s.push_back({});
+                }
+                else
+                {
+                    ctx->style_var_vec2s.resize(size);
+                }
+            }
+            for(size_t i =0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+            {
+                ImGui::PushID(i);
+                auto old = ctx->style_var_vec2s[i].idx;
+                if(ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_var_vec2s[i].idx, false))
+                {
+                    if(GStyleVarInfo[ctx->style_var_vec2s[i].idx].Count != 2)
+                    {
+                        ctx->style_var_vec2s[i].idx = old;
+                    }
+                }
+                ImGui::DragFloat2(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_vec2s[i].val.x);
+                ImGui::PopID();
+            }
+        }
+        ImGui::PopID();
     }
 }

@@ -18,6 +18,19 @@ namespace imgui_editor
 	
 	void draw_widget(widget* ctx)
 	{
+		for(size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+		{
+			ImGui::PushStyleColor(ctx->style_colors[i].idx, (ImVec4)ctx->style_colors[i].col);
+		}
+		for(size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+		{
+			ImGui::PushStyleVar(ctx->style_var_floats[i].idx, ctx->style_var_floats[i].val);
+		}
+		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+		{
+			ImGui::PushStyleVar(ctx->style_var_vec2s[i].idx, ctx->style_var_vec2s[i].val);
+		}
+
 		bool begin_type = false;
 		switch (ctx->type)
 		{
@@ -439,6 +452,19 @@ namespace imgui_editor
 		default:
 			debug_break();
 			break;
+		}
+
+		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+		{
+			ImGui::PopStyleVar();
+		}
+		for(size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+		{
+			ImGui::PopStyleVar();
+		}
+		for(size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+		{
+			ImGui::PopStyleColor();
 		}
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
