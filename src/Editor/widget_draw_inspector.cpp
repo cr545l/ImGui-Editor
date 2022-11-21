@@ -13,15 +13,23 @@ namespace imgui_editor
 
         switch (ctx->type)
         {
+        case widget_type::widget_type_none:
+        break;
         case widget_type::widget_type_button:
-        {
-            // widget_button* args = (widget_button*)ctx->args;
-        }
+        break;
+        case widget_type::widget_type_small_button:
         break;
         case widget_type::widget_type_checkbox:
         {
             widget_checkbox *args = (widget_checkbox *)ctx->args;
             ImGui::Checkbox("check", &args->check);
+        }
+        break;
+        case widget_type::widget_type_checkbox_flags:
+        {
+            widget_checkbox_flags *args = (widget_checkbox_flags *)ctx->args;
+            ImGui::InputInt("flags", &args->flags);
+            ImGui::InputInt("flags_value", &args->flags_value);         
         }
         break;
         case widget_type::widget_type_radio_button:
@@ -30,22 +38,7 @@ namespace imgui_editor
             ImGui::Checkbox("active", &args->active);
         }
         break;
-        case widget_type::widget_type_small_button:
-        {
-            // widget_small_button* args = (widget_small_button*)ctx->args;
-        }
-        break;
-        case widget_type::widget_type_checkbox_flags:
-        {
-            widget_checkbox_flags *args = (widget_checkbox_flags *)ctx->args;
-            ImGui::InputInt("flags", &args->flags);
-            ImGui::InputInt("flags_value", &args->flags_value);
-        }
-        break;
         case widget_type::widget_type_text:
-        {
-            // widget_text* args = (widget_text*)ctx->args;
-        }
         break;
         case widget_type::widget_type_text_colored:
         {
@@ -54,14 +47,8 @@ namespace imgui_editor
         }
         break;
         case widget_type::widget_type_bullet_text:
-        {
-            // widget_bullet_text* args = (widget_bullet_text*)ctx->args;
-        }
         break;
         case widget_type::widget_type_bullet:
-        {
-            // widget_bullet* args = (widget_bullet*)ctx->args;
-        }
         break;
         case widget_type::widget_type_selectable:
         {
@@ -72,9 +59,6 @@ namespace imgui_editor
         }
         break;
         case widget_type::widget_type_label_text:
-        {
-            // widget_label_text* args = (widget_label_text*)ctx->args;
-        }
         break;
         case widget_type::widget_type_input_text:
         {
@@ -172,6 +156,191 @@ namespace imgui_editor
             ImGui::Combo("flags", &args->flags);
         }
         break;
+        case widget_type::widget_type_input_double:
+        {
+            widget_input_double *args = (widget_input_double *)ctx->args;
+
+            // ImGui::DragScalar("value", ImGuiDataType_Double, &args->value);
+            // ImGui::DragFloat("step", &args->step);
+            // ImGui::DragScalar("step_fast", &args->step_fast);
+        }
+        break;
+        case widget_type::widget_type_drag_int:
+        {
+            widget_drag_int *args = (widget_drag_int *)ctx->args;
+
+            ImGui::DragInt("value", &args->value);
+            ImGui::DragInt("min", &args->min);
+            ImGui::DragInt("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_drag_int2:
+        {
+            widget_drag_int2 *args = (widget_drag_int2 *)ctx->args;
+
+            ImGui::DragInt2("value", args->value);
+            ImGui::DragInt("min", &args->min);
+            ImGui::DragInt("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_drag_int3:
+        {
+            widget_drag_int3 *args = (widget_drag_int3 *)ctx->args;
+
+            ImGui::DragInt3("value", args->value);
+            ImGui::DragInt("min", &args->min);
+            ImGui::DragInt("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_drag_int4:
+        {
+            widget_drag_int4 *args = (widget_drag_int4 *)ctx->args;
+
+            ImGui::DragInt4("value", args->value);
+            ImGui::DragInt("min", &args->min);
+            ImGui::DragInt("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_drag_float:
+        {
+            widget_drag_float *args = (widget_drag_float *)ctx->args;
+
+            ImGui::DragFloat("value", &args->value);
+            ImGui::DragFloat("min", &args->min);
+            ImGui::DragFloat("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_drag_float2:
+        {
+            widget_drag_float2 *args = (widget_drag_float2 *)ctx->args;
+
+            ImGui::DragFloat2("value", args->value);
+            ImGui::DragFloat("min", &args->min);
+            ImGui::DragFloat("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_drag_float3:
+        {
+            widget_drag_float3 *args = (widget_drag_float3 *)ctx->args;
+
+            ImGui::DragFloat3("value", args->value);
+            ImGui::DragFloat("min", &args->min);
+            ImGui::DragFloat("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_drag_float4:
+        {
+            widget_drag_float4 *args = (widget_drag_float4 *)ctx->args;
+
+            ImGui::DragFloat4("value", args->value);
+            ImGui::DragFloat("min", &args->min);
+            ImGui::DragFloat("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_slider_int:
+        {
+            widget_slider_int *args = (widget_slider_int *)ctx->args;
+
+            ImGui::SliderInt("value", &args->value, args->min, args->max);
+            ImGui::DragInt("min", &args->min);
+            ImGui::DragInt("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_slider_int2:
+        {
+            widget_slider_int2 *args = (widget_slider_int2 *)ctx->args;
+
+            ImGui::SliderInt2("value", args->value, args->min, args->max);
+            ImGui::DragInt("min", &args->min);
+            ImGui::DragInt("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_slider_int3:
+        {
+            widget_slider_int3 *args = (widget_slider_int3 *)ctx->args;
+
+            ImGui::SliderInt3("value", args->value, args->min, args->max);
+            ImGui::DragInt("min", &args->min);
+            ImGui::DragInt("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_slider_int4:
+        {
+            widget_slider_int4 *args = (widget_slider_int4 *)ctx->args;
+
+            ImGui::SliderInt4("value", args->value, args->min, args->max);
+            ImGui::DragInt("min", &args->min);
+            ImGui::DragInt("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_slider_float:
+        {
+            widget_slider_float *args = (widget_slider_float *)ctx->args;
+
+            ImGui::SliderFloat("value", &args->value, args->min, args->max);
+            ImGui::DragFloat("min", &args->min);
+            ImGui::DragFloat("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_slider_float2:
+        {
+            widget_slider_float2 *args = (widget_slider_float2 *)ctx->args;
+
+            ImGui::SliderFloat2("value", args->value, args->min, args->max);
+            ImGui::DragFloat("min", &args->min);
+            ImGui::DragFloat("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_slider_float3:
+        {
+            widget_slider_float3 *args = (widget_slider_float3 *)ctx->args;
+
+            ImGui::SliderFloat3("value", args->value, args->min, args->max);
+            ImGui::DragFloat("min", &args->min);
+            ImGui::DragFloat("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
+        case widget_type::widget_type_slider_float4:
+        {
+            widget_slider_float4 *args = (widget_slider_float4 *)ctx->args;
+
+            ImGui::SliderFloat4("value", args->value, args->min, args->max);
+            ImGui::DragFloat("min", &args->min);
+            ImGui::DragFloat("max", &args->max);
+            ImGui::InputText("format", &args->format);
+            ImGui::Combo("flags", &args->flags);
+        }
+        break;
         case widget_type::widget_type_color_edit3:
         {
             widget_color_edit3 *args = (widget_color_edit3 *)ctx->args;
@@ -228,9 +397,6 @@ namespace imgui_editor
         }
         break;
         case widget_type::widget_type_separator:
-        {
-            // widget_separator *args = (widget_separator *)ctx->args;
-        }
         break;
         case widget_type::widget_type_same_line:
         {
@@ -240,9 +406,6 @@ namespace imgui_editor
             ImGui::DragFloat("spacing", &args->spacing);
         }
         case widget_type::widget_type_spacing:
-        {
-            // widget_spacing *args = (widget_spacing *)ctx->args;
-        }
         break;
         case widget_type::widget_type_dummy:
         {
@@ -289,6 +452,28 @@ namespace imgui_editor
             ImGui::Combo("flags", &args->flags);
         }
         break;
+        case widget_type::widget_type_begin_end_list_box:
+        {
+            widget_begin_end_list_box *args = (widget_begin_end_list_box *)ctx->args;
+
+            ImGui::DragFloat2("size", &args->size.x);
+                   
+            ImGui::DragInt("items_count", &args->items_count);
+            ImGui::DragInt("items_height", &args->items_height);
+        }
+        break;        
+        case widget_type::widget_type_begin_end_table:
+        {
+            widget_begin_end_table *args = (widget_begin_end_table *)ctx->args;
+
+            ImGui::DragInt("columns", &args->columns);
+            ImGui::Combo("flags", &args->flags);
+            ImGui::DragFloat2("outer_size", &args->outer_size.x);
+            ImGui::DragFloat("inner_width", &args->inner_width);
+        }
+        break;
+        case widget_type::widget_type_begin_end_group:
+        break;
         case widget_type::widget_type_begin_end_combo:
         {
             widget_begin_end_combo *args = (widget_begin_end_combo *)ctx->args;
@@ -303,8 +488,9 @@ namespace imgui_editor
 
             ImGui::Checkbox("enabled", &args->enabled);
         }
-
-        default:
+        break;
+		default:
+			debug_break();
             break;
         }
     }

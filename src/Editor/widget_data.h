@@ -4,7 +4,7 @@
 namespace imgui_editor
 {	
 	struct widget_type_none {};
-	
+
 	struct widget_button { };
 	struct widget_checkbox
 	{
@@ -124,16 +124,90 @@ namespace imgui_editor
 	struct widget_input_double
 	{
 		double value;
+		double step;
+		double step_fast;
+		std::string format;
+		ImGuiInputTextFlags_ flags;
 	};
 
 	struct widget_drag_int
 	{
-		int value = 0;
+		int value;
+		float speed;
+		int min;
+		int max;
+		std::string format;
+		ImGuiSliderFlags_ flags;
 	};
 
+	struct widget_drag_int2
+	{
+		int value[2];
+		float speed;
+		int min;
+		int max;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	struct widget_drag_int3
+	{
+		int value[3];
+		float speed;
+		int min;
+		int max;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	struct widget_drag_int4
+	{
+		int value[4];
+		float speed;
+		int min;
+		int max;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+	
 	struct widget_drag_float
 	{
-		float value = 0.0f;
+		float value;
+		float speed;
+		float min;
+		float max;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	struct widget_drag_float2
+	{
+		float value[2];
+		float speed;
+		float min;
+		float max;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	struct widget_drag_float3
+	{
+		float value[3];
+		float speed;
+		float min;
+		float max;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	struct widget_drag_float4
+	{
+		float value[4];
+		float speed;
+		float min;
+		float max;
+		std::string format;
+		ImGuiSliderFlags_ flags;
 	};
 
 	struct widget_slider_int
@@ -321,6 +395,13 @@ namespace imgui_editor
 		int items_height;
 	};
 
+	struct widget_push_pop_tree_node
+	{
+		ImGuiTreeNodeFlags_ flags;
+	};
+
+	struct widget_begin_end_group { };
+	
 	struct widget_begin_end_combo
 	{
 		std::string preview_value;

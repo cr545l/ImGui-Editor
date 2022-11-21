@@ -21,9 +21,16 @@ namespace imgui_editor
 		bool begin_type = false;
 		switch (ctx->type)
 		{
+		case widget_type::widget_type_none:	
+		break;
 		case widget_type::widget_type_button:
 		{
 			ImGui::Button(ctx->label.c_str(), ctx->size);
+		}
+		break;
+		case widget_type::widget_type_small_button:
+		{
+			ImGui::SmallButton(ctx->label.c_str());
 		}
 		break;
 		case widget_type::widget_type_checkbox:
@@ -33,22 +40,18 @@ namespace imgui_editor
 			ImGui::Checkbox(ctx->label.c_str(), &args->check);
 		}
 		break;
+		case widget_type::widget_type_checkbox_flags:
+		{
+			widget_checkbox_flags* args = (widget_checkbox_flags*)ctx->args;
+
+			ImGui::CheckboxFlags(ctx->label.c_str(), &args->flags, args->flags_value);
+		}
+		break;
 		case widget_type::widget_type_radio_button:
 		{
 			widget_radio_button* args = (widget_radio_button*)ctx->args;
 
 			ImGui::RadioButton(ctx->label.c_str(), args->active);
-		}
-		break;
-		case widget_type::widget_type_small_button:
-		{
-			ImGui::SmallButton(ctx->label.c_str());
-		}
-		break;
-		case widget_type::widget_type_checkbox_flags:
-		{
-			widget_checkbox_flags* args = (widget_checkbox_flags*)ctx->args;
-			ImGui::CheckboxFlags(ctx->label.c_str(), &args->flags, args->flags_value);
 		}
 		break;
 		case widget_type::widget_type_text:
@@ -89,6 +92,7 @@ namespace imgui_editor
 			widget_input_text* args = (widget_input_text*)ctx->args;
 			ImGui::InputText(ctx->label.c_str(), &args->text, args->flags);
 		}
+		break;
 		case widget_type::widget_type_input_text_multiline:
 		{
 			widget_input_text_multiline* args = (widget_input_text_multiline*)ctx->args;
@@ -158,13 +162,49 @@ namespace imgui_editor
 		case widget_type::widget_type_drag_int:
 		{
             widget_drag_int* args = (widget_drag_int*)ctx->args;
-            ImGui::DragInt(ctx->label.c_str(), &args->value);
+            ImGui::DragInt(ctx->label.c_str(), &args->value, args->speed, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_drag_int2:
+		{
+			widget_drag_int2* args = (widget_drag_int2*)ctx->args;
+			ImGui::DragInt2(ctx->label.c_str(), args->value, args->speed, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_drag_int3:
+		{
+			widget_drag_int3* args = (widget_drag_int3*)ctx->args;
+			ImGui::DragInt3(ctx->label.c_str(), args->value, args->speed, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_drag_int4:
+		{
+			widget_drag_int4* args = (widget_drag_int4*)ctx->args;
+			ImGui::DragInt4(ctx->label.c_str(), args->value, args->speed, args->min, args->max, args->format.c_str(), args->flags);
 		}
 		break;
 		case widget_type::widget_type_drag_float:
 		{
             widget_drag_float* args = (widget_drag_float*)ctx->args;
-            ImGui::DragFloat(ctx->label.c_str(), &args->value);
+            ImGui::DragFloat(ctx->label.c_str(), &args->value, args->speed, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_drag_float2:
+		{
+			widget_drag_float2* args = (widget_drag_float2*)ctx->args;
+			ImGui::DragFloat2(ctx->label.c_str(), args->value, args->speed, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_drag_float3:
+		{
+			widget_drag_float3* args = (widget_drag_float3*)ctx->args;
+			ImGui::DragFloat3(ctx->label.c_str(), args->value, args->speed, args->min, args->max, args->format.c_str(), args->flags);
+		}
+		break;
+		case widget_type::widget_type_drag_float4:
+		{
+			widget_drag_float4* args = (widget_drag_float4*)ctx->args;
+			ImGui::DragFloat4(ctx->label.c_str(), args->value, args->speed, args->min, args->max, args->format.c_str(), args->flags);
 		}
 		break;
 		case widget_type::widget_type_slider_int:
@@ -231,6 +271,18 @@ namespace imgui_editor
 		{
 			widget_color_edit4* args = (widget_color_edit4*)ctx->args;
 			ImGui::ColorEdit4(ctx->label.c_str(), args->value, args->flags);
+		}
+		break;
+		case widget_type::widget_type_color_picker3:
+		{
+			widget_color_picker3* args = (widget_color_picker3*)ctx->args;
+			ImGui::ColorPicker3(ctx->label.c_str(), args->value, args->flags);
+		}
+		break;
+		case widget_type::widget_type_color_picker4:
+		{
+			widget_color_picker4* args = (widget_color_picker4*)ctx->args;
+			ImGui::ColorPicker4(ctx->label.c_str(), args->value, args->flags);
 		}
 		break;
 		case widget_type::widget_type_list_box:
@@ -344,6 +396,14 @@ namespace imgui_editor
 			}
 		}
 		break;
+		case widget_type::widget_type_begin_end_group:
+		{
+			begin_type = true;
+			widget_begin_end_group* args = (widget_begin_end_group*)ctx->args;
+			ImGui::BeginGroup();
+			draw_children(ctx);
+			ImGui::EndGroup();
+		}
 		case widget_type::widget_type_push_pop_tree_node:
 		{
 			begin_type = true;
@@ -375,8 +435,10 @@ namespace imgui_editor
 				ImGui::EndMenu();
 			}
 		}
+		break;
 		default:
-		case widget_type::widget_type_none:			break;
+			debug_break();
+			break;
 		}
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))

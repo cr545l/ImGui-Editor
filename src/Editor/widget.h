@@ -22,6 +22,7 @@ namespace imgui_editor
 	void draw_inspector_widget(widget* context);
 
 	widget* new_widget(widget_type type);
+	void delete_widget(widget* target);
 
 	void attach_child(widget* parent, widget* child);
 }

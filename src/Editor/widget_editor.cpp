@@ -13,14 +13,14 @@ ImVec2 g_unitSize;
 namespace imgui_editor
 {
 
-	void draw_widget_tool(widget_tool* ctx)
+	void draw_widget_tool(widget_tool *ctx)
 	{
 		if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unitSize.y * 25), true))
 		{
 			if (ImGui::BeginChild("Types", ImVec2(0.f, g_unitSize.y * 20)))
 			{
 				magic_enum::enum_for_each<widget_type>([&](widget_type t)
-					{
+													   {
 						std::string name = std::string(magic_enum::enum_name(t));
 
 						name = name.substr(12, name.length() - 12);
@@ -29,10 +29,8 @@ namespace imgui_editor
 						if (ImGui::Selectable(name.c_str(), t == ctx->type))
 						{
 							ctx->type = t;
-						}
-					});
+						} });
 				ImGui::EndChild();
-
 			}
 			ImGui::Separator();
 			const bool disable = nullptr == ctx->root;
@@ -57,7 +55,7 @@ namespace imgui_editor
 		ImGui::EndChild();
 	}
 
-	void init_widget_editor(widget_editor* ctx)
+	void init_widget_editor(widget_editor *ctx)
 	{
 		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
 		ctx->root->label = "root";
@@ -70,21 +68,23 @@ namespace imgui_editor
 		ctx->inspector.editor = ctx;
 	}
 
-	void draw_widget_hierarchy(widget_hierarchy* context)
+	void draw_widget_hierarchy(widget_hierarchy *context)
 	{
 		auto selected = selection::get_targets();
-		std::function<void(widget*)> drawNode = [&](widget* _widget) {
-
+		std::function<void(widget *)> drawNode = [&](widget *_widget)
+		{
+			ImGui::PushID(_widget->label.c_str());
 			ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-			if (std::any_of(selected.begin(), selected.end(), [&](widget* w) { return w == _widget; }))
+			if (std::any_of(selected.begin(), selected.end(), [&](widget *w)
+							{ return w == _widget; }))
 			{
 				flag |= ImGuiTreeNodeFlags_Selected;
 			}
 
 			if (_widget && ImGui::TreeNodeEx(_widget->label.c_str(), flag))
 			{
-				const auto& children = _widget->children;
+				const auto &children = _widget->children;
 				for (size_t i = 0, max = children.size(); i < max; ++i)
 				{
 					ImGui::PushID(i);
@@ -98,12 +98,13 @@ namespace imgui_editor
 			{
 				selection::select(_widget);
 			}
+			ImGui::PopID();
 		};
 
 		drawNode(context->root);
 	}
 
-	void draw_widget_inspector(widget_inspector* context)
+	void draw_widget_inspector(widget_inspector *context)
 	{
 		auto selected = selection::get_targets();
 		ImGui::Text("Selected %lu", selected.size());
@@ -116,16 +117,16 @@ namespace imgui_editor
 		}
 	}
 
-	void draw_widget_editor(widget_editor* ctx)
+	void draw_widget_editor(widget_editor *ctx)
 	{
 		g_windowSize = ImGui::GetIO().DisplaySize;
 		g_unitSize = ImGui::CalcTextSize(" ");
 
 		constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
 
-		const ImVec2 toolSize{ g_unitSize.x * 50, g_windowSize.y };
+		const ImVec2 toolSize{g_unitSize.x * 50, g_windowSize.y};
 		ImGui::SetNextWindowSize(toolSize);
-		ImGui::SetNextWindowPos({ 0,0 });
+		ImGui::SetNextWindowPos({0, 0});
 		if (ImGui::Begin("tool", nullptr, flag))
 		{
 			static CR_STATE bool demo = false;
@@ -156,9 +157,9 @@ namespace imgui_editor
 		}
 		ImGui::End();
 
-		const ImVec2 viewSize{ g_windowSize.x - toolSize.x * 2, g_windowSize.y };
+		const ImVec2 viewSize{g_windowSize.x - toolSize.x * 2, g_windowSize.y};
 		ImGui::SetNextWindowSize(viewSize);
-		ImGui::SetNextWindowPos({ toolSize.x, 0 });
+		ImGui::SetNextWindowPos({toolSize.x, 0});
 		if (ImGui::Begin("view", nullptr, flag | ImGuiWindowFlags_NoBackground))
 		{
 			draw_widget(ctx->root);
@@ -170,7 +171,7 @@ namespace imgui_editor
 		ImGui::End();
 
 		ImGui::SetNextWindowSize(toolSize);
-		ImGui::SetNextWindowPos({ g_windowSize.x - toolSize.x, 0 });
+		ImGui::SetNextWindowPos({g_windowSize.x - toolSize.x, 0});
 		if (ImGui::Begin("inspector", nullptr, flag))
 		{
 			draw_widget_inspector(&ctx->inspector);

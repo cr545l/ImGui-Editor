@@ -13,6 +13,8 @@ TEST(widget, args_nullptr_check)
             auto w = new_widget(t);
             std::string name = std::string(magic_enum::enum_name(t));
             EXPECT_NE(nullptr, w->args)<< name << " IS NULLPTR";
+            delete_widget(w);
+            EXPECT_EQ(nullptr, w->args)<< name << " IS NOT NULLPTR";
             delete w;
         });
 }
