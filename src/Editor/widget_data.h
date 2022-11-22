@@ -1,11 +1,17 @@
-#ifndef __WIDGET_DATA_
-#define __WIDGET_DATA_
+#ifndef __WIDGET_DATA_H__
+#define __WIDGET_DATA_H__
 
 namespace imgui_editor
 {	
+	// std::string widget_data_serialize(widget_type type, void* data);
+	// void* widget_data_deserialize(const char* data);
+
 	struct widget_type_none {};
 
 	struct widget_button { };
+
+	struct widget_small_button { };
+
 	struct widget_checkbox
 	{
 		bool check = false;
@@ -17,15 +23,13 @@ namespace imgui_editor
 		int flags_value = 0;
 	};
 
-	struct widget_text {};
-
 	struct widget_radio_button
 	{
 		bool active = false;
 	};
 
-	struct widget_small_button { };
-
+	struct widget_text {};
+	
 	struct widget_text_colored
 	{
 		ImColor color;
@@ -34,6 +38,7 @@ namespace imgui_editor
 	struct widget_bullet_text { };
 
 	struct widget_bullet { };
+
 	struct widget_selectable
 	{
 		bool selected = false;
@@ -395,11 +400,6 @@ namespace imgui_editor
 		int items_height;
 	};
 
-	struct widget_push_pop_tree_node
-	{
-		ImGuiTreeNodeFlags_ flags;
-	};
-
 	struct widget_begin_end_group { };
 	
 	struct widget_begin_end_combo
@@ -412,6 +412,12 @@ namespace imgui_editor
 	{
 		bool enabled = true;
 	};
+
+	struct widget_push_pop_tree_node
+	{
+		ImGuiTreeNodeFlags_ flags;
+	};
+
 }
 
 #endif

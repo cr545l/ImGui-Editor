@@ -1,50 +1,25 @@
-#include "Precompiled.h"
+#ifndef __IMGUI_EX_H__
+#define __IMGUI_EX_H__
 
-#include <algorithm>
 #include <magic_enum.hpp>
 
-template<typename ... Args>
-std::string string_format(const std::string& format, Args ... args)
+namespace imgui_editor
 {
-	int size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
-	assert( 0< size );
-	std::unique_ptr<char[]> buf(new char[size]);
-	snprintf(buf.get(), size, format.c_str(), args ...);
-	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+    template<typename ... Args>
+    std::string string_format(const std::string& format, Args ... args)
+    {
+        int size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+        assert( 0< size );
+        std::unique_ptr<char[]> buf(new char[size]);
+        snprintf(buf.get(), size, format.c_str(), args ...);
+        return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+    }
 }
 
 namespace ImGui
 {
-    bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL)
-    {
-        bool result = false;
-
-        int size =value.size();
-        if(ImGui::InputInt(baseLabel, (int*)&size))
-        {
-            if (size < 0)
-            {
-                size = 0;
-            }
-
-            if ((int)value.size() < size)
-            {
-                value.push_back("new item");
-            }
-            else
-            {
-                value.resize(size);
-            }
-        }
-        for(size_t i =0, max = value.size(); i < max; ++i)
-        {
-            ImGui::PushID(i);
-            result = ImGui::InputText(string_format("%s[%u]", baseLabel, i).c_str(), &value[i], flags, callback, user_data);
-            ImGui::PopID();
-        }
-        return result;
-    }
-
+    bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+    
     template <typename T>
     bool Combo(const char* label, T* value, bool bit_flag = true)
     {
@@ -106,3 +81,5 @@ namespace ImGui
         return result;
     }
 }
+
+#endif

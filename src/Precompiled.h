@@ -13,8 +13,6 @@
 #include <cr.h>
 //#include <magic_enum.hpp>
 
-
-
 #ifdef _MSC_VER
 
 #define debug_break __debugbreak

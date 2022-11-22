@@ -1,9 +1,9 @@
 #include "Precompiled.h"
 
+#include "Editor/imgui_ex.h"
+
 #include "Editor/widget.h"
 #include "Editor/widget_data.h"
-
-#include "Editor/imgui.h"
 
 struct ImGuiStyleVarInfo
 {

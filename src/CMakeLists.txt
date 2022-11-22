@@ -1,7 +1,8 @@
 fips_begin_sharedlib(editor cmdline)
     fips_files(Editor/main.cpp)
     
-    fips_files(Editor/imgui.h)
+    fips_files(Editor/imgui_ex.h)
+    fips_files(Editor/imgui_ex.cpp)
     fips_files(Editor/widget_type.h)
     
     fips_files(Editor/widget.h)
@@ -9,6 +10,9 @@ fips_begin_sharedlib(editor cmdline)
     fips_files(Editor/widget.cpp)
     fips_files(Editor/widget_draw.cpp)
     fips_files(Editor/widget_draw_inspector.cpp)
+    
+    fips_files(Editor/widget_serialize.cpp)
+    fips_files(Editor/widget_deserialize.cpp)
     
     fips_files(Editor/widget_editor.h)
     fips_files(Editor/widget_editor.cpp)

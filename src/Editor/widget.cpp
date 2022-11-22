@@ -709,8 +709,6 @@ namespace imgui_editor
 			break;
 		}
 	}
-
-
 	struct command_attach_child
 	{
 		widget* parent;

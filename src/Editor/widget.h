@@ -22,6 +22,7 @@ namespace imgui_editor
 		ImGuiStyleVar_ idx = ImGuiStyleVar_WindowPadding;
 		ImVec2 val;
 	};
+	
 	struct widget
 	{
 		std::string label = "empty";
@@ -45,6 +46,9 @@ namespace imgui_editor
 
 	widget* new_widget(widget_type type);
 	void delete_widget(widget* target);
+
+	std::string widget_serialize(widget* target);
+	widget* widget_deserialize(const char* data);
 
 	void attach_child(widget* parent, widget* child);
 }
