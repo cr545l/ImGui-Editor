@@ -109,11 +109,38 @@ namespace imgui_editor
 		auto selected = selection::get_targets();
 		ImGui::Text("Selected %lu", selected.size());
 
-		ImGui::Separator();
-
-		for (auto i : selected)
+		if(selected.size())
 		{
-			draw_inspector_widget(i);
+			auto ctx = selection::get_targets()[0];
+
+			ImGui::Separator();
+			
+			if(ImGui::TreeNode("Output"))
+			{
+				std::string s =  widget_data_serialize(ctx->type, ctx->args);
+				ImGui::InputTextMultiline("##data", &s, ImVec2(0, 0), ImGuiInputTextFlags_ReadOnly);
+				ImGui::TreePop();
+			}
+
+			if(ImGui::TreeNode("Input"))
+			{
+				// std::string s =  widget_data_serialize(ctx->type, ctx->args);
+				ImGui::InputTextMultiline("##data", &context->input, ImVec2(0, 0));
+				// widget_data_deserialize(ctx->type, ctx->args, s);
+				if(ImGui::Button("Apply"))
+				{
+					widget_data_deserialize(ctx->type, ctx->args, context->input.c_str());
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::Separator();
+
+			for (auto i : selected)
+			{
+				draw_inspector_widget(i);
+			}
 		}
 	}
 

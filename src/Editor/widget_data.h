@@ -3,10 +3,7 @@
 
 namespace imgui_editor
 {	
-	// std::string widget_data_serialize(widget_type type, void* data);
-	// void* widget_data_deserialize(const char* data);
-
-	struct widget_type_none {};
+	struct widget_none {};
 
 	struct widget_button { };
 
@@ -29,7 +26,7 @@ namespace imgui_editor
 	};
 
 	struct widget_text {};
-	
+
 	struct widget_text_colored
 	{
 		ImColor color;

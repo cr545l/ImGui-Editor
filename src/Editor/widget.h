@@ -26,12 +26,12 @@ namespace imgui_editor
 	struct widget
 	{
 		std::string label = "empty";
-		std::vector<widget*> children;
-
 		ImVec2 size;
-		widget_type type = widget_type::widget_type_none;
 
+		widget_type type = widget_type::widget_type_none;
 		void* args = nullptr;
+
+		std::vector<widget*> children;
 
 		std::vector<style_color> style_colors;
 		std::vector<style_var_float> style_var_floats;
@@ -46,6 +46,9 @@ namespace imgui_editor
 
 	widget* new_widget(widget_type type);
 	void delete_widget(widget* target);
+
+	std::string widget_data_serialize(widget_type type, void* data);
+	void widget_data_deserialize(widget_type type, void* target, const char* data);
 
 	std::string widget_serialize(widget* target);
 	widget* widget_deserialize(const char* data);

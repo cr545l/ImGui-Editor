@@ -24,6 +24,7 @@ namespace imgui_editor
 	struct widget_inspector
 	{
 		widget_editor* editor = nullptr;
+		std::string input;
 	};
 
 	struct widget_editor

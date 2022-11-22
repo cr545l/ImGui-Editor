@@ -13,6 +13,11 @@ namespace imgui_editor
 		w->type = type;
 		switch (type)
 		{
+		case widget_type::widget_type_none:
+		{
+			w->args = new widget_none();
+		}
+		break;
 		case widget_type::widget_type_button:
 		{
 			w->args = new widget_button();
@@ -320,8 +325,6 @@ namespace imgui_editor
 		{
 			w->args = new widget_begin_end_menu();
 		}
-		case widget_type::widget_type_none:
-			w->args = new widget_type_none();
 		}
 		return w;
 	}
@@ -332,7 +335,7 @@ namespace imgui_editor
 		{
 			case widget_type::widget_type_none:
 			{
-				delete (widget_type_none*)target->args;
+				delete (widget_none*)target->args;
 				target->args = nullptr;
 			}
 			break;

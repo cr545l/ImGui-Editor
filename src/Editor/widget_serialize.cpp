@@ -295,8 +295,15 @@ namespace imgui_editor
         }
     }
     
+    //
+    // , [] {}
+    //
+
+
 	std::string widget_serialize(widget* target)
     {
+        std::string result;
+
         return "";
     }
 }
