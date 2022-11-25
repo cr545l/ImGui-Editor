@@ -12,7 +12,6 @@ ImVec2 g_unitSize;
 
 namespace imgui_editor
 {
-
 	void draw_widget_tool(widget_tool *ctx)
 	{
 		if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unitSize.y * 25), true))
@@ -111,13 +110,13 @@ namespace imgui_editor
 
 		if(selected.size())
 		{
-			auto ctx = selection::get_targets()[0];
+			widget* ctx = selection::get_targets()[0];
 
 			ImGui::Separator();
 			
 			if(ImGui::TreeNode("Output"))
 			{
-				std::string s =  widget_data_serialize(ctx->type, ctx->args);
+				std::string s =  widget_serialize(ctx);
 				ImGui::InputTextMultiline("##data", &s, ImVec2(0, 0), ImGuiInputTextFlags_ReadOnly);
 				ImGui::TreePop();
 			}
@@ -129,7 +128,7 @@ namespace imgui_editor
 				// widget_data_deserialize(ctx->type, ctx->args, s);
 				if(ImGui::Button("Apply"))
 				{
-					widget_data_deserialize(ctx->type, ctx->args, context->input.c_str());
+					widget_deserialize(ctx, context->input.c_str());
 				}
 
 				ImGui::TreePop();
@@ -184,18 +183,7 @@ namespace imgui_editor
 		}
 		ImGui::End();
 
-		const ImVec2 viewSize{g_windowSize.x - toolSize.x * 2, g_windowSize.y};
-		ImGui::SetNextWindowSize(viewSize);
-		ImGui::SetNextWindowPos({toolSize.x, 0});
-		if (ImGui::Begin("view", nullptr, flag | ImGuiWindowFlags_NoBackground))
-		{
-			draw_widget(ctx->root);
-			// const ImVec2 pos = ImGui::GetCurrentWindow()->Pos;
-			// const ImVec2 cursor = pos + ImGui::GetCursorPos();
-			// const ImVec2 max = cursor + ImVec2(g_unitSize.x * 0.5f, g_unitSize.y);
-			// ImGui::GetWindowDrawList()->AddRectFilled(cursor, max, IM_COL32_WHITE);
-		}
-		ImGui::End();
+		draw_widget(ctx->root);
 
 		ImGui::SetNextWindowSize(toolSize);
 		ImGui::SetNextWindowPos({g_windowSize.x - toolSize.x, 0});

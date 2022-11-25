@@ -302,8 +302,27 @@ namespace imgui_editor
 
 	std::string widget_serialize(widget* target)
     {
-        std::string result;
+        std::string args = widget_data_serialize(target->type, target->args);
 
-        return "";
+        std::string children;
+        for(size_t i = 0, max = target->children.size(); i < max; ++i)
+        {
+            children += widget_serialize(target->children[i]);
+            children += ",";
+        }
+        std::string style_colors;
+        std::string style_var_floats;
+        std::string style_var_vec2s;
+
+        return string_format("%d,{%s},%s,%f,%f,[%s],[%s],[%s],[%s]", 
+        target->type,
+        args.c_str(),
+        target->label.c_str(), 
+        target->size.x, 
+        target->size.y, 
+        children.c_str(),
+        style_colors.c_str(),
+        style_var_floats.c_str(),
+        style_var_vec2s.c_str());
     }
 }
