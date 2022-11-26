@@ -2,6 +2,7 @@
 #define __IMGUI_EX_H__
 
 #include <magic_enum.hpp>
+#include <algorithm>
 
 namespace imgui_editor
 {
