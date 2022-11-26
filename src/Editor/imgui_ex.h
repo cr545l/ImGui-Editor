@@ -22,16 +22,15 @@ namespace ImGui
     bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
     
     template <typename T>
-    bool Combo(const char* label, T* value, bool bit_flag = true)
+    std::string GetEnumName(const T& value, bool bit_flag = true)
     {
         constexpr std::string_view type_name =  magic_enum::enum_type_name<T>();
 
-        bool result = false;
         std::string name = "";
         if(bit_flag)
         {
             magic_enum::enum_for_each<T>([&](T t) {
-                if (static_cast<int>(t) & static_cast<int>(*value))
+                if (static_cast<int>(t) & static_cast<int>(value))
                 {
                     if (name.length())
                     {
@@ -51,19 +50,24 @@ namespace ImGui
         }
         else
         {
-            std::string n = std::string(magic_enum::enum_name(*value));
+            std::string n = std::string(magic_enum::enum_name(value));
             n = n.substr(type_name.length(), n.length() - type_name.length());
             std::replace(n.begin(), n.end(), '_', ' ');
             name = n;
         }
+        return name;
+    }
 
-        if (ImGui::BeginCombo(label, name.c_str()))
+    template <typename T>
+    bool Combo(const char* label, T* value, bool bit_flag = true)
+    {
+        constexpr std::string_view type_name =  magic_enum::enum_type_name<T>();
+        bool result = false;
+
+        if (ImGui::BeginCombo(label, GetEnumName(*value, bit_flag).c_str()))
         {
             magic_enum::enum_for_each<T>([&](T t) {
-                std::string name = std::string(magic_enum::enum_name(t));
-                name = name.substr(type_name.length(), name.length() - type_name.length());
-                // name replace _ to space
-                std::replace(name.begin(), name.end(), '_', ' ');
+                std::string name = GetEnumName(t, false);
                 if (ImGui::Selectable(name.c_str(), bit_flag?static_cast<int>(t) & static_cast<int>(*value) : t == *value))
                 {
                     if (bit_flag && ImGui::GetIO().KeyCtrl)

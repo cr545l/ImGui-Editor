@@ -577,14 +577,22 @@ namespace imgui_editor
             for(size_t i =0, max = ctx->style_var_floats.size(); i < max; ++i)
             {
                 ImGui::PushID(i);
-                auto old = ctx->style_var_floats[i].idx;
-                if(ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_var_floats[i].idx, false))
+                std::string preview = ImGui::GetEnumName(ctx->style_var_floats[i].idx, false);
+                if(ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
                 {
-                    if(GStyleVarInfo[ctx->style_var_floats[i].idx].Count != 1)
+                    for(int j = 0; j < ImGuiStyleVar_COUNT; ++j)
                     {
-                        ctx->style_var_floats[i].idx = old;
+                        if(GStyleVarInfo[j].Count == 1)
+                        {
+                            if(ImGui::Selectable(ImGui::GetEnumName((ImGuiStyleVar_)j,false).c_str(), ctx->style_var_floats[i].idx == j))
+                            {
+                                ctx->style_var_floats[i].idx = (ImGuiStyleVar_)j;
+                            }
+                        }
                     }
+                    ImGui::EndCombo();
                 }
+
                 ImGui::DragFloat(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_floats[i].val);
                 ImGui::PopID();
             }
@@ -613,13 +621,20 @@ namespace imgui_editor
             for(size_t i =0, max = ctx->style_var_vec2s.size(); i < max; ++i)
             {
                 ImGui::PushID(i);
-                auto old = ctx->style_var_vec2s[i].idx;
-                if(ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_var_vec2s[i].idx, false))
+                std::string preview = ImGui::GetEnumName(ctx->style_var_vec2s[i].idx, false);
+                if(ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
                 {
-                    if(GStyleVarInfo[ctx->style_var_vec2s[i].idx].Count != 2)
+                    for(int j = 0; j < ImGuiStyleVar_COUNT; ++j)
                     {
-                        ctx->style_var_vec2s[i].idx = old;
+                        if(GStyleVarInfo[j].Count == 2)
+                        {
+                            if(ImGui::Selectable(ImGui::GetEnumName((ImGuiStyleVar_)j,false).c_str(), ctx->style_var_vec2s[i].idx == j))
+                            {
+                                ctx->style_var_vec2s[i].idx = (ImGuiStyleVar_)j;
+                            }
+                        }
                     }
+                    ImGui::EndCombo();
                 }
                 ImGui::DragFloat2(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_vec2s[i].val.x);
                 ImGui::PopID();
