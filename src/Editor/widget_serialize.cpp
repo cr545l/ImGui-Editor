@@ -261,7 +261,7 @@ namespace imgui_editor
         case widget_type::widget_type_begin_end_popup:
         {
             widget_begin_end_popup* wd = (widget_begin_end_popup*)data;
-            return string_format("%s,%f", wd->name.c_str(), wd->flags);
+            return string_format("%f", wd->flags);
         }
         case widget_type::widget_type_begin_end_list_box:
         {

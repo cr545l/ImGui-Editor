@@ -378,7 +378,6 @@ namespace imgui_editor
 
 	struct widget_begin_end_popup
 	{
-		std::string name;
 		ImGuiWindowFlags_ flags;
 	};
 	
