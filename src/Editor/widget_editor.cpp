@@ -1,15 +1,13 @@
 #include "Precompiled.h"
 
 #include <algorithm>
+#include <fstream>
+
 #include <magic_enum/magic_enum.hpp>
 #include <portable-file-dialogs/portable-file-dialogs.h>
 #include <simpleini/SimpleIni.h>
 
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui_internal.h"
-
 #include "editor/widget_editor.h"
-
 #include "editor/selection.h"
 #include "editor/history.h"
 
@@ -73,17 +71,17 @@ namespace imgui_editor
 		ctx->hirarchy.root = ctx->root;
 		ctx->inspector.editor = ctx;
 		
-		CSimpleIniA ini;
-		ini.SetUnicode();
-		SI_Error rc = ini.LoadFile("imgui_editor.ini");
-		if (rc < 0)
-		{
-			rc = ini.SaveFile("imgui_editor.ini");
-			if (rc < 0)
-			{
-				printf("failed to save imgui_editor.ini");
-			}
-		}
+		// CSimpleIniA ini;
+		// ini.SetUnicode();
+		// SI_Error rc = ini.LoadFile("imgui_editor.ini");
+		// if (rc < 0)
+		// {
+		// 	rc = ini.SaveFile("imgui_editor.ini");
+		// 	if (rc < 0)
+		// 	{
+		// 		printf("failed to save imgui_editor.ini");
+		// 	}
+		// }
 	}
 
 	void draw_widget_hierarchy(widget_hierarchy *context)
@@ -175,13 +173,26 @@ namespace imgui_editor
 				{
 					pfd::open_file open("Open");
 
-					open.result();
+					const auto& result = open.result();
+					if(result.size())
+					{
+						std::ifstream ifs(result[0]);
+						std::string content((std::istreambuf_iterator<char>(ifs)),
+											(std::istreambuf_iterator<char>()));
+
+						widget_deserialize(ctx->root, content.c_str());
+					}
 				}
 
 				if (ImGui::MenuItem("Save"))
 				{
 					pfd::save_file save("Save");
-					save.result();
+					const auto& result = save.result();
+					if(result.size())
+					{
+						std::ofstream ofs(result);
+						ofs << widget_serialize(ctx->root);
+					}
 				}
 				ImGui::EndMenu();
 			}

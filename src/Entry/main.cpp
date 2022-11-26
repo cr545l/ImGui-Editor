@@ -1,18 +1,18 @@
+#include <fstream>
+#include <vector>
+
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <GLFW/glfw3.h>
-
 #ifdef _WIN32
 #undef APIENTRY
 #define GLFW_EXPOSE_NATIVE_WIN32
 #define GLFW_EXPOSE_NATIVE_WGL
 #include <GLFW/glfw3native.h>
 #endif
-
 #define CR_HOST CR_UNSAFE
 #include <CR/cr.h>
 
-#include <vector>
 #include <simpleini/SimpleIni.h>
 
 #include "editor/history.h"
@@ -123,6 +123,23 @@ imgui_editor::widget_editor we;
 imgui_editor::history history;
 imgui_editor::selection_context selection;
 
+void drop_callback(GLFWwindow* window, int count, const char** paths)
+{
+    for (int i = 0;  i < count;  i++)
+    {
+        printf("Dropped file %s", paths[i]);         
+    }
+
+    if(1 == count)
+    {
+        std::ifstream ifs(paths[0]);
+        std::string content((std::istreambuf_iterator<char>(ifs)),
+                            (std::istreambuf_iterator<char>()));
+
+        widget_deserialize(we.root, content.c_str());
+    }
+}
+
 int main(int argc, char **argv) {
     if (!glfwInit())
         return 1;
@@ -131,7 +148,6 @@ int main(int argc, char **argv) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 
     CSimpleIniA ini;
     ini.SetUnicode();
@@ -195,6 +211,8 @@ int main(int argc, char **argv) {
         glfwSwapBuffers(window);
         sprintf(title, "ImGui Editor %.1ffps", ImGui::GetIO().Framerate);
         glfwSetWindowTitle(window, title);
+        glfwSetDropCallback(window, drop_callback);
+
 
         if(data.w != current_width || data.h != current_height) 
         {

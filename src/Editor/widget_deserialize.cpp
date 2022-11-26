@@ -831,7 +831,8 @@ namespace imgui_editor
 		{
 			widget* child_widget = new_widget(widget_type::widget_type_none);
 			widget_deserialize(child_widget, children[i].c_str());
-			attach_child(target_widget, child_widget);
+
+            target_widget->children.push_back(child_widget);
 		}
 
 		char dummy;
