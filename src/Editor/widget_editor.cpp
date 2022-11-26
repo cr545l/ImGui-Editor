@@ -2,10 +2,10 @@
 
 #include <algorithm>
 #include <magic_enum.hpp>
-#include "Editor/widget_editor.h"
+#include "editor/widget_editor.h"
 
-#include "Editor/selection.h"
-#include "Editor/history.h"
+#include "editor/selection.h"
+#include "editor/history.h"
 
 ImVec2 g_windowSize;
 ImVec2 g_unitSize;
@@ -147,6 +147,26 @@ namespace imgui_editor
 	{
 		g_windowSize = ImGui::GetIO().DisplaySize;
 		g_unitSize = ImGui::CalcTextSize(" ");
+
+
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Open"))
+				{
+
+				}
+
+				if (ImGui::MenuItem("Save"))
+				{
+
+				}
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMainMenuBar();
+		}
 
 		constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
 

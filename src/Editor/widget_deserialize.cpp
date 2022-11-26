@@ -1,10 +1,10 @@
 #include "Precompiled.h"
 
 #include <sstream>
-#include "Editor/imgui_ex.h"
+#include "editor/imgui_ex.h"
 
-#include "Editor/widget.h"
-#include "Editor/widget_data.h"
+#include "editor/widget.h"
+#include "editor/widget_data.h"
 
 namespace imgui_editor
 {

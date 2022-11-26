@@ -1,5 +1,5 @@
 #include "Precompiled.h"
-#include "Editor/history.h"
+#include "editor/history.h"
 
 namespace imgui_editor
 {

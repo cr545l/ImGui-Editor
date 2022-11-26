@@ -1,6 +1,6 @@
 #include "Precompiled.h"
 
-#include "Editor/imgui_ex.h"
+#include "editor/imgui_ex.h"
 
 namespace ImGui
 {

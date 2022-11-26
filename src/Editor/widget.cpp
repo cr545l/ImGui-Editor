@@ -1,9 +1,9 @@
 #include "Precompiled.h"
 
-#include "Editor/widget.h"
-#include "Editor/widget_data.h"
-#include "Editor/selection.h"
-#include "Editor/history.h"
+#include "editor/widget.h"
+#include "editor/widget_data.h"
+#include "editor/selection.h"
+#include "editor/history.h"
 
 namespace imgui_editor
 {

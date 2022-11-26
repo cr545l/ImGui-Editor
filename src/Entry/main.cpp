@@ -14,9 +14,9 @@
 
 #include <vector>
 
-#include "Editor/history.h"
-#include "Editor/selection.h"
-#include "Editor/widget_editor.h"
+#include "editor/history.h"
+#include "editor/selection.h"
+#include "editor/widget_editor.h"
 
 const char *plugin = DEPLOY_PATH "/" CR_PLUGIN("editor");
 

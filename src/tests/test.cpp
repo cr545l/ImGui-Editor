@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <magic_enum.hpp>
 
-#include "Editor/widget.h"
+#include "editor/widget.h"
 
 using namespace imgui_editor;
 

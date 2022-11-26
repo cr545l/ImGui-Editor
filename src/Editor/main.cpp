@@ -7,9 +7,9 @@
 
 #include <cr.h>
 
-#include "Editor/widget_editor.h"
-#include "Editor/history.h"
-#include "Editor/selection.h"
+#include "editor/widget_editor.h"
+#include "editor/history.h"
+#include "editor/selection.h"
 
 // imgui 100% 게스트 측을 테스트하려면 이것을 활성화하십시오.
 //#define IMGUI_GUEST_ONLY

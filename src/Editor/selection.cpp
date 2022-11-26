@@ -1,7 +1,7 @@
 #include "Precompiled.h"
-#include "Editor/selection.h"
+#include "editor/selection.h"
 
-#include "Editor/history.h"
+#include "editor/history.h"
 
 namespace imgui_editor
 {
