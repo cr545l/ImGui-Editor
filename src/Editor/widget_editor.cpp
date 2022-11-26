@@ -148,13 +148,15 @@ namespace imgui_editor
 		g_windowSize = ImGui::GetIO().DisplaySize;
 		g_unitSize = ImGui::CalcTextSize(" ");
 
-		constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
+		constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
 
-		const ImVec2 toolSize{g_unitSize.x * 50, g_windowSize.y};
+		static ImVec2 toolSize{g_unitSize.x * 50, g_windowSize.y};
 		ImGui::SetNextWindowSize(toolSize);
 		ImGui::SetNextWindowPos({0, 0});
 		if (ImGui::Begin("tool", nullptr, flag))
 		{
+			toolSize = ImGui::GetWindowSize();
+			toolSize.y = g_windowSize.y;
 			static CR_STATE bool demo = false;
 			ImGui::Checkbox("Demo", &demo);
 			if (demo)
@@ -185,10 +187,13 @@ namespace imgui_editor
 
 		draw_widget(ctx->root);
 
-		ImGui::SetNextWindowSize(toolSize);
-		ImGui::SetNextWindowPos({g_windowSize.x - toolSize.x, 0});
+		static ImVec2 inspectorSize{ g_unitSize.x * 50, g_windowSize.y };
+		ImGui::SetNextWindowSize(inspectorSize);
+		ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, 0});
 		if (ImGui::Begin("inspector", nullptr, flag))
 		{
+			inspectorSize = ImGui::GetWindowSize();
+			inspectorSize.y = g_windowSize.y;
 			draw_widget_inspector(&ctx->inspector);
 		}
 		ImGui::End();

@@ -295,28 +295,35 @@ namespace imgui_editor
         }
     }
     
-    //
-    // , [] {}
-    //
-
-
 	std::string widget_serialize(widget* target)
     {
-        std::string args = widget_data_serialize(target->type, target->args);
-
         std::string children;
         for(size_t i = 0, max = target->children.size(); i < max; ++i)
         {
-            children += widget_serialize(target->children[i]);
-            children += ",";
+            children += string_format("%s,", widget_serialize(target->children[i]).c_str());
         }
+
         std::string style_colors;
+        for (size_t i = 0, max = target->style_colors.size(); i < max; ++i)
+        {
+            style_colors += string_format("{%d,%f,%f,%f,%f},", (int)target->style_colors[i].idx, target->style_colors[i].col.Value.x, target->style_colors[i].col.Value.y, target->style_colors[i].col.Value.z, target->style_colors[i].col.Value.w);
+        }
+
         std::string style_var_floats;
-        std::string style_var_vec2s;
+        for (size_t i = 0, max = target->style_var_floats.size(); i < max; ++i)
+        {
+            style_var_floats += string_format("{%d,%f},", (int)target->style_var_floats[i].idx, target->style_var_floats[i].val);
+        }
+
+		std::string style_var_vec2s;
+		for (size_t i = 0, max = target->style_var_vec2s.size(); i < max; ++i)
+		{
+            style_var_vec2s += string_format("{%d,%f,%f},", (int)target->style_var_vec2s[i].idx, target->style_var_vec2s[i].val.x, target->style_var_vec2s[i].val.y);
+		}
 
         return string_format("{%d,{%s},%s,%f,%f,[%s],[%s],[%s],[%s]}", 
         target->type,
-        args.c_str(),
+        widget_data_serialize(target->type, target->args).c_str(),
         target->label.c_str(), 
         target->size.x, 
         target->size.y, 
