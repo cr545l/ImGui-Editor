@@ -8,6 +8,7 @@
 #include "editor/widget_editor.h"
 #include "editor/history.h"
 #include "editor/selection.h"
+#include "editor/widget.h"
 
 // imgui 100% 게스트 측을 테스트하려면 이것을 활성화하십시오.
 //#define IMGUI_GUEST_ONLY
@@ -39,6 +40,8 @@ struct HostData {
     imgui_editor::widget_editor* widget_editor = nullptr;
     imgui_editor::history* history= nullptr;
     imgui_editor::selection_context* selection= nullptr;
+
+    std::string* root = nullptr;
 };
 
 static uint32_t     g_failure = 0;
@@ -453,12 +456,14 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     switch (operation) {
         case CR_LOAD:
             imui_init();
-            imgui_editor::init_widget_editor(g_data->widget_editor);
+            imgui_editor::init_widget_editor(g_data->widget_editor, g_data->root->c_str());
             imgui_editor::init_history(g_data->history);
             imgui_editor::init_selection(g_data->selection);
             return 0;
         case CR_UNLOAD:
             // if needed, save stuff to pass over to next instance
+            // 필요한 경우 다음 인스턴스로 전달할 항목을 저장합니다.
+            *g_data->root = widget_serialize(g_data->widget_editor->root);
             return 0;
         case CR_CLOSE:
             imui_shutdown();

@@ -59,10 +59,16 @@ namespace imgui_editor
 		ImGui::EndChild();
 	}
 
-	void init_widget_editor(widget_editor *ctx)
+	void init_widget_editor(widget_editor *ctx, const char* init)
 	{
 		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
 		ctx->root->label = "root";
+
+		// debug_break();
+		if(0 != strcmp("", init))
+		{
+			widget_deserialize(ctx->root, init);
+		}
 
 		ctx->tool.editor = ctx;
 		ctx->tool.root = ctx->root;
@@ -70,18 +76,6 @@ namespace imgui_editor
 		ctx->hirarchy.editor = ctx;
 		ctx->hirarchy.root = ctx->root;
 		ctx->inspector.editor = ctx;
-		
-		// CSimpleIniA ini;
-		// ini.SetUnicode();
-		// SI_Error rc = ini.LoadFile("imgui_editor.ini");
-		// if (rc < 0)
-		// {
-		// 	rc = ini.SaveFile("imgui_editor.ini");
-		// 	if (rc < 0)
-		// 	{
-		// 		printf("failed to save imgui_editor.ini");
-		// 	}
-		// }
 	}
 
 	void draw_widget_hierarchy(widget_hierarchy *context)

@@ -36,7 +36,7 @@ namespace imgui_editor
 		widget_inspector inspector;
 	};
 
-	void init_widget_editor(widget_editor* context);
+	void init_widget_editor(widget_editor* context, const char* init);
 
 	void draw_widget_tool(widget_tool* context);
 	void draw_widget_hierarchy(widget_hierarchy* context);

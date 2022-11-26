@@ -57,6 +57,8 @@ struct HostData {
     imgui_editor::widget_editor* widget_editor = nullptr;
     imgui_editor::history* history = nullptr;
     imgui_editor::selection_context* selection = nullptr;
+
+    std::string* root = nullptr;
 };
 
 // some global data from our libs we keep in the host so we
@@ -182,6 +184,9 @@ int main(int argc, char **argv) {
     data.widget_editor = &we;
     data.history = &history;
     data.selection = &selection;
+
+    std::string rootBuffer;
+    data.root = &rootBuffer;
     
     glfwSetMouseButtonCallback(window, ImGui_ImplGlfwGL3_MouseButtonCallback);
     glfwSetScrollCallback(window, ImGui_ImplGlfwGL3_ScrollCallback);
