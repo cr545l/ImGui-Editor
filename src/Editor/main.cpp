@@ -5,8 +5,6 @@
 #include <GL/gl3w.h> // gl*
 #include <GLFW/glfw3.h> // GLFW_KEY*
 
-#include <cr.h>
-
 #include "editor/widget_editor.h"
 #include "editor/history.h"
 #include "editor/selection.h"

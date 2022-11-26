@@ -1,7 +1,13 @@
 #include "Precompiled.h"
 
 #include <algorithm>
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
+#include <portable-file-dialogs/portable-file-dialogs.h>
+#include <simpleini/SimpleIni.h>
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui_internal.h"
+
 #include "editor/widget_editor.h"
 
 #include "editor/selection.h"
@@ -19,7 +25,7 @@ namespace imgui_editor
 			if (ImGui::BeginChild("Types", ImVec2(0.f, g_unitSize.y * 20)))
 			{
 				magic_enum::enum_for_each<widget_type>([&](widget_type t)
-													   {
+					{
 						std::string name = std::string(magic_enum::enum_name(t));
 
 						name = name.substr(12, name.length() - 12);
@@ -29,8 +35,9 @@ namespace imgui_editor
 						{
 							ctx->type = t;
 						} });
-				ImGui::EndChild();
 			}
+			ImGui::EndChild();
+
 			ImGui::Separator();
 			const bool disable = nullptr == ctx->root;
 			ImGui::BeginDisabled(disable);
@@ -65,6 +72,18 @@ namespace imgui_editor
 		ctx->hirarchy.editor = ctx;
 		ctx->hirarchy.root = ctx->root;
 		ctx->inspector.editor = ctx;
+		
+		CSimpleIniA ini;
+		ini.SetUnicode();
+		SI_Error rc = ini.LoadFile("imgui_editor.ini");
+		if (rc < 0)
+		{
+			rc = ini.SaveFile("imgui_editor.ini");
+			if (rc < 0)
+			{
+				printf("failed to save imgui_editor.ini");
+			}
+		}
 	}
 
 	void draw_widget_hierarchy(widget_hierarchy *context)
@@ -147,36 +166,40 @@ namespace imgui_editor
 	{
 		g_windowSize = ImGui::GetIO().DisplaySize;
 		g_unitSize = ImGui::CalcTextSize(" ");
-
-
+				
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
 			{
 				if (ImGui::MenuItem("Open"))
 				{
+					pfd::open_file open("Open");
 
+					open.result();
 				}
 
 				if (ImGui::MenuItem("Save"))
 				{
-
+					pfd::save_file save("Save");
+					save.result();
 				}
 				ImGui::EndMenu();
 			}
 
 			ImGui::EndMainMenuBar();
 		}
+		float mainMenuSizeY = ImGui::GetFrameHeight();
 
 		constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
 
 		static ImVec2 toolSize{g_unitSize.x * 50, g_windowSize.y};
 		ImGui::SetNextWindowSize(toolSize);
-		ImGui::SetNextWindowPos({0, 0});
+		ImGui::SetNextWindowPos({0, mainMenuSizeY});
 		if (ImGui::Begin("tool", nullptr, flag))
 		{
 			toolSize = ImGui::GetWindowSize();
-			toolSize.y = g_windowSize.y;
+			toolSize.y = g_windowSize.y - mainMenuSizeY;
+
 			static CR_STATE bool demo = false;
 			ImGui::Checkbox("Demo", &demo);
 			if (demo)
@@ -209,11 +232,11 @@ namespace imgui_editor
 
 		static ImVec2 inspectorSize{ g_unitSize.x * 50, g_windowSize.y };
 		ImGui::SetNextWindowSize(inspectorSize);
-		ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, 0});
+		ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, mainMenuSizeY });
 		if (ImGui::Begin("inspector", nullptr, flag))
 		{
 			inspectorSize = ImGui::GetWindowSize();
-			inspectorSize.y = g_windowSize.y;
+			inspectorSize.y = g_windowSize.y - mainMenuSizeY;
 			draw_widget_inspector(&ctx->inspector);
 		}
 		ImGui::End();

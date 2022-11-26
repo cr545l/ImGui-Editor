@@ -2,7 +2,7 @@
 #include "enum_test.h"
 
 #include <algorithm>
-#include <magic_enum.hpp>
+#include <magic_enum/magic_enum.hpp>
 // #include "editor/widget.h"
 
 namespace imgui_editor

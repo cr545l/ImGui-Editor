@@ -10,9 +10,10 @@
 #endif
 
 #define CR_HOST CR_UNSAFE
-#include <cr.h>
+#include <CR/cr.h>
 
 #include <vector>
+#include <simpleini/SimpleIni.h>
 
 #include "editor/history.h"
 #include "editor/selection.h"
@@ -35,7 +36,7 @@ struct HostData {
     int w, h;
     int display_w, display_h;
     ImGuiContext *imgui_context = nullptr;
-    void *wndh = nullptr;
+    void *wndh = nullptr; 
 
     // GLFW input/time data feed to guest
     double timestep = 0.0;
@@ -130,12 +131,32 @@ int main(int argc, char **argv) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    window = glfwCreateWindow(1024, 768, "ImGui Editor", NULL, NULL);
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+
+
+    CSimpleIniA ini;
+    ini.SetUnicode();
+    SI_Error rc = ini.LoadFile("imgui_editor.ini");
+    if (rc < 0)
+    {
+        rc = ini.SaveFile("imgui_editor.ini");
+        if (rc < 0)
+        {
+			printf("failed to save imgui_editor.ini");
+		}
+	}
+
+	char* stop = nullptr;
+	const char* w_string = ini.GetValue("main_window_size", "width");
+	const char* h_string = ini.GetValue("main_window_size", "height");
+	const int width = w_string ? strtod(w_string, &stop) : 1024;
+	const int height = h_string ? strtod(h_string, &stop) : 768;
+
+	window = glfwCreateWindow(width, height, "ImGui Editor", NULL, NULL);
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
 
 #ifdef _WIN32
-    data.wndh = glfwGetWin32Window(window);
+	data.wndh = glfwGetWin32Window(window);
 #endif
     data.set_clipboard_fn = ImGui_ImplGlfwGL3_SetClipboardText;
     data.get_clipboard_fn = ImGui_ImplGlfwGL3_GetClipboardText;
@@ -157,7 +178,9 @@ int main(int argc, char **argv) {
     cr_plugin_open(ctx, plugin);
     
     char title[64];
-    
+    int current_width = width;
+    int current_height = height;
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
@@ -172,6 +195,22 @@ int main(int argc, char **argv) {
         glfwSwapBuffers(window);
         sprintf(title, "ImGui Editor %.1ffps", ImGui::GetIO().Framerate);
         glfwSetWindowTitle(window, title);
+
+        if(data.w != current_width || data.h != current_height) 
+        {
+			current_width = data.w;
+			current_height = data.h;
+			ini.SetValue("main_window_size", "width", std::to_string(current_width).c_str());
+			ini.SetValue("main_window_size", "height", std::to_string(current_height).c_str());
+			rc = ini.SaveFile("imgui_editor.ini");
+			if (rc < 0)
+			{
+				printf("failed to save imgui_editor.ini");
+			}
+		}
+
+        current_width = data.w;
+        current_height = data.h;
     }
 
     cr_plugin_close(ctx);

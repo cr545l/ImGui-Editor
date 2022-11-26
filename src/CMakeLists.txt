@@ -24,14 +24,9 @@ fips_begin_sharedlib(editor cmdline)
     fips_files(editor/selection.cpp)
 	
     fips_files(thirdparty/imgui/imgui_stdlib.cpp)
-    fips_files(thirdparty/portable-file-dialogs/portable-file-dialogs.h)
     
     include_directories(.)
     include_directories(thirdparty)
-    include_directories(thirdparty/GL)
-    include_directories(thirdparty/CR)
-    include_directories(thirdparty/magic_enum)
-    include_directories(thirdparty/imgui)
 
     fips_src(thirdparty/GL GROUP_FOLDERS)
     fips_deps(imgui glfw3)
@@ -83,8 +78,6 @@ fips_begin_app(entry cmdline)
     fips_files(Entry/main.cpp)
     include_directories(.)
     include_directories(thirdparty)
-    include_directories(thirdparty/GL)
-    include_directories(thirdparty/CR)
 
     fips_src(GL GROUP_FOLDERS)
     fips_deps(editor imgui glfw3)

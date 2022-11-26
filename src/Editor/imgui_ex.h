@@ -1,8 +1,8 @@
 #ifndef __IMGUI_EX_H__
 #define __IMGUI_EX_H__
 
-#include <magic_enum.hpp>
 #include <algorithm>
+#include <magic_enum/magic_enum.hpp>
 
 namespace imgui_editor
 {

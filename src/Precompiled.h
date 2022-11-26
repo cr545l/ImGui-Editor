@@ -5,14 +5,12 @@
 #include <functional>
 
 // Third Party 
+#include <CR/cr.h>
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 #include <misc/cpp/imgui_stdlib.h>
-#include <cr.h>
-//#include <magic_enum.hpp>
-
 #ifdef _MSC_VER
 
 #define debug_break __debugbreak
