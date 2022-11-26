@@ -44,8 +44,10 @@ namespace imgui_editor
 	void draw_widget(widget* context);
 	void draw_inspector_widget(widget* context);
 
-	widget* new_widget(widget_type type);
-	void delete_widget(widget* target);
+	CR_EXPORT widget* new_widget(widget_type type);
+	CR_EXPORT void* new_widget_arg(widget_type type);
+	CR_EXPORT void delete_widget(widget* target);
+	CR_EXPORT void delete_widget_args(widget_type type, void* target);
 
 	std::string widget_data_serialize(widget_type type, void* data);
 	void widget_data_deserialize(widget_type type, void* target, const char* data);

@@ -314,7 +314,7 @@ namespace imgui_editor
         std::string style_var_floats;
         std::string style_var_vec2s;
 
-        return string_format("%d,{%s},%s,%f,%f,[%s],[%s],[%s],[%s]", 
+        return string_format("{%d,{%s},%s,%f,%f,[%s],[%s],[%s],[%s]}", 
         target->type,
         args.c_str(),
         target->label.c_str(), 

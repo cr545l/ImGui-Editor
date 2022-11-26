@@ -53,32 +53,113 @@ namespace imgui_editor
         }
     }
 
-    void widget_deserialize(widget* result, const char* d)
+    void widget_deserialize(widget* target_widget, const char* d)
     {
         std::string data = d;
 
         std::string read;
         std::istringstream stream(d);
-        char *pos = NULL;
+        char* pos = NULL;
 
+        std::getline(stream, read, '{');
         std::getline(stream, read, ',');
-        result->type = (widget_type)strtoul(read.c_str(), &pos, 0);
+        target_widget->type = (widget_type)strtoul(read.c_str(), &pos, 0);
 
         std::getline(stream, read, '{');
         std::getline(stream, read, '}');
-        widget_data_deserialize(result->type, result->args, read.c_str());
-        std::getline(stream, read, ',');
-        
-        std::getline(stream, read, ',');
-        result->label = read;
-        
-        std::getline(stream, read, ',');
-        result->size.x = strtof(read.c_str(), &pos);
-        std::getline(stream, read, ',');
-        result->size.y = strtof(read.c_str(), &pos);
 
+        if (nullptr != target_widget->args) delete_widget_args(target_widget->type, target_widget->args);
+        target_widget->args = new_widget_arg(target_widget->type);
 
-        std::getline(stream, read, '[');
-        std::getline(stream, read, ']');
+        widget_data_deserialize(target_widget->type, target_widget->args, read.c_str());
+
+        std::getline(stream, read, ',');
+
+        std::getline(stream, read, ',');
+        target_widget->label = read;
+
+        std::getline(stream, read, ',');
+        target_widget->size.x = strtof(read.c_str(), &pos);
+        std::getline(stream, read, ',');
+        target_widget->size.y = strtof(read.c_str(), &pos);
+
+        std::getline(stream, read);
+
+        // 1 2123 21 23 212121 0
+        // [ [][[n]] [[a]][][] ]
+
+        // 121210
+        // [[][]]
+
+        // 10
+        // []
+        const std::string::size_type begin = read.find('[');
+        std::string::size_type end = read.size();
+        size_t count = 0;
+        for (size_t i = begin; i < read.size(); ++i)
+        {
+            if ('[' == read[i])
+            {
+                ++count;
+            }
+            else if (']' == read[i])
+            {
+                end = i;
+                --count;
+            }
+            if (0 == count)break;
+        }
+        std::string body = read.substr(begin + 1, end - begin - 1); // remove []
+
+        //   1232 32 3210  10  12343 43 4321 210  
+        // [ {[{},{},{}]}, {}, {{[{},{},{}]},[]}, {} ]
+        //               ^   ^                  ^
+
+        count = 0;
+        std::vector<std::string> children;
+        size_t cursor = 0;
+        for (size_t i = 0; i < body.size(); ++i)
+        {
+            if ('[' == body[i] || '{' == body[i])
+            {
+                ++count;
+            }
+            else if (']' == body[i] || '}' == body[i])
+            {
+                --count;
+            }
+            else if (0 == count && ',' == body[i])
+            {
+                children.push_back(body.substr(cursor, i - cursor - 1));
+                cursor = i + 1;
+            }
+        }
+
+        for (size_t i = 0; i < children.size(); ++i)
+        {
+            widget* child_widget = new_widget(widget_type::widget_type_none);
+            widget_deserialize(child_widget, children[i].c_str());
+            attach_child(target_widget, child_widget);
+        }
+
+		std::getline(stream, read, ']');
+		//
+		std::getline(stream, read, ',');
+
+		std::getline(stream, read, '[');
+		std::getline(stream, read, ']');
+		//
+		std::getline(stream, read, ',');
+
+		std::getline(stream, read, '[');
+		std::getline(stream, read, ']');
+		//
+		std::getline(stream, read, ',');
+
+		std::getline(stream, read, '[');
+		std::getline(stream, read, ']');
+		//
+		std::getline(stream, read, ',');
+		std::getline(stream, read, '}');
     }
 }
