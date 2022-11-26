@@ -607,14 +607,6 @@ namespace imgui_editor
             stream >> wd->size.y;
         }
         break;
-        case widget_type::widget_type_list_box:
-        {
-            // widget_list_box* wd = (widget_list_box*)data;
-            // stream >> wd->current_item;
-            // stream >> comma;
-            // stream >> wd->flags;
-        }
-        break;
         case widget_type::widget_type_collapsing_header:
         {
             widget_collapsing_header* wd = (widget_collapsing_header*)data;

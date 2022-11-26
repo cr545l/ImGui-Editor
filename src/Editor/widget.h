@@ -41,6 +41,8 @@ namespace imgui_editor
 		void(*draw_inspector)(widget*) = nullptr;
 	};
 
+	const char* get_pretty_name(widget_type type);
+
 	void draw_widget(widget* context);
 	void draw_inspector_widget(widget* context);
 

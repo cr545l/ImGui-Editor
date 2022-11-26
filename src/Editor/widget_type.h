@@ -3,24 +3,24 @@
 
 namespace imgui_editor
 {
-	enum class widget_type : uint8_t
+	// 추후 추가될 위젯들을 위해 공백으로 확보
+	enum class widget_type : uint32_t
 	{
-		widget_type_none,
+		widget_type_none = 0,
 
-		widget_type_button,
+		widget_type_button = 1000,
 		widget_type_small_button,
 		widget_type_checkbox,
 		widget_type_checkbox_flags,
 		widget_type_radio_button,
 
-		widget_type_text,
+		widget_type_text = 2000,
 		widget_type_text_colored,
 		widget_type_bullet_text,
 		widget_type_bullet,
-
 		widget_type_selectable,
 
-		widget_type_label_text,
+		widget_type_label_text = 3000,
 		widget_type_input_text,
 		widget_type_input_text_multiline,
 		widget_type_input_text_with_hint,
@@ -34,7 +34,7 @@ namespace imgui_editor
 		widget_type_input_float4,
 		widget_type_input_double,
 
-		widget_type_drag_int,
+		widget_type_drag_int = 4000,
 		widget_type_drag_int2,
 		widget_type_drag_int3,
 		widget_type_drag_int4,		
@@ -43,7 +43,7 @@ namespace imgui_editor
 		widget_type_drag_float3,
 		widget_type_drag_float4,
 
-		widget_type_slider_int,
+		widget_type_slider_int = 5000,
 		widget_type_slider_int2,
 		widget_type_slider_int3,
 		widget_type_slider_int4,
@@ -53,16 +53,13 @@ namespace imgui_editor
 		widget_type_slider_float4,
 		widget_type_slider_angle,
 
-		widget_type_color_edit3,
+		widget_type_color_edit3 = 6000,
 		widget_type_color_edit4,
 		widget_type_color_picker3,
 		widget_type_color_picker4,
 		widget_type_color_button,
 
-		widget_type_list_box,
-
-		widget_type_collapsing_header,
-		
+		widget_type_collapsing_header = 7000,		
 		widget_type_separator,
 		widget_type_same_line,
 		widget_type_spacing,
@@ -70,7 +67,7 @@ namespace imgui_editor
 		widget_type_indent,
 		widget_type_unindent,
 
-		widget_type_begin_end_window,
+		widget_type_begin_end_window = 8000,
 		widget_type_begin_end_child,
 		widget_type_begin_end_popup,
 		widget_type_begin_end_list_box,
@@ -79,7 +76,7 @@ namespace imgui_editor
 		widget_type_begin_end_combo,
 		widget_type_begin_end_menu,
 
-		widget_type_push_pop_tree_node,
+		widget_type_push_pop_tree_node = 9000,
 
 	};
 }

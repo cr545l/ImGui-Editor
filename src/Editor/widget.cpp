@@ -65,7 +65,6 @@ namespace imgui_editor
 		case widget_type::widget_type_color_picker3:		return new widget_color_picker3();
 		case widget_type::widget_type_color_picker4:		return new widget_color_picker4();
 		case widget_type::widget_type_color_button:			return new widget_color_button();
-		case widget_type::widget_type_list_box:				return new widget_list_box();
 		case widget_type::widget_type_collapsing_header:	return new widget_collapsing_header();
 		case widget_type::widget_type_separator:			return new widget_separator();
 		case widget_type::widget_type_same_line:			return new widget_same_line();
@@ -148,7 +147,6 @@ namespace imgui_editor
 		case widget_type::widget_type_color_picker3:		delete (widget_color_picker3*)target;			break;
 		case widget_type::widget_type_color_picker4:		delete (widget_color_picker4*)target;			break;
 		case widget_type::widget_type_color_button:			delete (widget_color_button*)target;			break;
-		case widget_type::widget_type_list_box:				delete (widget_list_box*)target;				break;
 		case widget_type::widget_type_collapsing_header:	delete (widget_collapsing_header*)target;		break;
 		case widget_type::widget_type_separator:			delete (widget_separator*)target;				break;
 		case widget_type::widget_type_same_line:			delete (widget_same_line*)target;				break;

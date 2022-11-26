@@ -216,11 +216,6 @@ namespace imgui_editor
             widget_color_button* wd = (widget_color_button*)data;
             return string_format("%f,%f,%f,%f,%d,%f,%f", wd->col.x, wd->col.y, wd->col.z, wd->col.w, wd->flags, wd->size.x, wd->size.y);
         }
-        case widget_type::widget_type_list_box:
-        {
-            // widget_list_box* wd = (widget_list_box*)data;
-            // return string_format("%d,%d,%d", wd->current_item, wd->items_count, wd->flags);
-        }
         case widget_type::widget_type_collapsing_header:
         {
             widget_collapsing_header* wd = (widget_collapsing_header*)data;

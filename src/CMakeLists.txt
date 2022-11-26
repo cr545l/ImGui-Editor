@@ -10,6 +10,8 @@ fips_begin_sharedlib(editor cmdline)
     fips_files(editor/widget.cpp)
     fips_files(editor/widget_draw.cpp)
     fips_files(editor/widget_draw_inspector.cpp)
+    fips_files(editor/widget_draw_hierarchy.cpp)
+    fips_files(editor/widget_draw_tool.cpp)
     
     fips_files(editor/widget_serialize.cpp)
     fips_files(editor/widget_deserialize.cpp)

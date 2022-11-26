@@ -417,15 +417,6 @@ namespace imgui_editor
             ImGui::Combo("flags", &args->flags);
         }
         break;
-        case widget_type::widget_type_list_box:
-        {
-            widget_list_box *args = (widget_list_box *)ctx->args;
-
-            ImGui::DragInt("current_item", &args->current_item);
-            ImGui::InputTexts("items", args->items);
-            ImGui::DragInt("height_in_items", &args->height_in_items);
-        }
-        break;
         case widget_type::widget_type_collapsing_header:
         {
             widget_collapsing_header *args = (widget_collapsing_header *)ctx->args;

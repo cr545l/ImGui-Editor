@@ -16,49 +16,6 @@ ImVec2 g_unitSize;
 
 namespace imgui_editor
 {
-	void draw_widget_tool(widget_tool *ctx)
-	{
-		if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unitSize.y * 25), true))
-		{
-			if (ImGui::BeginChild("Types", ImVec2(0.f, g_unitSize.y * 20)))
-			{
-				magic_enum::enum_for_each<widget_type>([&](widget_type t)
-					{
-						std::string name = std::string(magic_enum::enum_name(t));
-
-						name = name.substr(12, name.length() - 12);
-						// name replace _ to space
-						std::replace(name.begin(), name.end(), '_', ' ');
-						if (ImGui::Selectable(name.c_str(), t == ctx->type))
-						{
-							ctx->type = t;
-						} });
-			}
-			ImGui::EndChild();
-
-			ImGui::Separator();
-			const bool disable = nullptr == ctx->root;
-			ImGui::BeginDisabled(disable);
-			if (ImGui::Button("Add Widget"))
-			{
-				auto selected = selection::get_targets();
-				if (selected.size())
-				{
-					for (auto i : selected)
-					{
-						attach_child(i, new_widget(ctx->type));
-					}
-				}
-				else
-				{
-					attach_child(ctx->root, new_widget(ctx->type));
-				}
-			}
-			ImGui::EndDisabled();
-		}
-		ImGui::EndChild();
-	}
-
 	void init_widget_editor(widget_editor *ctx, const char* init)
 	{
 		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
@@ -76,42 +33,6 @@ namespace imgui_editor
 		ctx->hirarchy.editor = ctx;
 		ctx->hirarchy.root = ctx->root;
 		ctx->inspector.editor = ctx;
-	}
-
-	void draw_widget_hierarchy(widget_hierarchy *context)
-	{
-		auto selected = selection::get_targets();
-		std::function<void(widget *)> drawNode = [&](widget *_widget)
-		{
-			ImGui::PushID(_widget->label.c_str());
-			ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnDoubleClick;
-
-			if (std::any_of(selected.begin(), selected.end(), [&](widget *w)
-							{ return w == _widget; }))
-			{
-				flag |= ImGuiTreeNodeFlags_Selected;
-			}
-
-			if (_widget && ImGui::TreeNodeEx(_widget->label.c_str(), flag))
-			{
-				const auto &children = _widget->children;
-				for (size_t i = 0, max = children.size(); i < max; ++i)
-				{
-					ImGui::PushID(i);
-					drawNode(children[i]);
-					ImGui::PopID();
-				}
-				ImGui::TreePop();
-			}
-
-			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-			{
-				selection::select(_widget);
-			}
-			ImGui::PopID();
-		};
-
-		drawNode(context->root);
 	}
 
 	void draw_widget_inspector(widget_inspector *context)
@@ -190,7 +111,20 @@ namespace imgui_editor
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Edit"))
+			{
+				if (ImGui::MenuItem("Undo", nullptr, nullptr, has_undo_command()))
+				{
+					undo();
+				}
 
+				if (ImGui::MenuItem("Redo", nullptr, nullptr, has_redo_command()))
+				{
+					redo();
+				}
+
+				ImGui::EndMenu();
+			}
 			ImGui::EndMainMenuBar();
 		}
 		float mainMenuSizeY = ImGui::GetFrameHeight();
@@ -211,23 +145,6 @@ namespace imgui_editor
 			{
 				ImGui::ShowDemoWindow(&demo);
 			}
-
-			ImGui::BeginDisabled(!has_undo_command());
-			if (ImGui::Button("Undo"))
-			{
-				undo();
-			}
-			ImGui::EndDisabled();
-
-			ImGui::SameLine();
-
-			ImGui::BeginDisabled(!has_redo_command());
-			if (ImGui::Button("Redo"))
-			{
-				redo();
-			}
-			ImGui::EndDisabled();
-
 			draw_widget_tool(&ctx->tool);
 			draw_widget_hierarchy(&ctx->hirarchy);
 		}
