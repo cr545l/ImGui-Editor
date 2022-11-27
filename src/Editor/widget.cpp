@@ -5,6 +5,8 @@
 #include "editor/selection.h"
 #include "editor/history.h"
 
+extern size_t g_widget_id;
+
 namespace imgui_editor
 {
 	widget* new_widget(widget_type type)
@@ -12,6 +14,7 @@ namespace imgui_editor
 		auto w = new widget();
 		w->type = type;
 		w->args = new_widget_arg(type);
+		w->id = g_widget_id++;
 		return w;
 	}
 

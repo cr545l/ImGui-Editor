@@ -37,6 +37,7 @@ namespace imgui_editor
 		std::vector<style_var_float> style_var_floats;
 		std::vector<style_var_vec2> style_var_vec2s;
 
+		size_t id = 0;
 		widget* parent = nullptr;
 
 		void(*draw)(widget*) = nullptr;

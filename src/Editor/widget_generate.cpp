@@ -58,22 +58,22 @@ namespace imgui_editor
             case widget_type::widget_type_checkbox:
             {
 		    	widget_checkbox* args = (widget_checkbox*)ctx->args;
-                result += indent + string_format("bool check = %s;\n", args->check?"true":"false");
-                result += indent + string_format("ImGui::Checkbox(\"%s\", &check);\n", ctx->label.c_str());
+                result += indent + string_format("bool check_%zu = %s;\n", ctx->id, args->check?"true":"false");
+                result += indent + string_format("ImGui::Checkbox(\"%s\", &check_%zu);\n", ctx->label.c_str(), ctx->id);
             }
             break;
 		    case widget_type::widget_type_checkbox_flags:
             {
                 widget_checkbox_flags* args = (widget_checkbox_flags*)ctx->args;
-                result += indent +string_format("int flags = %d;\n", args->flags);
-                result += indent +string_format("ImGui::CheckboxFlags(\"%s\", &flags, %d);\n", ctx->label.c_str(), args->flags_value);
+                result += indent +string_format("int flags_%zu = %d;\n", ctx->id, args->flags);
+                result += indent +string_format("ImGui::CheckboxFlags(\"%s\", &flags_%zu, %d);\n", ctx->label.c_str(), ctx->id, args->flags_value);
             }
             break;
             case widget_type::widget_type_radio_button:
             {
                 widget_radio_button* args = (widget_radio_button*)ctx->args;
-                result += indent +string_format("int active = %d;\n", args->active);
-                result += indent +string_format("ImGui::RadioButton(\"%s\", &active);\n", ctx->label.c_str());
+                result += indent +string_format("int active_%zu = %d;\n", ctx->id, args->active);
+                result += indent +string_format("ImGui::RadioButton(\"%s\", &active_%zu);\n", ctx->label.c_str(), ctx->id);
             }
             break;
             case widget_type::widget_type_text:
@@ -100,28 +100,298 @@ namespace imgui_editor
 		    case widget_type::widget_type_selectable:
             {
                 widget_selectable* args = (widget_selectable*)ctx->args;
-                result += indent + string_format("bool selected = %s;\n", args->selected?"true":"false");
-                result += indent + string_format("ImGui::Selectable(\"%s\", &selected, (ImGuiSelectableFlags_)%d, ImVec2(%f, %f));\n",
-                    ctx->label.c_str(),
-                    (int)args->flags, ctx->size.x, ctx->size.y);
+                result += indent + string_format("bool selected_%zu = %s;\n", ctx->id, args->selected?"true":"false");
+                result += indent + string_format("ImGui::Selectable(\"%s\", &selected_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiSelectableFlags_AllowDoubleClick":"0", ctx->size.x, ctx->size.y);
             }
             break;
-
-
-
-
+		    case widget_type::widget_type_label_text:
+            {
+                widget_label_text* args = (widget_label_text*)ctx->args;
+                result += indent + string_format("ImGui::LabelText(\"%s\", \"%s\");\n", ctx->label.c_str(), args->text.c_str());
+            }
+            break;
+            case widget_type::widget_type_input_text:
+            {
+                widget_input_text* args = (widget_input_text*)ctx->args;
+                result += indent + string_format("std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
+                result += indent + string_format("ImGui::InputText(\"%s\", &text_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+		    case widget_type::widget_type_input_text_multiline:
+            {
+                widget_input_text_multiline* args = (widget_input_text_multiline*)ctx->args;
+                result += indent + string_format("std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
+                result += indent + string_format("ImGui::InputTextMultiline(\"%s\", &text_%zu, ImVec2(%f, %f), %s, ImGuiInputTextFlags_CallbackResize, NULL, NULL);\n", ctx->label.c_str(), ctx->id, ctx->size.x, ctx->size.y, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0");
+            }
+            break;
+            case widget_type::widget_type_input_text_with_hint: 
+            {
+                widget_input_text_with_hint* args = (widget_input_text_with_hint*)ctx->args;
+                result += indent + string_format("std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
+                result += indent + string_format("ImGui::InputTextWithHint(\"%s\", \"%s\", &text_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), args->hint.c_str(), ctx->id, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_int:
+            {
+                widget_input_int* args = (widget_input_int*)ctx->args;
+                result += indent + string_format("int value_%zu = %d;\n", ctx->id, args->value);
+                result += indent + string_format("ImGui::InputInt(\"%s\", &value_%zu, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->step, args->step_fast, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_int2:
+            {
+                widget_input_int2* args = (widget_input_int2*)ctx->args;
+                result += indent + string_format("int value_%zu[2] = {%d, %d};\n", ctx->id, args->value[0], args->value[1]);
+                result += indent + string_format("ImGui::InputInt2(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_int3:
+            {
+                widget_input_int3* args = (widget_input_int3*)ctx->args;
+                result += indent + string_format("int value_%zu[3] = {%d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
+                result += indent + string_format("ImGui::InputInt3(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_int4:
+            {
+                widget_input_int4* args = (widget_input_int4*)ctx->args;
+                result += indent + string_format("int value_%zu[4] = {%d, %d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
+                result += indent + string_format("ImGui::InputInt4(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_float:
+            {
+                widget_input_float* args = (widget_input_float*)ctx->args;
+                result += indent + string_format("float value_%zu = %f;\n", ctx->id, args->value);
+                result += indent + string_format("ImGui::InputFloat(\"%s\", &value_%zu, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->step, args->step_fast, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_float2:
+            {
+                widget_input_float2* args = (widget_input_float2*)ctx->args;
+                result += indent + string_format("float value_%zu[2] = {%f, %f};\n", ctx->id, args->value[0], args->value[1]);
+                result += indent + string_format("ImGui::InputFloat2(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_float3:
+            {
+                widget_input_float3* args = (widget_input_float3*)ctx->args;
+                result += indent + string_format("float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
+                result += indent + string_format("ImGui::InputFloat3(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_float4:
+            {
+                widget_input_float4* args = (widget_input_float4*)ctx->args;
+                result += indent + string_format("float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
+                result += indent + string_format("ImGui::InputFloat4(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_input_double:
+            {
+                widget_input_double* args = (widget_input_double*)ctx->args;
+                result += indent + string_format("double value_%zu = %f;\n", ctx->id, args->value);
+                result += indent + string_format("ImGui::InputDouble(\"%s\", &value_%zu, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->step, args->step_fast, args->flags?"ImGuiInputTextFlags_AllowTabInput":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_drag_int:
+            {
+                widget_drag_int* args = (widget_drag_int*)ctx->args;
+                result += indent + string_format("int value_%zu = %d;\n", ctx->id, args->value);
+                result += indent + string_format("ImGui::DragInt(\"%s\", &value_%zu, %f, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_drag_int2:
+            {
+                widget_drag_int2* args = (widget_drag_int2*)ctx->args;
+                result += indent + string_format("int value_%zu[2] = {%d, %d};\n", ctx->id, args->value[0], args->value[1]);
+                result += indent + string_format("ImGui::DragInt2(\"%s\", value_%zu, %f, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_drag_int3:
+            {
+                widget_drag_int3* args = (widget_drag_int3*)ctx->args;
+                result += indent + string_format("int value_%zu[3] = {%d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
+                result += indent + string_format("ImGui::DragInt3(\"%s\", value_%zu, %f, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_drag_int4:
+            {
+                widget_drag_int4* args = (widget_drag_int4*)ctx->args;
+                result += indent + string_format("int value_%zu[4] = {%d, %d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
+                result += indent + string_format("ImGui::DragInt4(\"%s\", value_%zu, %f, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_drag_float:
+            {
+                widget_drag_float* args = (widget_drag_float*)ctx->args;
+                result += indent + string_format("float value_%zu = %f;\n", ctx->id, args->value);
+                result += indent + string_format("ImGui::DragFloat(\"%s\", &value_%zu, %f, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_drag_float2:
+            {
+                widget_drag_float2* args = (widget_drag_float2*)ctx->args;
+                result += indent + string_format("float value_%zu[2] = {%f, %f};\n", ctx->id, args->value[0], args->value[1]);
+                result += indent + string_format("ImGui::DragFloat2(\"%s\", value_%zu, %f, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_drag_float3:
+            {
+                widget_drag_float3* args = (widget_drag_float3*)ctx->args;
+                result += indent + string_format("float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
+                result += indent + string_format("ImGui::DragFloat3(\"%s\", value_%zu, %f, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_drag_float4:
+            {
+                widget_drag_float4* args = (widget_drag_float4*)ctx->args;
+                result += indent + string_format("float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
+                result += indent + string_format("ImGui::DragFloat4(\"%s\", value_%zu, %f, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_int:
+            {
+                widget_slider_int* args = (widget_slider_int*)ctx->args;
+                result += indent + string_format("int value_%zu = %d;\n", ctx->id, args->value);
+                result += indent + string_format("ImGui::SliderInt(\"%s\", &value_%zu, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_int2:
+            {
+                widget_slider_int2* args = (widget_slider_int2*)ctx->args;
+                result += indent + string_format("int value_%zu[2] = {%d, %d};\n", ctx->id, args->value[0], args->value[1]);
+                result += indent + string_format("ImGui::SliderInt2(\"%s\", value_%zu, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_int3:
+            {
+                widget_slider_int3* args = (widget_slider_int3*)ctx->args;
+                result += indent + string_format("int value_%zu[3] = {%d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
+                result += indent + string_format("ImGui::SliderInt3(\"%s\", value_%zu, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_int4:
+            {
+                widget_slider_int4* args = (widget_slider_int4*)ctx->args;
+                result += indent + string_format("int value_%zu[4] = {%d, %d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
+                result += indent + string_format("ImGui::SliderInt4(\"%s\", value_%zu, %d, %d, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_float:
+            {
+                widget_slider_float* args = (widget_slider_float*)ctx->args;
+                result += indent + string_format("float value_%zu = %f;\n", ctx->id, args->value);
+                result += indent + string_format("ImGui::SliderFloat(\"%s\", &value_%zu, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_float2:
+            {
+                widget_slider_float2* args = (widget_slider_float2*)ctx->args;
+                result += indent + string_format("float value_%zu[2] = {%f, %f};\n", ctx->id, args->value[0], args->value[1]);
+                result += indent + string_format("ImGui::SliderFloat2(\"%s\", value_%zu, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_float3:
+            {
+                widget_slider_float3* args = (widget_slider_float3*)ctx->args;
+                result += indent + string_format("float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
+                result += indent + string_format("ImGui::SliderFloat3(\"%s\", value_%zu, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_float4:
+            {
+                widget_slider_float4* args = (widget_slider_float4*)ctx->args;
+                result += indent + string_format("float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
+                result += indent + string_format("ImGui::SliderFloat4(\"%s\", value_%zu, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_slider_angle:
+            {
+                widget_slider_angle* args = (widget_slider_angle*)ctx->args;
+                result += indent + string_format("float value_%zu = %f;\n", ctx->id, args->value);
+                result += indent + string_format("ImGui::SliderAngle(\"%s\", &value_%zu, %f, %f, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->min, args->max, args->flags?"ImGuiSliderFlags_AlwaysClamp":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_color_edit3:
+            {
+                widget_color_edit3* args = (widget_color_edit3*)ctx->args;
+                result += indent + string_format("float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
+                result += indent + string_format("ImGui::ColorEdit3(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiColorEditFlags_NoInputs":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_color_edit4:
+            {
+                widget_color_edit4* args = (widget_color_edit4*)ctx->args;
+                result += indent + string_format("float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
+                result += indent + string_format("ImGui::ColorEdit4(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiColorEditFlags_NoInputs":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_color_picker3:
+            {
+                widget_color_picker3* args = (widget_color_picker3*)ctx->args;
+                result += indent + string_format("float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
+                result += indent + string_format("ImGui::ColorPicker3(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiColorEditFlags_NoInputs":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+            case widget_type::widget_type_color_picker4:
+            {
+                widget_color_picker4* args = (widget_color_picker4*)ctx->args;
+                result += indent + string_format("float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
+                result += indent + string_format("ImGui::ColorPicker4(\"%s\", value_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiColorEditFlags_NoInputs":"0", ctx->size.x, ctx->size.y);
+            }
+            break;
+		    case widget_type::widget_type_collapsing_header:
+            {
+                widget_collapsing_header* args = (widget_collapsing_header*)ctx->args;
+                result += indent + string_format("ImGui::CollapsingHeader(\"%s\", %s, %s);\n", ctx->label.c_str(), args->flags?"ImGuiTreeNodeFlags_DefaultOpen":"0", args->flags?"ImGuiTreeNodeFlags_DefaultOpen":"0");
+            }
+            break;
+		    case widget_type::widget_type_separator:    
+            {
+                result += indent + string_format("ImGui::Separator();\n");
+            }            
+            break;
+		    case widget_type::widget_type_same_line:
+            {
+                widget_same_line* args = (widget_same_line*)ctx->args;
+                result += indent + string_format("ImGui::SameLine(%f, %f);\n", args->offset_from_start_x, args->spacing);
+            }
+            break;
+		    case widget_type::widget_type_spacing:
+            {
+                result += indent + string_format("ImGui::Spacing();\n");
+            }
+            break;
+		    case widget_type::widget_type_dummy:
+            {
+                widget_dummy* args = (widget_dummy*)ctx->args;
+                result += indent + string_format("ImGui::Dummy(ImVec2(%f, %f));\n", args->size.x, args->size.y);
+            }
+            break;
+            case widget_type::widget_type_indent:
+            {
+                result += indent + string_format("ImGui::Indent();\n");
+            }
+            break;
+            case widget_type::widget_type_unindent:
+            {
+                result += indent + string_format("ImGui::Unindent();\n");
+            }
+            break;
 		    case widget_type::widget_type_begin_end_window:
             {
                 widget_begin_end_window* args = (widget_begin_end_window*)ctx->args;
 
-                result += indent + string_format("bool open = ImGui::Begin(\"%s\", &%s, (ImGuiWindowFlags_)%d);\n",
+                result += indent + string_format("bool open_%zu = ImGui::Begin(\"%s\", &%s, (ImGuiWindowFlags_)%d);\n",
+                    ctx->id,
                     ctx->label.c_str(),
                     args->open?"true":"false",
                     (int)args->flags);
 
                 begin_type = true;
                 
-                result += indent + "if(open)\n";
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
 
                 indent += '\t';
@@ -132,9 +402,217 @@ namespace imgui_editor
                 indent.pop_back();
 
                 result += indent + "}\n";
+
+                result += indent + string_format("ImGui::End();\n");
             }
             break;
+            case widget_type::widget_type_begin_end_child:
+            {
+                widget_begin_end_child* args = (widget_begin_end_child*)ctx->args;
 
+                result += indent + string_format("bool open_%zu =ImGui::BeginChild(\"%s\", ImVec2(%f, %f), %s, (ImGuiWindowFlags_)%d);\n",
+                    ctx->id,
+                    ctx->label.c_str(),
+                    ctx->size.x,
+                    ctx->size.y,
+                    args->border?"true":"false",
+                    (int)args->flags);
+
+                begin_type = true;
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+                indent.pop_back();
+
+                result += indent + "}\n";
+
+                result += indent + string_format("ImGui::EndChild();\n");
+            }
+            break;
+		    case widget_type::widget_type_begin_end_popup:
+            {
+                widget_begin_end_popup* args = (widget_begin_end_popup*)ctx->args;
+
+                result += indent + string_format("bool open_%zu =ImGui::BeginPopup(\"%s\", (ImGuiWindowFlags_)%d);\n",
+                    ctx->id,
+                    ctx->label.c_str(),
+                    (int)args->flags);
+
+                begin_type = true;
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+
+                result += indent + string_format("ImGui::EndPopup();\n");
+
+                indent.pop_back();
+
+                result += indent + "}\n";
+            }
+            break;
+            case widget_type::widget_type_begin_end_list_box:
+            {
+                widget_begin_end_list_box* args = (widget_begin_end_list_box*)ctx->args;
+
+                result += indent + string_format("bool open_%zu =ImGui::BeginListBox(\"%s\", ImVec2(%f, %f));\n",
+                    ctx->id,
+                    ctx->label.c_str(),
+                    ctx->size.x,
+                    ctx->size.y);
+
+                begin_type = true;
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+
+                result += indent + string_format("ImGui::EndListBox();\n");
+
+                indent.pop_back();
+
+                result += indent + "}\n";
+            }
+            break;
+            case widget_type::widget_type_begin_end_table:
+            {
+                widget_begin_end_table* args = (widget_begin_end_table*)ctx->args;
+
+                result += indent + string_format("bool open_%zu =ImGui::BeginTable(\"%s\", %d, (ImGuiTableFlags_)%d, ImVec2(%f, %f), %f);\n",
+                    ctx->id,
+                    ctx->label.c_str(),
+                    args->columns,
+                    (int)args->flags,
+                    ctx->size.x,
+                    ctx->size.y,
+                    args->inner_width);
+
+                begin_type = true;
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+
+                result += indent + string_format("ImGui::EndTable();\n");
+
+                indent.pop_back();
+
+                result += indent + "}\n";
+            }
+            break;
+            case widget_type::widget_type_begin_end_group:
+            {
+                result += indent + string_format("ImGui::BeginGroup();\n");
+
+                begin_type = true;
+
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+                
+                result += indent + "ImGui::EndGroup();\n";
+            }
+            break;
+            case widget_type::widget_type_push_pop_tree_node:
+            {
+                widget_push_pop_tree_node* args = (widget_push_pop_tree_node*)ctx->args;
+
+                result += indent + string_format("bool open_%zu =ImGui::TreeNode(\"%s\");\n",
+                    ctx->id,
+                    ctx->label.c_str());
+
+                begin_type = true;
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+
+                result += indent + string_format("ImGui::TreePop();\n");
+
+                indent.pop_back();
+
+                result += indent + "}\n";
+            }
+            break;
+            case widget_type::widget_type_begin_end_combo:
+            {
+                widget_begin_end_combo* args = (widget_begin_end_combo*)ctx->args;
+
+                result += indent + string_format("bool open_%zu =ImGui::BeginCombo(\"%s\", \"%s\", (ImGuiComboFlags_)%d);\n",
+                    ctx->id,
+                    ctx->label.c_str(),
+                    args->preview_value.c_str(),
+                    (int)args->flags);
+
+                begin_type = true;
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+
+                result += indent + string_format("ImGui::EndCombo();\n");
+
+                indent.pop_back();
+
+                result += indent + "}\n";
+            }
+            break;
+            case widget_type::widget_type_begin_end_menu:
+            {
+                result += indent + string_format("bool open_%zu =ImGui::BeginMenu(\"%s\");\n",
+                    ctx->id,
+                    ctx->label.c_str());
+
+                begin_type = true;
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+
+                result += indent + string_format("ImGui::EndMenu();\n");
+
+                indent.pop_back();
+
+                result += indent + "}\n";
+            }
+            break;
             default:
                 break;
             }
@@ -154,7 +632,7 @@ namespace imgui_editor
                 result += indent + "ImGui::PopStyleColor();\n";
             }
 
-            if(begin_type)
+            if(!begin_type)
             {
                 for(size_t i =0, max = ctx->children.size(); i < max; ++i)
                 {

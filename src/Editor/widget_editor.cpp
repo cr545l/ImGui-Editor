@@ -13,11 +13,13 @@
 
 ImVec2 g_windowSize;
 ImVec2 g_unitSize;
+size_t g_widget_id = 0;
 
 namespace imgui_editor
 {
 	void init_widget_editor(widget_editor *ctx, const char* init)
 	{
+		g_widget_id = 0;
 		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
 		ctx->root->label = "root";
 
