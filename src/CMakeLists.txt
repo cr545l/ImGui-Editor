@@ -15,6 +15,7 @@ fips_begin_sharedlib(editor cmdline)
     
     fips_files(editor/widget_serialize.cpp)
     fips_files(editor/widget_deserialize.cpp)
+    fips_files(editor/widget_generate.cpp)
     
     fips_files(editor/widget_editor.h)
     fips_files(editor/widget_editor.cpp)

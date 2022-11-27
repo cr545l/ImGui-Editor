@@ -59,6 +59,14 @@ namespace imgui_editor
 	std::string widget_serialize(widget* target);
 	void widget_deserialize(widget* target, const char* data);
 
+	enum class generate_code
+	{
+		cpp,
+	};
+
+	std::string widget_generate(generate_code code, widget* target);
+
+
 	// can undo
 	void attach_child(widget* parent, widget* child);
 

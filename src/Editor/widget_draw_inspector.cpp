@@ -4,6 +4,10 @@
 
 #include "editor/widget.h"
 #include "editor/widget_data.h"
+#include "editor/selection.h"
+#include "editor/widget_editor.h"
+
+extern ImVec2 g_unitSize;
 
 struct ImGuiStyleVarInfo
 {
@@ -44,6 +48,52 @@ static const ImGuiStyleVarInfo GStyleVarInfo[] =
 
 namespace imgui_editor
 {
+	void draw_widget_inspector(widget_inspector* context)
+	{
+		auto selected = selection::get_targets();
+		ImGui::Text("Selected %lu", selected.size());
+
+		if(selected.size())
+		{
+			widget* ctx = selection::get_targets()[0];
+
+			ImGui::Separator();
+			
+			if(ImGui::TreeNode("Gen c++"))
+			{
+				std::string s =  widget_generate(generate_code::cpp, ctx);
+				ImGui::InputTextMultiline("##data", &s, ImVec2(0, g_unitSize.y*50), ImGuiInputTextFlags_ReadOnly);
+				ImGui::TreePop();
+			}
+			
+			if(ImGui::TreeNode("Output"))
+			{
+				std::string s =  widget_serialize(ctx);
+				ImGui::InputTextMultiline("##data", &s, ImVec2(0, g_unitSize.y*2), ImGuiInputTextFlags_ReadOnly);
+				ImGui::TreePop();
+			}
+
+			if(ImGui::TreeNode("Input"))
+			{
+				ImGui::InputTextMultiline("##data", &context->input, ImVec2(0, g_unitSize.y*2));
+				if(ImGui::Button("Apply"))
+				{
+					widget_deserialize(ctx, context->input.c_str());
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::Separator();
+
+			for (auto i : selected)
+			{
+				draw_inspector_widget(i);
+			}
+		}
+	}
+
+
     void draw_inspector_widget(widget *ctx)
     {
         ImGui::InputText("label", &ctx->label);

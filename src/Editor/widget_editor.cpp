@@ -34,47 +34,7 @@ namespace imgui_editor
 		ctx->hirarchy.root = ctx->root;
 		ctx->inspector.editor = ctx;
 	}
-
-	void draw_widget_inspector(widget_inspector *context)
-	{
-		auto selected = selection::get_targets();
-		ImGui::Text("Selected %lu", selected.size());
-
-		if(selected.size())
-		{
-			widget* ctx = selection::get_targets()[0];
-
-			ImGui::Separator();
-			
-			if(ImGui::TreeNode("Output"))
-			{
-				std::string s =  widget_serialize(ctx);
-				ImGui::InputTextMultiline("##data", &s, ImVec2(0, 0), ImGuiInputTextFlags_ReadOnly);
-				ImGui::TreePop();
-			}
-
-			if(ImGui::TreeNode("Input"))
-			{
-				// std::string s =  widget_data_serialize(ctx->type, ctx->args);
-				ImGui::InputTextMultiline("##data", &context->input, ImVec2(0, 0));
-				// widget_data_deserialize(ctx->type, ctx->args, s);
-				if(ImGui::Button("Apply"))
-				{
-					widget_deserialize(ctx, context->input.c_str());
-				}
-
-				ImGui::TreePop();
-			}
-
-			ImGui::Separator();
-
-			for (auto i : selected)
-			{
-				draw_inspector_widget(i);
-			}
-		}
-	}
-
+	
 	void draw_widget_editor(widget_editor *ctx)
 	{
 		g_windowSize = ImGui::GetIO().DisplaySize;
