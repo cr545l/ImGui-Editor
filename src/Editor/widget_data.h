@@ -56,7 +56,6 @@ namespace imgui_editor
 	struct widget_input_text_multiline
 	{
 		std::string text;
-		ImVec2 size;
 		ImGuiInputTextFlags_ flags;
 	};
 
@@ -321,7 +320,6 @@ namespace imgui_editor
 	{
 		ImVec4 col;
 		ImGuiColorEditFlags_ flags;
-		ImVec2 size;
 	};
 
 	struct widget_list_box
@@ -343,7 +341,6 @@ namespace imgui_editor
 
 	struct widget_dummy
 	{
-		ImVec2 size;
 	};
 
 	struct widget_indent
@@ -371,7 +368,6 @@ namespace imgui_editor
 
 	struct widget_begin_end_child
 	{
-		ImVec2 size;
 		bool border = 1;
 		ImGuiWindowFlags_ flags;
 	};
@@ -391,7 +387,6 @@ namespace imgui_editor
 
 	struct widget_begin_end_list_box
 	{
-		ImVec2 size;
 		int items_count;
 		int items_height;
 	};

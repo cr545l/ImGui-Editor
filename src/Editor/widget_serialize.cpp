@@ -54,7 +54,7 @@ namespace imgui_editor
         case widget_type::widget_type_input_text_multiline:
         {
             widget_input_text_multiline* wd = (widget_input_text_multiline*)data;
-            return string_format("%s,%f,%f,%d,", wd->text.c_str(), wd->size.x, wd->size.y, wd->flags);
+            return string_format("%s,%d,", wd->text.c_str(), wd->flags);
         }
         case widget_type::widget_type_input_text_with_hint:
         {
@@ -214,7 +214,7 @@ namespace imgui_editor
         case widget_type::widget_type_color_button:
         {
             widget_color_button* wd = (widget_color_button*)data;
-            return string_format("%f,%f,%f,%f,%d,%f,%f", wd->col.x, wd->col.y, wd->col.z, wd->col.w, wd->flags, wd->size.x, wd->size.y);
+            return string_format("%f,%f,%f,%f,%d", wd->col.x, wd->col.y, wd->col.z, wd->col.w, wd->flags);
         }
         case widget_type::widget_type_collapsing_header:
         {
@@ -228,11 +228,7 @@ namespace imgui_editor
             return string_format("%f,%f", wd->offset_from_start_x, wd->spacing);
         }
         case widget_type::widget_type_spacing: return "";
-        case widget_type::widget_type_dummy: 
-        {
-            widget_dummy* wd = (widget_dummy*)data;
-            return string_format("%f,%f", wd->size.x, wd->size.y);
-        }
+        case widget_type::widget_type_dummy: return "";
         case widget_type::widget_type_indent: 
         {
             widget_indent* wd = (widget_indent*)data;
@@ -251,7 +247,7 @@ namespace imgui_editor
         case widget_type::widget_type_begin_end_child:
         {
             widget_begin_end_child* wd = (widget_begin_end_child*)data;
-            return string_format("%f,%f,%d,%d", wd->size.x, wd->size.y, wd->border, wd->flags);
+            return string_format("%d,%d", wd->border, wd->flags);
         }
         case widget_type::widget_type_begin_end_popup:
         {
@@ -261,7 +257,7 @@ namespace imgui_editor
         case widget_type::widget_type_begin_end_list_box:
         {
             widget_begin_end_list_box* wd = (widget_begin_end_list_box*)data;
-            return string_format("%f,%f,%d,%d", wd->size.x, wd->size.y,wd->items_count, wd->items_height);
+            return string_format("%d,%d", wd->items_count, wd->items_height);
         }
         case widget_type::widget_type_begin_end_table:
         {

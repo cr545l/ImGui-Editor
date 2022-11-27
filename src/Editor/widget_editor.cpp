@@ -123,6 +123,6 @@ namespace imgui_editor
 			inspectorSize.y = g_windowSize.y - mainMenuSizeY;
 			draw_widget_inspector(&ctx->inspector);
 		}
-		ImGui::End();
+		ImGui::End();			
 	}
 }

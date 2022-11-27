@@ -368,6 +368,11 @@ namespace imgui_editor
 			ImGui::ColorPicker4(ctx->label.c_str(), args->value, args->flags);
 		}
 		break;
+		case widget_type::widget_type_color_button:
+		{
+			widget_color_button* args = (widget_color_button*)ctx->args;
+			ImGui::ColorButton(ctx->label.c_str(), args->col, args->flags, ctx->size);
+		}
 		case widget_type::widget_type_collapsing_header:
 		{
 			widget_collapsing_header* args = (widget_collapsing_header*)ctx->args;
@@ -393,7 +398,7 @@ namespace imgui_editor
 		case widget_type::widget_type_dummy:
 		{
 			widget_dummy* args = (widget_dummy*)ctx->args;
-			ImGui::Dummy(args->size);
+			ImGui::Dummy(ctx->size);
 		}
 		break;
 		case widget_type::widget_type_indent:
@@ -423,7 +428,7 @@ namespace imgui_editor
 		{
 			begin_type = true;
 			widget_begin_end_child* args = (widget_begin_end_child*)ctx->args;
-			if (ImGui::BeginChild(ctx->label.c_str(), args->size, args->border, args->flags))
+			if (ImGui::BeginChild(ctx->label.c_str(), ctx->size, args->border, args->flags))
 			{
 				draw_children(ctx);
 			}
@@ -445,7 +450,7 @@ namespace imgui_editor
 		{
 			begin_type = true;
 			widget_begin_end_list_box* args = (widget_begin_end_list_box*)ctx->args;
-			if (ImGui::BeginListBox(ctx->label.c_str(), args->size))
+			if (ImGui::BeginListBox(ctx->label.c_str(), ctx->size))
 			{
 				draw_children(ctx);
 				ImGui::EndListBox();

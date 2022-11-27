@@ -64,6 +64,11 @@ namespace imgui_editor
 				std::string s =  widget_generate(generate_code::cpp, ctx);
 				ImGui::InputTextMultiline("##data", &s, ImVec2(0, g_unitSize.y*50), ImGuiInputTextFlags_ReadOnly);
 				ImGui::TreePop();
+
+                if(ImGui::Button("Copy"))
+                {
+                    ImGui::SetClipboardText(s.c_str());
+                }
 			}
 			
 			if(ImGui::TreeNode("Output"))
@@ -93,10 +98,10 @@ namespace imgui_editor
 		}
 	}
 
-
     void draw_inspector_widget(widget *ctx)
     {
         ImGui::InputText("label", &ctx->label);
+        ImGui::DragFloat2("size", &ctx->size.x);
 
         switch (ctx->type)
         {
@@ -160,7 +165,6 @@ namespace imgui_editor
             widget_input_text_multiline *args = (widget_input_text_multiline *)ctx->args;
 
             ImGui::InputTextMultiline("text", &args->text);
-            ImGui::DragFloat2("size", &args->size.x);
             ImGui::Combo("flags", &args->flags);
         }
         break;
@@ -486,11 +490,6 @@ namespace imgui_editor
         case widget_type::widget_type_spacing:
         break;
         case widget_type::widget_type_dummy:
-        {
-            widget_dummy *args = (widget_dummy *)ctx->args;
-
-            ImGui::DragFloat2("size", &args->size.x);
-        }
         break;
         case widget_type::widget_type_indent:
         {
@@ -518,7 +517,6 @@ namespace imgui_editor
         {
             widget_begin_end_child *args = (widget_begin_end_child *)ctx->args;
 
-            ImGui::DragFloat2("size", &args->size.x);
             ImGui::Checkbox("border", &args->border);
             ImGui::Combo("flags", &args->flags);
         }
@@ -533,8 +531,6 @@ namespace imgui_editor
         case widget_type::widget_type_begin_end_list_box:
         {
             widget_begin_end_list_box *args = (widget_begin_end_list_box *)ctx->args;
-
-            ImGui::DragFloat2("size", &args->size.x);
                    
             ImGui::DragInt("items_count", &args->items_count);
             ImGui::DragInt("items_height", &args->items_height);

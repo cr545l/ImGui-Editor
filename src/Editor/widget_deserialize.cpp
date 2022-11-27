@@ -158,10 +158,6 @@ namespace imgui_editor
             widget_input_text_multiline* wd = (widget_input_text_multiline*)data;
             stream >> wd->text;
             stream >> comma;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
-            stream >> comma;
             stream >> wd->flags;
         }
         break;
@@ -601,10 +597,6 @@ namespace imgui_editor
             stream >> wd->col.w;
             stream >> comma;
             stream >> wd->flags;
-            stream >> comma;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
         }
         break;
         case widget_type::widget_type_collapsing_header:
@@ -623,14 +615,7 @@ namespace imgui_editor
         }
         break;
         case widget_type::widget_type_spacing: return;
-        case widget_type::widget_type_dummy:
-        {
-            widget_dummy* wd = (widget_dummy*)data;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
-        }
-        break;
+        case widget_type::widget_type_dummy: return;
         case widget_type::widget_type_indent:
         {
             widget_indent* wd = (widget_indent*)data;
@@ -654,10 +639,6 @@ namespace imgui_editor
         case widget_type::widget_type_begin_end_child:
         {
             widget_begin_end_child* wd = (widget_begin_end_child*)data;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
-            stream >> comma;
             stream >> wd->border;
             stream >> comma;
             stream >> wd->flags;
@@ -672,10 +653,6 @@ namespace imgui_editor
         case widget_type::widget_type_begin_end_list_box:
         {
             widget_begin_end_list_box* wd = (widget_begin_end_list_box*)data;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
-            stream >> comma;
             stream >> wd->items_count;
             stream >> comma;
             stream >> wd->items_height;
