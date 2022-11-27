@@ -37,6 +37,8 @@ namespace imgui_editor
 		std::vector<style_var_float> style_var_floats;
 		std::vector<style_var_vec2> style_var_vec2s;
 
+		widget* parent = nullptr;
+
 		void(*draw)(widget*) = nullptr;
 		void(*draw_inspector)(widget*) = nullptr;
 	};
@@ -57,7 +59,10 @@ namespace imgui_editor
 	std::string widget_serialize(widget* target);
 	void widget_deserialize(widget* target, const char* data);
 
+	// can undo
 	void attach_child(widget* parent, widget* child);
+
+	void remove_widget(widget* target);
 }
 
 #endif

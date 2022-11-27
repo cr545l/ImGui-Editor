@@ -165,24 +165,28 @@ namespace imgui_editor
 		case widget_type::widget_type_push_pop_tree_node:	delete (widget_push_pop_tree_node*)target;		break;
 		}
 	}
-
 	struct command_attach_child
 	{
 		widget* parent;
 		widget* child;
 		size_t index;
+
+		widget* oldParent;
 	};
 
 	void command_attach_child_undo(void* _context)
 	{
 		command_attach_child* ctx = (command_attach_child*)_context;
 		ctx->parent->children.erase(ctx->parent->children.begin() + ctx->index);
+		ctx->child->parent = ctx->oldParent;
 	}
 
 	void command_attach_child_redo(void* _context)
 	{
 		command_attach_child* ctx = (command_attach_child*)_context;
 		ctx->parent->children.push_back(ctx->child);
+		ctx->oldParent = ctx->child->parent;
+		ctx->child->parent = ctx->parent;
 		ctx->index = ctx->parent->children.size() - 1;
 	}
 
@@ -195,7 +199,7 @@ namespace imgui_editor
 	void attach_child(widget* parent, widget* child)
 	{
 		imgui_editor::command* cmd = new imgui_editor::command();
-		cmd->label = "attach child";
+		cmd->label = "Attach child";
 
 		command_attach_child* ctx = new command_attach_child();
 
@@ -208,7 +212,63 @@ namespace imgui_editor
 		cmd->destructor = command_attach_child_destructor;
 
 		commit(cmd);
+	}
 
-		// parent->children.push_back(child);
+	struct commamd_remove_widget
+	{
+		widget* parent;
+		size_t index;
+
+		std::string widget;
+	};
+
+	void command_remove_widget_undo(void* _context)
+	{
+		commamd_remove_widget* ctx = (commamd_remove_widget*)_context;
+
+		widget* w = new_widget(widget_type::widget_type_none);
+		widget_deserialize(w,ctx->widget.c_str());
+
+		ctx->parent->children.insert(ctx->parent->children.begin() + ctx->index, w);
+	}
+
+	void command_remove_widget_redo(void* _context)
+	{
+		commamd_remove_widget* ctx = (commamd_remove_widget*)_context;
+		ctx->widget = widget_serialize(ctx->parent->children[ctx->index]);
+		ctx->parent->children.erase(ctx->parent->children.begin() + ctx->index);
+	}
+
+	void command_remove_widget_destructor(void* ctx)
+	{
+		commamd_remove_widget* cmd = (commamd_remove_widget*)ctx;
+		delete cmd;
+	}
+
+	void remove_widget(widget* target)
+	{
+		size_t index = std::find(target->parent->children.begin(), target->parent->children.end(), target)-target->parent->children.begin();
+		if(index < target->parent->children.size())
+		{
+			imgui_editor::command* cmd = new imgui_editor::command();
+			cmd->label = "Remove widget";
+
+			commamd_remove_widget* ctx = new commamd_remove_widget();
+
+			ctx->parent = target->parent;
+			ctx->index = index;
+			ctx->widget = widget_serialize(target);
+
+			cmd->argument_data = ctx;
+			cmd->undo = command_remove_widget_undo;
+			cmd->redo = command_remove_widget_redo;
+			cmd->destructor = command_remove_widget_destructor;
+			
+			commit(cmd);
+		}
+		else
+		{
+			debug_break();
+		}
 	}
 }

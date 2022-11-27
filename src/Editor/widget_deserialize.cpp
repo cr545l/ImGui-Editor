@@ -825,6 +825,7 @@ namespace imgui_editor
 			widget_deserialize(child_widget, children[i].c_str());
 
             target_widget->children.push_back(child_widget);
+            child_widget->parent = target_widget;
 		}
 
 		char dummy;

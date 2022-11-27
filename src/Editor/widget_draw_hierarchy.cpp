@@ -31,7 +31,10 @@ namespace imgui_editor
                 {
                     ImGui::Text(_widget->label.c_str());
                     ImGui::Separator();
-                    ImGui::MenuItem("Delete");
+                    if(ImGui::MenuItem("Delete"))
+                    {
+                        remove_widget(_widget);
+                    }
                     ImGui::EndPopup();
                 }
 
