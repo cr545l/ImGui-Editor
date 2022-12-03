@@ -55,10 +55,10 @@ namespace imgui_editor
 	CR_EXPORT void delete_widget_args(widget_type type, void* target);
 
 	std::string widget_data_serialize(widget_type type, void* data);
-	void widget_data_deserialize(widget_type type, void* target, const char* data);
+	CR_EXPORT void widget_data_deserialize(widget_type type, void* target, const char* data);
 
 	std::string widget_serialize(widget* target);
-	void widget_deserialize(widget* target, const char* data);
+	CR_EXPORT void widget_deserialize(widget* target, const char* data);
 
 	enum class generate_code
 	{

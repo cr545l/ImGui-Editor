@@ -71,6 +71,8 @@ namespace imgui_editor
         widget_type::widget_type_begin_end_combo,
         widget_type::widget_type_begin_end_menu,
         widget_type::widget_type_push_pop_tree_node,
+        widget_type::widget_type_push_pop_item_width,
+        widget_type::widget_type_push_pop_text_wrap_pos,
     };
 
     void draw_widget_tool(widget_tool *ctx)

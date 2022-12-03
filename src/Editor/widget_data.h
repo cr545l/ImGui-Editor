@@ -357,9 +357,7 @@ namespace imgui_editor
 	{
 		ImGuiTreeNodeFlags_ flags;
 	};
-
 	
-
 	struct widget_begin_end_window
 	{
 		bool open = true;
@@ -407,6 +405,16 @@ namespace imgui_editor
 	struct widget_push_pop_tree_node
 	{
 		ImGuiTreeNodeFlags_ flags;
+	};
+
+	struct widget_push_pop_item_width
+	{
+		float item_width;
+	};
+
+	struct widget_push_pop_text_wrap_pos
+	{
+		float item_width;
 	};
 
 }

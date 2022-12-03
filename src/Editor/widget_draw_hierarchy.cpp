@@ -1,5 +1,7 @@
 #include "Precompiled.h"
 
+#include <algorithm>
+
 #include "editor/selection.h"
 #include "editor/widget_editor.h"
 #include "editor/widget.h"

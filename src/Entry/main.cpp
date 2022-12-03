@@ -226,6 +226,7 @@ int main(int argc, char **argv) {
 			ini.SetValue("main_window_size", "width", std::to_string(current_width).c_str());
 			ini.SetValue("main_window_size", "height", std::to_string(current_height).c_str());
 			rc = ini.SaveFile("imgui_editor.ini");
+
 			if (rc < 0)
 			{
 				printf("failed to save imgui_editor.ini");

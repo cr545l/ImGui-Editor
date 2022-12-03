@@ -690,9 +690,21 @@ namespace imgui_editor
         case widget_type::widget_type_push_pop_tree_node:
         {
             widget_push_pop_tree_node* wd = (widget_push_pop_tree_node*)data;
-            stream >> wd->flags;
-        }
-        break;
+			stream >> wd->flags;
+		}
+		break;
+		case widget_type::widget_type_push_pop_item_width:
+		{
+			widget_push_pop_item_width* wd = (widget_push_pop_item_width*)data;
+			stream >> wd->item_width;
+		}
+		break;
+		case widget_type::widget_type_push_pop_text_wrap_pos:
+		{
+			widget_push_pop_text_wrap_pos* wd = (widget_push_pop_text_wrap_pos*)data;
+			stream >> wd->item_width;
+		}
+		break;
 		}
 	}
 

@@ -280,6 +280,16 @@ namespace imgui_editor
             widget_push_pop_tree_node* wd = (widget_push_pop_tree_node*)data;
             return string_format("%d", wd->flags);
         }
+        case widget_type::widget_type_push_pop_item_width:
+        {
+            widget_push_pop_item_width* wd = (widget_push_pop_item_width*)data;
+            return string_format("%f", wd->item_width);
+        }
+        case widget_type::widget_type_push_pop_text_wrap_pos:
+        {
+            widget_push_pop_text_wrap_pos* wd = (widget_push_pop_text_wrap_pos*)data;
+            return string_format("%f", wd->item_width);
+        }
         default:
             debug_break();
             return "";

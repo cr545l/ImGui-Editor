@@ -558,9 +558,23 @@ namespace imgui_editor
         break;
         case widget_type::widget_type_begin_end_menu:
         {
-            widget_begin_end_menu *args = (widget_begin_end_menu *)ctx->args;
+            widget_begin_end_menu* args = (widget_begin_end_menu*)ctx->args;
 
             ImGui::Checkbox("enabled", &args->enabled);
+        }
+        break;
+        case widget_type::widget_type_push_pop_item_width:
+        {
+            widget_push_pop_item_width* args = (widget_push_pop_item_width*)ctx->args;
+
+            ImGui::DragFloat("item_width", &args->item_width);
+        }
+        break;
+        case widget_type::widget_type_push_pop_text_wrap_pos:
+        {
+            widget_push_pop_text_wrap_pos* args = (widget_push_pop_text_wrap_pos*)ctx->args;
+
+            ImGui::DragFloat("item_width", &args->item_width);
         }
         break;
 		default:
