@@ -59,6 +59,7 @@ struct HostData {
     imgui_editor::selection_context* selection = nullptr;
 
     std::string* root = nullptr;
+	void (*widget_deserialize)(imgui_editor::widget* target, const char* data);
 };
 
 // some global data from our libs we keep in the host so we
@@ -138,7 +139,7 @@ void drop_callback(GLFWwindow* window, int count, const char** paths)
         std::string content((std::istreambuf_iterator<char>(ifs)),
                             (std::istreambuf_iterator<char>()));
 
-        widget_deserialize(we.root, content.c_str());
+        data.widget_deserialize(we.root, content.c_str());
     }
 }
 
@@ -162,7 +163,7 @@ int main(int argc, char **argv) {
 			printf("failed to save imgui_editor.ini");
 		}
 	}
-
+ 
 	char* stop = nullptr;
 	const char* w_string = ini.GetValue("main_window_size", "width");
 	const char* h_string = ini.GetValue("main_window_size", "height");
@@ -226,7 +227,7 @@ int main(int argc, char **argv) {
 			ini.SetValue("main_window_size", "width", std::to_string(current_width).c_str());
 			ini.SetValue("main_window_size", "height", std::to_string(current_height).c_str());
 			rc = ini.SaveFile("imgui_editor.ini");
-
+  
 			if (rc < 0)
 			{
 				printf("failed to save imgui_editor.ini");

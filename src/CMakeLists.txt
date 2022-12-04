@@ -83,7 +83,7 @@ fips_begin_app(entry cmdline)
     include_directories(thirdparty)
 
     fips_src(GL GROUP_FOLDERS)
-    fips_deps(editor imgui glfw3)
+    fips_deps(imgui glfw3)
 
     if (FIPS_WINDOWS)
         fips_libs(opengl32)

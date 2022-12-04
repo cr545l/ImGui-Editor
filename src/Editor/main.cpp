@@ -42,6 +42,7 @@ struct HostData {
     imgui_editor::selection_context* selection= nullptr;
 
     std::string* root = nullptr;
+    void (*widget_deserialize)(imgui_editor::widget* target, const char* data);
 };
 
 static uint32_t     g_failure = 0;
@@ -456,9 +457,10 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     switch (operation) {
         case CR_LOAD:
             imui_init();
-            imgui_editor::init_widget_editor(g_data->widget_editor, g_data->root->c_str());
-            imgui_editor::init_history(g_data->history);
-            imgui_editor::init_selection(g_data->selection);
+            init_widget_editor(g_data->widget_editor, g_data->root->c_str());
+            init_history(g_data->history);
+            init_selection(g_data->selection);
+			g_data->widget_deserialize = imgui_editor::widget_deserialize;
             return 0;
         case CR_UNLOAD:
             // if needed, save stuff to pass over to next instance
