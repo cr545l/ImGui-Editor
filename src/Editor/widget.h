@@ -54,8 +54,8 @@ namespace imgui_editor
 	CR_EXPORT void delete_widget(widget* target);
 	CR_EXPORT void delete_widget_args(widget_type type, void* target);
 
-	std::string widget_data_serialize(widget_type type, void* data);
-	CR_EXPORT void widget_data_deserialize(widget_type type, void* target, const char* data);
+	std::string widget_data_serialize(widget_type type, void* data, const char*& version);
+	CR_EXPORT void widget_data_deserialize(widget_type type, void* target, const char* data, const char* version);
 
 	std::string widget_serialize(widget* target);
 	CR_EXPORT void widget_deserialize(widget* target, const char* data);
