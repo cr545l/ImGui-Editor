@@ -3,7 +3,6 @@
 
 namespace imgui_editor
 {
-	// 추후 추가될 위젯들을 위해 공백으로 확보
 	enum class widget_type : uint32_t
 	{
 		widget_type_none 						= 0,
