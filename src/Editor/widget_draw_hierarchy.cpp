@@ -5,6 +5,7 @@
 #include "editor/selection.h"
 #include "editor/widget_editor.h"
 #include "editor/widget.h"
+#include "editor/command.h"
 
 namespace imgui_editor
 {
@@ -26,7 +27,7 @@ namespace imgui_editor
 			bool showChildren = ImGui::TreeNodeEx(current_widget->label.c_str(), flag, "%s (%s)", current_widget->label.c_str(), get_pretty_name(current_widget->type));
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			{
-				selection::select(current_widget);
+				command::select(current_widget);
 			}
 			if (ImGui::BeginPopupContextItem())
 			{
@@ -41,7 +42,7 @@ namespace imgui_editor
 
 			if (remove)
 			{
-				remove_widget(current_widget);
+				command::remove_widget(current_widget);
 			}
 			else
 			{

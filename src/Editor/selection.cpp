@@ -12,7 +12,7 @@ namespace imgui_editor
 		g_context = ctx;
 	}
 
-	namespace selection
+	namespace command
 	{
 		struct command_select_context
 		{
@@ -45,7 +45,7 @@ namespace imgui_editor
 
 		void select(widget* target)
 		{
-			command* cmd = new imgui_editor::command();
+			command_data* cmd = new imgui_editor::command_data();
 			cmd->label = "select";
 
 			command_select_context* ctx = new command_select_context();
@@ -65,7 +65,7 @@ namespace imgui_editor
 
 		void select(std::initializer_list<widget*> targets)
 		{
-			command* cmd = new imgui_editor::command();
+			command_data* cmd = new imgui_editor::command_data();
 			command_select_context* ctx = new command_select_context();
 
 			assert(0 < targets.size());
@@ -84,7 +84,10 @@ namespace imgui_editor
 
 			commit(cmd);
 		}
+	}
 
+	namespace selection
+	{
 		widget* get_target()
 		{
 			return g_context->target;

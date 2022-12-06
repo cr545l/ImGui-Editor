@@ -14,9 +14,6 @@ namespace imgui_editor
 
 	namespace selection
 	{
-		void select(widget* target);
-		void select(std::initializer_list<widget*> targets);
-
 		widget* get_target();
 		const std::vector<widget*> get_targets();
 	}

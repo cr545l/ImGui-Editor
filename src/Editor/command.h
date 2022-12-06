@@ -1,0 +1,24 @@
+#ifndef __COMMAND_H__
+#define __COMMAND_H__
+
+namespace imgui_editor
+{
+    struct widget;
+    enum class widget_type : uint32_t;
+
+    // Support Undo / Redo
+    namespace command
+    {
+	    void create_widget(widget* parent, const widget_type& type);
+
+	    void attach_child(widget* parent, widget* child);
+
+        void remove_widget(widget* target);
+
+		void select(widget* target);
+        
+		void select(std::initializer_list<widget*> targets);
+    }
+}
+
+#endif

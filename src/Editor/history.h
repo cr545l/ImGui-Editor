@@ -3,7 +3,7 @@
 
 namespace imgui_editor
 {
-	struct command
+	struct command_data
 	{
 		const char* label = "empty";
 		void* argument_data;
@@ -14,13 +14,13 @@ namespace imgui_editor
 
 	struct history
 	{
-		std::vector<command*> commands;
+		std::vector<command_data*> commands;
 		size_t index = SIZE_MAX;
 	};
 
 	void init_history(history* history);
 
-	void commit(command* ctx);
+	void commit(command_data* ctx);
 
 	void undo();
 	void redo();

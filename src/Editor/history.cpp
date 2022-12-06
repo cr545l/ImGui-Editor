@@ -5,12 +5,12 @@ namespace imgui_editor
 {
     static history* g_context = nullptr;
 
-    void command_undo(command* ctx)
+    void command_undo(command_data* ctx)
     {
         ctx->undo(ctx->argument_data);
     }
 
-    void command_redo(command* ctx)
+    void command_redo(command_data* ctx)
     {
         ctx->redo(ctx->argument_data);
     }
@@ -20,7 +20,7 @@ namespace imgui_editor
         g_context = history;
     }
 
-    void commit(command* ctx)
+    void commit(command_data* ctx)
     {
         for (size_t i = g_context->index + 1, max = g_context->commands.size(); i < max; ++i)
         {

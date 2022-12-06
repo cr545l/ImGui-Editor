@@ -3,6 +3,7 @@
 #include "editor/widget.h"
 #include "editor/widget_data.h"
 #include "editor/selection.h"
+#include "editor/command.h"
 
 namespace imgui_editor
 {
@@ -63,17 +64,17 @@ namespace imgui_editor
 		case widget_type::widget_type_dummy:					return "Dummy";
 		case widget_type::widget_type_indent:					return "Indent";
 		case widget_type::widget_type_unindent:					return "Unindent";
-		case  widget_type::widget_type_begin_end_window:		return "Begin End Window";
-		case  widget_type::widget_type_begin_end_child: 		return "Begin End Child";
-		case  widget_type::widget_type_begin_end_popup: 		return "Begin End Popup";
-		case  widget_type::widget_type_begin_end_list_box: 		return "Begin End List Box";
-		case  widget_type::widget_type_begin_end_table: 		return "Begin End Table";
-		case  widget_type::widget_type_begin_end_group: 		return "Begin End Group";
-		case  widget_type::widget_type_begin_end_combo: 		return "Begin End Combo";
-		case  widget_type::widget_type_begin_end_menu: 			return "Begin End Menu";
-		case  widget_type::widget_type_push_pop_tree_node: 		return "Push Pop Tree Node";
-		case  widget_type::widget_type_push_pop_item_width: 	return "Push Pop Item Width";
-		case  widget_type::widget_type_push_pop_text_wrap_pos: 	return "Push Pop Text Wrap Pos";
+		case widget_type::widget_type_begin_end_window:			return "Begin End Window";
+		case widget_type::widget_type_begin_end_child: 			return "Begin End Child";
+		case widget_type::widget_type_begin_end_popup: 			return "Begin End Popup";
+		case widget_type::widget_type_begin_end_list_box: 		return "Begin End List Box";
+		case widget_type::widget_type_begin_end_table: 			return "Begin End Table";
+		case widget_type::widget_type_begin_end_group: 			return "Begin End Group";
+		case widget_type::widget_type_begin_end_combo: 			return "Begin End Combo";
+		case widget_type::widget_type_begin_end_menu: 			return "Begin End Menu";
+		case widget_type::widget_type_push_pop_tree_node: 		return "Push Pop Tree Node";
+		case widget_type::widget_type_push_pop_item_width: 		return "Push Pop Item Width";
+		case widget_type::widget_type_push_pop_text_wrap_pos: 	return "Push Pop Text Wrap Pos";
 		}
 		return "";
 	}
@@ -736,11 +737,37 @@ namespace imgui_editor
 
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 		{
-			selection::select(ctx);
+			command::select(ctx);
 		}
+
 		if (ImGui::IsItemHovered(ImGuiMouseButton_Left))
 		{
 			ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
+		}
+
+		if(ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
+			ImGui::Text(ctx->label.c_str());
+			ImGui::EndDragDropSource();
+		}
+
+		if(ImGui::BeginDragDropTarget())
+		{
+			if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
+			{
+				widget* source = *(widget**)payload->Data;
+				if(source != ctx)
+				{
+					// command::select(source);
+					// command::select(ctx);
+					// source->parent->children.erase(std::find(source->parent->children.begin(), source->parent->children.end(), source));
+					// ctx->children.push_back(source);
+					// source->parent = ctx;
+					command::attach_child(ctx, source);
+				}
+			}
+			ImGui::EndDragDropTarget();
 		}
 
 		if (!begin_type)

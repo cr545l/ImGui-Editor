@@ -70,11 +70,6 @@ namespace imgui_editor
 
 	std::string widget_generate(generate_code code, widget* target);
 
-	// can undo
-	void attach_child(widget* parent, widget* child);
-
-	void remove_widget(widget* target);
-
 	// TODO
 	// struct widget_args_required
 	// {

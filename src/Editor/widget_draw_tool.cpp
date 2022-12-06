@@ -2,7 +2,7 @@
 
 #include "editor/widget_editor.h"
 #include "editor/selection.h"
-#include "editor/history.h"
+#include "editor/command.h"
 
 extern ImVec2 g_unitSize;
 
@@ -103,12 +103,12 @@ namespace imgui_editor
                 {
                     for (auto i : selected)
                     {
-                        attach_child(i, new_widget(ctx->type));
+                        command::create_widget(i, ctx->type);
                     }
                 }
                 else
                 {
-                    attach_child(ctx->root, new_widget(ctx->type));
+                    command::create_widget(ctx->root, ctx->type);
                 }
             }
             ImGui::EndDisabled();

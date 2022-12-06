@@ -22,6 +22,9 @@ fips_begin_sharedlib(editor cmdline)
         
     fips_files(editor/history.h)
     fips_files(editor/history.cpp)
+        
+    fips_files(editor/command.h)
+    fips_files(editor/command.cpp)
     
     fips_files(editor/selection.h)
     fips_files(editor/selection.cpp)
