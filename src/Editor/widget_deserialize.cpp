@@ -88,7 +88,7 @@ namespace imgui_editor
 		return stream;
 	}
 
-	void widget_data_deserialize(widget_type type, void* data, const char* str, const char* version)
+	void widget_data_deserialize(widget_type type, void* data, const char* str, const std::string& version)
 	{
 		std::istringstream stream(str);
 		char comma;
@@ -781,7 +781,7 @@ namespace imgui_editor
         target_widget->type = (widget_type)strtoul(read.c_str(), &pos, 0);
 
         std::getline(widget_stream, read, ',');
-        std::string version = read;
+        const std::string version = read;
 
         std::getline(widget_stream, read, '{');
         std::getline(widget_stream, read, '}');
@@ -789,7 +789,7 @@ namespace imgui_editor
         if (nullptr != target_widget->args) delete_widget_args(target_widget->type, target_widget->args);
         target_widget->args = new_widget_arg(target_widget->type);
 
-        widget_data_deserialize(target_widget->type, target_widget->args, read.c_str(), version.c_str());
+        widget_data_deserialize(target_widget->type, target_widget->args, read.c_str(), version);
 
         std::getline(widget_stream, read, ',');
 
