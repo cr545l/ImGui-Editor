@@ -66,14 +66,14 @@ namespace imgui_editor
 		widget_type_input_text					,
 		widget_type_input_text_multiline		,
 		widget_type_input_text_with_hint		,
-		widget_type_input_int					,
-		widget_type_input_int2					,
-		widget_type_input_int3					,
-		widget_type_input_int4					,
 		widget_type_input_float					,
 		widget_type_input_float2				,
 		widget_type_input_float3				,
 		widget_type_input_float4				,
+		widget_type_input_int					,
+		widget_type_input_int2					,
+		widget_type_input_int3					,
+		widget_type_input_int4					,
 		widget_type_input_double				,
 
 		// Widgets: Color Editor/Picker 

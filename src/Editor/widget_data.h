@@ -4,6 +4,78 @@
 namespace imgui_editor
 {	
 	struct widget_none {};
+	
+	// Windows
+
+	struct widget_begin_end_window
+	{
+		bool open = true;
+		ImGuiWindowFlags_ flags;
+	};
+
+	struct widget_begin_end_child
+	{
+		bool border = 1;
+		ImGuiWindowFlags_ flags;
+	};
+
+	// Parameters stacks (current window)
+	
+	struct widget_push_pop_item_width
+	{
+		float item_width;
+	};
+
+	struct widget_push_pop_text_wrap_pos
+	{
+		float item_width;
+	};
+
+	// Cursor / Layout
+
+	struct widget_separator { };
+
+	struct widget_same_line
+	{
+		float offset_from_start_x = 0.0f;
+		float spacing = -1.0f;
+	};
+
+	struct widget_spacing { };
+
+	struct widget_dummy
+	{
+	};
+
+	struct widget_indent
+	{
+		float indent_w = 0.0f;
+	};
+
+	struct widget_unindent
+	{
+		float indent_w = 0.0f;
+	};
+
+	struct widget_begin_end_group { };
+
+	// Widgets: Text
+	
+	struct widget_text {};
+
+	struct widget_text_colored
+	{
+		ImColor color;
+	};
+
+	struct widget_label_text
+	{
+		std::string text;
+	};
+
+	struct widget_bullet_text { };
+
+	// Widgets: Main
 
 	struct widget_button { };
 
@@ -25,151 +97,17 @@ namespace imgui_editor
 		bool active = false;
 	};
 
-	struct widget_text {};
-
-	struct widget_text_colored
-	{
-		ImColor color;
-	};
-
-	struct widget_bullet_text { };
-
 	struct widget_bullet { };
 
-	struct widget_selectable
+	// Widgets: Combo Box
+	
+	struct widget_begin_end_combo
 	{
-		bool selected = false;
-		ImGuiSelectableFlags_ flags;
+		std::string preview_value;
+		ImGuiComboFlags_ flags;
 	};
 
-	struct widget_label_text
-	{
-		std::string text;
-	};
-
-	struct widget_input_text
-	{
-		std::string text;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_text_multiline
-	{
-		std::string text;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_text_with_hint
-	{
-		std::string text;
-		std::string hint;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_int
-	{
-		int value;
-		int step;
-		int step_fast;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_int2
-	{
-		int value[2];
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_int3
-	{
-		int value[3];
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_int4
-	{
-		int value[4];
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_float
-	{
-		float value;
-		float step;
-		float step_fast;
-		std::string format;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_float2
-	{
-		float value[2];
-		std::string format;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_float3
-	{
-		float value[3];
-		std::string format;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_float4
-	{
-		float value[4];
-		std::string format;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_input_double
-	{
-		double value;
-		double step;
-		double step_fast;
-		std::string format;
-		ImGuiInputTextFlags_ flags;
-	};
-
-	struct widget_drag_int
-	{
-		int value;
-		float speed;
-		int min;
-		int max;
-		std::string format;
-		ImGuiSliderFlags_ flags;
-	};
-
-	struct widget_drag_int2
-	{
-		int value[2];
-		float speed;
-		int min;
-		int max;
-		std::string format;
-		ImGuiSliderFlags_ flags;
-	};
-
-	struct widget_drag_int3
-	{
-		int value[3];
-		float speed;
-		int min;
-		int max;
-		std::string format;
-		ImGuiSliderFlags_ flags;
-	};
-
-	struct widget_drag_int4
-	{
-		int value[4];
-		float speed;
-		int min;
-		int max;
-		std::string format;
-		ImGuiSliderFlags_ flags;
-	};
+	// Widgets: Drag Sliders
 	
 	struct widget_drag_float
 	{
@@ -211,41 +149,47 @@ namespace imgui_editor
 		ImGuiSliderFlags_ flags;
 	};
 
-	struct widget_slider_int
+	struct widget_drag_int
 	{
-		int value = 0;
-		int min = 0;
-		int max = 0;
+		int value;
+		float speed;
+		int min;
+		int max;
 		std::string format;
 		ImGuiSliderFlags_ flags;
 	};
 
-	struct widget_slider_int2
+	struct widget_drag_int2
 	{
-		int value[2] = {0,};
-		int min = 0;
-		int max = 0;
+		int value[2];
+		float speed;
+		int min;
+		int max;
 		std::string format;
 		ImGuiSliderFlags_ flags;
 	};
 
-	struct widget_slider_int3
+	struct widget_drag_int3
 	{
-		int value[3] = {0,};
-		int min = 0;
-		int max = 0;
+		int value[3];
+		float speed;
+		int min;
+		int max;
 		std::string format;
 		ImGuiSliderFlags_ flags;
 	};
 
-	struct widget_slider_int4
+	struct widget_drag_int4
 	{
-		int value[4] = {0,};
-		int min = 0;
-		int max = 0;
+		int value[4];
+		float speed;
+		int min;
+		int max;
 		std::string format;
 		ImGuiSliderFlags_ flags;
 	};
+
+	// Widgets: Regular Sliders
 
 	struct widget_slider_float
 	{
@@ -292,6 +236,130 @@ namespace imgui_editor
 		ImGuiSliderFlags_ flags;
 	};
 
+	struct widget_slider_int
+	{
+		int value = 0;
+		int min = 0;
+		int max = 0;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	struct widget_slider_int2
+	{
+		int value[2] = {0,};
+		int min = 0;
+		int max = 0;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	struct widget_slider_int3
+	{
+		int value[3] = {0,};
+		int min = 0;
+		int max = 0;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	struct widget_slider_int4
+	{
+		int value[4] = {0,};
+		int min = 0;
+		int max = 0;
+		std::string format;
+		ImGuiSliderFlags_ flags;
+	};
+
+	// Widgets: Input with Keyboard
+
+	struct widget_input_text
+	{
+		std::string text;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_text_multiline
+	{
+		std::string text;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_text_with_hint
+	{
+		std::string text;
+		std::string hint;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_float
+	{
+		float value;
+		float step;
+		float step_fast;
+		std::string format;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_float2
+	{
+		float value[2];
+		std::string format;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_float3
+	{
+		float value[3];
+		std::string format;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_float4
+	{
+		float value[4];
+		std::string format;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_int
+	{
+		int value;
+		int step;
+		int step_fast;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_int2
+	{
+		int value[2];
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_int3
+	{
+		int value[3];
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_int4
+	{
+		int value[4];
+		ImGuiInputTextFlags_ flags;
+	};
+
+	struct widget_input_double
+	{
+		double value;
+		double step;
+		double step_fast;
+		std::string format;
+		ImGuiInputTextFlags_ flags;
+	};
+
+	// Widgets: Color Editor/Picker 
+
 	struct widget_color_edit3
 	{
 		float value[3] = {0.0f,};
@@ -322,65 +390,33 @@ namespace imgui_editor
 		ImGuiColorEditFlags_ flags;
 	};
 
-	struct widget_list_box
+	// Widgets: Trees
+
+	struct widget_push_pop_tree_node
 	{
-		int current_item = 0;
-		std::vector<std::string> items;
-		int height_in_items = -1;
-	};
-
-	struct widget_same_line
-	{
-		float offset_from_start_x = 0.0f;
-		float spacing = -1.0f;
-	};
-
-	struct widget_separator { };
-
-	struct widget_spacing { };
-
-	struct widget_dummy
-	{
-	};
-
-	struct widget_indent
-	{
-		float indent_w = 0.0f;
-	};
-
-	struct widget_unindent
-	{
-		float indent_w = 0.0f;
+		ImGuiTreeNodeFlags_ flags;
 	};
 
 	struct widget_collapsing_header
 	{
 		ImGuiTreeNodeFlags_ flags;
 	};
-	
-	struct widget_begin_end_window
+
+	// Widgets: Selectables
+
+	struct widget_selectable
 	{
-		bool open = true;
-		ImGuiWindowFlags_ flags;
+		bool selected = false;
+		ImGuiSelectableFlags_ flags;
 	};
 
-	struct widget_begin_end_child
-	{
-		bool border = 1;
-		ImGuiWindowFlags_ flags;
-	};
+	// Widgets: List Boxes
 
-	struct widget_begin_end_popup
+	struct widget_list_box
 	{
-		ImGuiWindowFlags_ flags;
-	};
-	
-	struct widget_begin_end_table
-	{
-		int columns = 1;
-		ImGuiTableFlags_ flags;
-		ImVec2 outer_size;
-		float inner_width = 0;
+		int current_item = 0;
+		std::vector<std::string> items;
+		int height_in_items = -1;
 	};
 
 	struct widget_begin_end_list_box
@@ -389,34 +425,29 @@ namespace imgui_editor
 		int items_height;
 	};
 
-	struct widget_begin_end_group { };
-	
-	struct widget_begin_end_combo
-	{
-		std::string preview_value;
-		ImGuiComboFlags_ flags;
-	};
+	// Widgets: Menus
 
 	struct widget_begin_end_menu
 	{
 		bool enabled = true;
 	};
 
-	struct widget_push_pop_tree_node
-	{
-		ImGuiTreeNodeFlags_ flags;
-	};
+	// Popups, Modals
 
-	struct widget_push_pop_item_width
+	struct widget_begin_end_popup
 	{
-		float item_width;
+		ImGuiWindowFlags_ flags;
 	};
+	
+	// Tables
 
-	struct widget_push_pop_text_wrap_pos
+	struct widget_begin_end_table
 	{
-		float item_width;
+		int columns = 1;
+		ImGuiTableFlags_ flags;
+		ImVec2 outer_size;
+		float inner_width = 0;
 	};
-
 }
 
 #endif

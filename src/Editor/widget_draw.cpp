@@ -142,14 +142,14 @@ namespace imgui_editor
 			case  widget_type::widget_type_input_text					: return 9001;
 			case  widget_type::widget_type_input_text_multiline			: return 9002;
 			case  widget_type::widget_type_input_text_with_hint			: return 9003;
-			case  widget_type::widget_type_input_int					: return 9004;
-			case  widget_type::widget_type_input_int2					: return 9005;
-			case  widget_type::widget_type_input_int3					: return 9006;
-			case  widget_type::widget_type_input_int4					: return 9007;
 			case  widget_type::widget_type_input_float					: return 9008;
 			case  widget_type::widget_type_input_float2					: return 9009;
 			case  widget_type::widget_type_input_float3					: return 9010;
 			case  widget_type::widget_type_input_float4					: return 9011;
+			case  widget_type::widget_type_input_int					: return 9004;
+			case  widget_type::widget_type_input_int2					: return 9005;
+			case  widget_type::widget_type_input_int3					: return 9006;
+			case  widget_type::widget_type_input_int4					: return 9007;
 			case  widget_type::widget_type_input_double					: return 9012;
 
 			// Widgets: Color Editor/Picker 
@@ -237,14 +237,14 @@ namespace imgui_editor
 		case 9001: return widget_type::widget_type_input_text				;
 		case 9002: return widget_type::widget_type_input_text_multiline		;
 		case 9003: return widget_type::widget_type_input_text_with_hint		;
-		case 9004: return widget_type::widget_type_input_int				;
-		case 9005: return widget_type::widget_type_input_int2				;
-		case 9006: return widget_type::widget_type_input_int3				;
-		case 9007: return widget_type::widget_type_input_int4				;
 		case 9008: return widget_type::widget_type_input_float				;
 		case 9009: return widget_type::widget_type_input_float2				;
 		case 9010: return widget_type::widget_type_input_float3				;
 		case 9011: return widget_type::widget_type_input_float4				;
+		case 9004: return widget_type::widget_type_input_int				;
+		case 9005: return widget_type::widget_type_input_int2				;
+		case 9006: return widget_type::widget_type_input_int3				;
+		case 9007: return widget_type::widget_type_input_int4				;
 		case 9012: return widget_type::widget_type_input_double				;
 
 		case 10001: return widget_type::widget_type_color_edit3				;
