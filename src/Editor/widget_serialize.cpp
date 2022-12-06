@@ -377,8 +377,8 @@ namespace imgui_editor
 		}
         const char* version = "";
         std::string args = widget_data_serialize(target->type, target->args, version);
-        return string_format("{%d,%s,{%s},%s,%f,%f,[%s],[%s],[%s],[%s]}", 
-        target->type,
+        return string_format("{%lu,%s,{%s},%s,%f,%f,[%s],[%s],[%s],[%s]}", 
+        to_fixed_type(target->type),
         version,
         args.c_str(),
         target->label.c_str(), 

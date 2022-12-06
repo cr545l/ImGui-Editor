@@ -1,6 +1,7 @@
 Logic required by the widget
 
-- Type
+- Fixed Type
+- Enum Type
 - Pretty name
 - Args Data
 - New

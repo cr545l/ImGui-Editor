@@ -42,9 +42,12 @@ namespace imgui_editor
 
 		void(*draw)(widget*) = nullptr;
 		void(*draw_inspector)(widget*) = nullptr;
-	};
+	};	
 
 	const char* get_pretty_name(widget_type type);
+
+	int32_t to_fixed_type(widget_type type);
+	widget_type to_widget_type(int32_t fixed_type);
 
 	void draw_widget(widget* context);
 	void draw_inspector_widget(widget* context);
@@ -71,6 +74,23 @@ namespace imgui_editor
 	void attach_child(widget* parent, widget* child);
 
 	void remove_widget(widget* target);
+
+	// TODO
+	// struct widget_args_required
+	// {
+	// 	size_t unique_id = 0;
+	// 	widget_type type = widget_type::widget_type_none;
+	// 	const char* pretty_name = nullptr;
+	// 	void*(* new_args)() = nullptr;
+	// 	void(* delete_args)(void*) = nullptr;
+	// 	void(* on_gui)(void*) = nullptr;
+	// 	void(* on_inspector)(void*) = nullptr;
+	// 	std::string(*serialize)(const char*&);
+	// 	void(*deserialize)(void*, const char*, const std::string&);
+	// 	std::string(*gen)(const generate_code&, void*);
+	// };
+
+	// widget_args_required& get_widget_args_required(widget_type type);
 }
 
 #endif

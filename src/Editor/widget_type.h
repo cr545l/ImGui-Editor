@@ -6,80 +6,102 @@ namespace imgui_editor
 	// 추후 추가될 위젯들을 위해 공백으로 확보
 	enum class widget_type : uint32_t
 	{
-		widget_type_none = 0,
+		widget_type_none 						= 0,
 
-		widget_type_button = 1000,
-		widget_type_small_button,
-		widget_type_checkbox,
-		widget_type_checkbox_flags,
-		widget_type_radio_button,
+		// Windows
+		widget_type_begin_end_window 			,
+		widget_type_begin_end_child				,
 
-		widget_type_text = 2000,
-		widget_type_text_colored,
-		widget_type_bullet_text,
-		widget_type_bullet,
-		widget_type_selectable,
+		// Parameters stacks (current window)
+		widget_type_push_pop_item_width			,
+		widget_type_push_pop_text_wrap_pos		,
 
-		widget_type_label_text = 3000,
-		widget_type_input_text,
-		widget_type_input_text_multiline,
-		widget_type_input_text_with_hint,
-		widget_type_input_int,
-		widget_type_input_int2,
-		widget_type_input_int3,
-		widget_type_input_int4,
-		widget_type_input_float,
-		widget_type_input_float2,
-		widget_type_input_float3,
-		widget_type_input_float4,
-		widget_type_input_double,
+		// Cursor / Layout
+		widget_type_separator					,
+		widget_type_same_line					,
+		widget_type_spacing						,
+		widget_type_dummy						,
+		widget_type_indent						,
+		widget_type_unindent					,
+		widget_type_begin_end_group				,
 
-		widget_type_drag_int = 4000,
-		widget_type_drag_int2,
-		widget_type_drag_int3,
-		widget_type_drag_int4,		
-		widget_type_drag_float,
-		widget_type_drag_float2,
-		widget_type_drag_float3,
-		widget_type_drag_float4,
+		// Widgets: Text
+		widget_type_text						,
+		widget_type_text_colored				,
+		widget_type_label_text					,
+		widget_type_bullet_text					,
 
-		widget_type_slider_int = 5000,
-		widget_type_slider_int2,
-		widget_type_slider_int3,
-		widget_type_slider_int4,
-		widget_type_slider_float,
-		widget_type_slider_float2,
-		widget_type_slider_float3,
-		widget_type_slider_float4,
-		widget_type_slider_angle,
+		// Widgets: Main
+		widget_type_button						,
+		widget_type_small_button				,
+		widget_type_checkbox					,
+		widget_type_checkbox_flags				,
+		widget_type_radio_button				,
+		widget_type_bullet						,
 
-		widget_type_color_edit3 = 6000,
-		widget_type_color_edit4,
-		widget_type_color_picker3,
-		widget_type_color_picker4,
-		widget_type_color_button,
+		 // Widgets: Combo Box
+		widget_type_begin_end_combo				,
 
-		widget_type_collapsing_header = 7000,		
-		widget_type_separator,
-		widget_type_same_line,
-		widget_type_spacing,
-		widget_type_dummy,
-		widget_type_indent,
-		widget_type_unindent,
+		// Widgets: Drag Sliders
+		widget_type_drag_float					,
+		widget_type_drag_float2					,
+		widget_type_drag_float3					,
+		widget_type_drag_float4					,
+		widget_type_drag_int					,
+		widget_type_drag_int2					,
+		widget_type_drag_int3					,
+		widget_type_drag_int4					,
+		
+		// Widgets: Regular Sliders
+		widget_type_slider_float				,
+		widget_type_slider_float2				,
+		widget_type_slider_float3				,
+		widget_type_slider_float4				,
+		widget_type_slider_angle				,
+		widget_type_slider_int					,
+		widget_type_slider_int2					,
+		widget_type_slider_int3					,
+		widget_type_slider_int4					,
 
-		widget_type_begin_end_window = 8000,
-		widget_type_begin_end_child,
-		widget_type_begin_end_popup,
-		widget_type_begin_end_list_box,
-		widget_type_begin_end_table,
-		widget_type_begin_end_group,
-		widget_type_begin_end_combo,
-		widget_type_begin_end_menu,
+   		// Widgets: Input with Keyboard
+		widget_type_input_text					,
+		widget_type_input_text_multiline		,
+		widget_type_input_text_with_hint		,
+		widget_type_input_int					,
+		widget_type_input_int2					,
+		widget_type_input_int3					,
+		widget_type_input_int4					,
+		widget_type_input_float					,
+		widget_type_input_float2				,
+		widget_type_input_float3				,
+		widget_type_input_float4				,
+		widget_type_input_double				,
 
-		widget_type_push_pop_tree_node = 9000,
-		widget_type_push_pop_item_width,
-		widget_type_push_pop_text_wrap_pos,
+		// Widgets: Color Editor/Picker 
+		widget_type_color_edit3					,
+		widget_type_color_edit4					,
+		widget_type_color_picker3				,
+		widget_type_color_picker4				,
+		widget_type_color_button				,
 
+    	// Widgets: Trees
+		widget_type_push_pop_tree_node			,
+		widget_type_collapsing_header			,
+
+		// Widgets: Selectables
+		widget_type_selectable					,
+
+		// Widgets: List Boxes
+		widget_type_begin_end_list_box			,
+		
+		// Widgets: Menus
+		widget_type_begin_end_menu				,
+
+    	// Popups, Modals
+		widget_type_begin_end_popup				,
+		
+		// Tables
+		widget_type_begin_end_table				,
 	};
 }
 

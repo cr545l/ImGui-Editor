@@ -77,6 +77,193 @@ namespace imgui_editor
 		}
 		return "";
 	}
+	
+	int32_t to_fixed_type(widget_type type)
+	{
+		switch (type)
+		{		
+			// Windows
+			case  widget_type::widget_type_begin_end_window 			: return 1001;
+			case  widget_type::widget_type_begin_end_child				: return 1002;
+
+			// Parameters stacks (current window)
+			case  widget_type::widget_type_push_pop_item_width			: return 2001;
+			case  widget_type::widget_type_push_pop_text_wrap_pos		: return 2002;
+
+			// Cursor / Layout
+			case  widget_type::widget_type_separator					: return 3001;
+			case  widget_type::widget_type_same_line					: return 3002;
+			case  widget_type::widget_type_spacing						: return 3003;
+			case  widget_type::widget_type_dummy						: return 3004;
+			case  widget_type::widget_type_indent						: return 3005;
+			case  widget_type::widget_type_unindent						: return 3006;
+			case  widget_type::widget_type_begin_end_group				: return 3007;
+
+			// Widgets: Text
+			case  widget_type::widget_type_text							: return 4001;
+			case  widget_type::widget_type_text_colored					: return 4002;
+			case  widget_type::widget_type_label_text					: return 4003;
+			case  widget_type::widget_type_bullet_text					: return 4004;
+
+			// Widgets: Main
+			case  widget_type::widget_type_button						: return 5001;
+			case  widget_type::widget_type_small_button					: return 5002;
+
+			case  widget_type::widget_type_checkbox						: return 5003;
+			case  widget_type::widget_type_checkbox_flags				: return 5004;
+			case  widget_type::widget_type_radio_button					: return 5005;
+			case  widget_type::widget_type_bullet						: return 5006;
+
+			// Widgets: Combo Box
+			case  widget_type::widget_type_begin_end_combo				: return 6001;
+
+			// Widgets: Drag Sliders
+			case  widget_type::widget_type_drag_float					: return 7001;
+			case  widget_type::widget_type_drag_float2					: return 7002;
+			case  widget_type::widget_type_drag_float3					: return 7003;
+			case  widget_type::widget_type_drag_float4					: return 7004;
+			case  widget_type::widget_type_drag_int						: return 7005;
+			case  widget_type::widget_type_drag_int2					: return 7006;
+			case  widget_type::widget_type_drag_int3					: return 7007;
+			case  widget_type::widget_type_drag_int4					: return 7008;
+
+			// Widgets: Regular Sliders
+			case  widget_type::widget_type_slider_float					: return 8001;
+			case  widget_type::widget_type_slider_float2				: return 8002;
+			case  widget_type::widget_type_slider_float3				: return 8003;
+			case  widget_type::widget_type_slider_float4				: return 8004;
+			case  widget_type::widget_type_slider_angle					: return 8005;
+			case  widget_type::widget_type_slider_int					: return 8006;
+			case  widget_type::widget_type_slider_int2					: return 8007;
+			case  widget_type::widget_type_slider_int3					: return 8008;
+			case  widget_type::widget_type_slider_int4					: return 8009;
+
+			// Widgets: Input with Keyboard
+			case  widget_type::widget_type_input_text					: return 9001;
+			case  widget_type::widget_type_input_text_multiline			: return 9002;
+			case  widget_type::widget_type_input_text_with_hint			: return 9003;
+			case  widget_type::widget_type_input_int					: return 9004;
+			case  widget_type::widget_type_input_int2					: return 9005;
+			case  widget_type::widget_type_input_int3					: return 9006;
+			case  widget_type::widget_type_input_int4					: return 9007;
+			case  widget_type::widget_type_input_float					: return 9008;
+			case  widget_type::widget_type_input_float2					: return 9009;
+			case  widget_type::widget_type_input_float3					: return 9010;
+			case  widget_type::widget_type_input_float4					: return 9011;
+			case  widget_type::widget_type_input_double					: return 9012;
+
+			// Widgets: Color Editor/Picker 
+			case  widget_type::widget_type_color_edit3					: return 10001;
+			case  widget_type::widget_type_color_edit4					: return 10002;
+			case  widget_type::widget_type_color_picker3				: return 10003;
+			case  widget_type::widget_type_color_picker4				: return 10004;
+			case  widget_type::widget_type_color_button					: return 10005;
+
+			// Widgets: Trees
+			case  widget_type::widget_type_push_pop_tree_node			: return 11001;
+			case  widget_type::widget_type_collapsing_header			: return 11002;
+
+			// Widgets: Selectables
+			case  widget_type::widget_type_selectable					: return 12001;
+
+			// Widgets: List Boxes
+			case  widget_type::widget_type_begin_end_list_box			: return 13001;
+
+			// Widgets: Menus
+			case  widget_type::widget_type_begin_end_menu				: return 14001;
+
+			// Popups; Modals
+			case  widget_type::widget_type_begin_end_popup				: return 15001;
+
+			// Tables
+			case  widget_type::widget_type_begin_end_table				: return 16001;
+			
+			case widget_type::widget_type_none:	
+		default:
+			return 0;
+		}
+	}
+	widget_type to_widget_type(int32_t fixed_type)
+	{
+		switch (fixed_type)
+		{
+		case 1001: return widget_type::widget_type_begin_end_window			;
+		case 1002: return widget_type::widget_type_begin_end_child			;
+
+		case 2001: return widget_type::widget_type_push_pop_item_width		;
+		case 2002: return widget_type::widget_type_push_pop_text_wrap_pos	;
+
+		case 3001: return widget_type::widget_type_separator				;
+		case 3002: return widget_type::widget_type_same_line				;
+		case 3003: return widget_type::widget_type_spacing					;
+		case 3004: return widget_type::widget_type_dummy					;
+		case 3005: return widget_type::widget_type_indent					;
+		case 3006: return widget_type::widget_type_unindent					;
+		case 3007: return widget_type::widget_type_begin_end_group			;
+
+		case 4001: return widget_type::widget_type_text						;
+		case 4002: return widget_type::widget_type_text_colored				;
+		case 4003: return widget_type::widget_type_label_text				;
+		case 4004: return widget_type::widget_type_bullet_text				;
+
+		case 5001: return widget_type::widget_type_button					;
+		case 5002: return widget_type::widget_type_small_button				;
+		case 5003: return widget_type::widget_type_checkbox					;
+		case 5004: return widget_type::widget_type_checkbox_flags			;
+		case 5005: return widget_type::widget_type_radio_button				;
+		case 5006: return widget_type::widget_type_bullet					;
+		
+		case 6001: return widget_type::widget_type_begin_end_combo			;
+
+		case 7001: return widget_type::widget_type_drag_float				;
+		case 7002: return widget_type::widget_type_drag_float2				;
+		case 7003: return widget_type::widget_type_drag_float3				;
+		case 7004: return widget_type::widget_type_drag_float4				;
+		case 7005: return widget_type::widget_type_drag_int					;
+		case 7006: return widget_type::widget_type_drag_int2				;
+		case 7007: return widget_type::widget_type_drag_int3				;
+		case 7008: return widget_type::widget_type_drag_int4				;
+
+		case 8001: return widget_type::widget_type_slider_float				;
+		case 8002: return widget_type::widget_type_slider_float2			;
+		case 8003: return widget_type::widget_type_slider_float3			;
+		case 8004: return widget_type::widget_type_slider_float4			;
+		case 8005: return widget_type::widget_type_slider_angle				;
+		case 8006: return widget_type::widget_type_slider_int				;
+		case 8007: return widget_type::widget_type_slider_int2				;
+		case 8008: return widget_type::widget_type_slider_int3				;
+		case 8009: return widget_type::widget_type_slider_int4				;
+
+		case 9001: return widget_type::widget_type_input_text				;
+		case 9002: return widget_type::widget_type_input_text_multiline		;
+		case 9003: return widget_type::widget_type_input_text_with_hint		;
+		case 9004: return widget_type::widget_type_input_int				;
+		case 9005: return widget_type::widget_type_input_int2				;
+		case 9006: return widget_type::widget_type_input_int3				;
+		case 9007: return widget_type::widget_type_input_int4				;
+		case 9008: return widget_type::widget_type_input_float				;
+		case 9009: return widget_type::widget_type_input_float2				;
+		case 9010: return widget_type::widget_type_input_float3				;
+		case 9011: return widget_type::widget_type_input_float4				;
+		case 9012: return widget_type::widget_type_input_double				;
+
+		case 10001: return widget_type::widget_type_color_edit3				;
+		case 10002: return widget_type::widget_type_color_edit4				;
+		case 10003: return widget_type::widget_type_color_picker3			;
+		case 10004: return widget_type::widget_type_color_picker4			;
+		case 10005: return widget_type::widget_type_color_button			;
+
+		case 11001: return widget_type::widget_type_push_pop_tree_node		;
+		case 11002: return widget_type::widget_type_collapsing_header		;
+
+		case 12001: return widget_type::widget_type_selectable				;
+
+		case 13001: return widget_type::widget_type_begin_end_list_box		;
+		case 14001: return widget_type::widget_type_begin_end_menu			;
+		case 15001: return widget_type::widget_type_begin_end_popup			;
+		case 16001: return widget_type::widget_type_begin_end_table			;
+		}
+	}
 
 	void draw_children(widget* ctx)
 	{

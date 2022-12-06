@@ -778,7 +778,8 @@ namespace imgui_editor
 
         std::getline(widget_stream, read, '{');
         std::getline(widget_stream, read, ',');
-        target_widget->type = (widget_type)strtoul(read.c_str(), &pos, 0);
+        size_t fixed_type = strtoul(read.c_str(), &pos, 0);
+        target_widget->type = to_widget_type(fixed_type);
 
         std::getline(widget_stream, read, ',');
         const std::string version = read;
