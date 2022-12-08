@@ -3,9 +3,90 @@
 
 #include <algorithm>
 #include <magic_enum/magic_enum.hpp>
+#include <sstream>
 
 namespace imgui_editor
 {
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiSelectableFlags_& flags)
+	{
+		int i = 0;
+		stream >> i;
+		flags = (ImGuiSelectableFlags_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiCol_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiCol_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiStyleVar_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiStyleVar_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiInputTextFlags_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiInputTextFlags_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiColorEditFlags_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiColorEditFlags_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiSliderFlags_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiSliderFlags_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiTreeNodeFlags_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiTreeNodeFlags_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiWindowFlags_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiWindowFlags_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiTableFlags_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiTableFlags_)i;
+		return stream;
+	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiComboFlags_& col)
+	{
+		int i = 0;
+		stream >> i;
+		col = (ImGuiComboFlags_)i;
+		return stream;
+	}
+    
     template<typename ... Args>
     std::string string_format(const std::string& format, Args ... args)
     {

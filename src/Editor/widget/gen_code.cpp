@@ -1,7 +1,5 @@
 #include "Precompiled.h"
 
-#include <sstream>
-#include <magic_enum/magic_enum.hpp>
 #include "editor/imgui_ex.h"
 
 #include "editor/widget.h"

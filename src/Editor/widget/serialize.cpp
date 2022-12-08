@@ -11,6 +11,9 @@ namespace imgui_editor
         switch (type)
         {
         case widget_type::widget_type_none: return "";
+		// Windows
+
+
         case widget_type::widget_type_button: return "";
         case widget_type::widget_type_small_button: return "";
         case widget_type::widget_type_checkbox:
@@ -348,45 +351,5 @@ namespace imgui_editor
             debug_break();
             return "";
         }
-    }
-    
-	std::string widget_serialize(widget* target)
-    {
-        std::string children;
-        for(size_t i = 0, max = target->children.size(); i < max; ++i)
-        {
-            children += string_format("%s,", widget_serialize(target->children[i]).c_str());
-        }
-
-        std::string style_colors;
-        for (size_t i = 0, max = target->style_colors.size(); i < max; ++i)
-        {
-            style_colors += string_format("{%d,%f,%f,%f,%f},", (int)target->style_colors[i].idx, target->style_colors[i].col.Value.x, target->style_colors[i].col.Value.y, target->style_colors[i].col.Value.z, target->style_colors[i].col.Value.w);
-        }
-
-        std::string style_var_floats;
-        for (size_t i = 0, max = target->style_var_floats.size(); i < max; ++i)
-        {
-            style_var_floats += string_format("{%d,%f},", (int)target->style_var_floats[i].idx, target->style_var_floats[i].val);
-        }
-
-		std::string style_var_vec2s;
-		for (size_t i = 0, max = target->style_var_vec2s.size(); i < max; ++i)
-		{
-            style_var_vec2s += string_format("{%d,%f,%f},", (int)target->style_var_vec2s[i].idx, target->style_var_vec2s[i].val.x, target->style_var_vec2s[i].val.y);
-		}
-        const char* version = "";
-        std::string args = widget_data_serialize(target->type, target->args, version);
-        return string_format("{%lu,%s,{%s},%s,%f,%f,[%s],[%s],[%s],[%s]}", 
-        to_fixed_type(target->type),
-        version,
-        args.c_str(),
-        target->label.c_str(), 
-        target->size.x, 
-        target->size.y, 
-        children.c_str(),
-        style_colors.c_str(),
-        style_var_floats.c_str(),
-        style_var_vec2s.c_str());
     }
 }
