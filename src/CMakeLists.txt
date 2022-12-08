@@ -6,8 +6,6 @@ fips_begin_sharedlib(editor cmdline)
     
     fips_files(editor/widget.h)
     fips_files(editor/widget.cpp)
-    fips_files(editor/widget_draw_hierarchy.cpp)
-    fips_files(editor/widget_draw_tool.cpp)
     
     fips_files(editor/widget/args_data.h)
     fips_files(editor/widget/delete.cpp)
@@ -23,7 +21,11 @@ fips_begin_sharedlib(editor cmdline)
     fips_files(editor/widget/to_enum_type.cpp)
     
     fips_files(editor/widget_editor.h)
-    fips_files(editor/widget_editor.cpp)
+
+    fips_files(editor/window/editor.cpp)    
+    fips_files(editor/window/hierarchy.cpp)
+    fips_files(editor/window/inspector.cpp)
+    fips_files(editor/window/tool.cpp)
         
     fips_files(editor/history.h)
     fips_files(editor/history.cpp)
