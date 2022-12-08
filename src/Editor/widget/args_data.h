@@ -1,5 +1,5 @@
-#ifndef __WIDGET_DATA_H__
-#define __WIDGET_DATA_H__
+#ifndef __ARGS_DATA_H__
+#define __ARGS_DATA_H__
 
 namespace imgui_editor
 {	

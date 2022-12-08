@@ -1,7 +1,7 @@
 #ifndef __WIDGET_H__
 #define __WIDGET_H__
 
-#include "editor/widget_type.h"
+#include "editor/widget/enum_type.h"
 
 namespace imgui_editor
 {

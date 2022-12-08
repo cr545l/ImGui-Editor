@@ -1,5 +1,5 @@
-#ifndef __WIDGET_TYPE_H__
-#define __WIDGET_TYPE_H__
+#ifndef __ENUM_TYPE_H__
+#define __ENUM_TYPE_H__
 
 namespace imgui_editor
 {
