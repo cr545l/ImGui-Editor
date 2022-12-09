@@ -49,6 +49,7 @@ namespace imgui_editor
 {
     void draw_inspector_widget(widget *ctx)
     {
+        ImGui::Text("ID : %zx", ctx->id);
         ImGui::InputText("label", &ctx->label);
         ImGui::DragFloat2("size", &ctx->size.x);
 

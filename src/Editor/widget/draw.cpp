@@ -552,6 +552,7 @@ namespace imgui_editor
 		if (ImGui::IsItemHovered(ImGuiMouseButton_Left))
 		{
 			ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
+			ImGui::GetWindowDrawList()->AddText(ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255), string_format("%s[%zx]",ctx->label.c_str(), ctx->id).c_str());
 		}
 
 		if(ImGui::BeginDragDropSource( ImGuiDragDropFlags_SourceAllowNullID))
