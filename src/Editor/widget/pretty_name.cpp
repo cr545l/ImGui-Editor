@@ -103,6 +103,9 @@ namespace imgui_editor
         
 		// Tables
 		case widget_type::widget_type_begin_end_table: 			return "Begin End Table";
+		case widget_type::widget_type_table_next_row: 			return "Table Next Row";
+		case widget_type::widget_type_table_next_column: 		return "Table Next Column";
+		case widget_type::widget_type_table_set_column_index: 	return "Table Set Column Index";
 		}
 		return "";
 	}

@@ -441,6 +441,21 @@ namespace imgui_editor
 		ImVec2 outer_size;
 		float inner_width = 0;
 	};
+
+	struct widget_table_next_row
+	{
+		ImGuiTableRowFlags_ flags;
+		float min_row_height;
+	};
+
+	struct widget_table_next_column
+	{
+	};
+	
+	struct widget_table_set_column_index
+	{
+		int column_n;
+	};
 #pragma endregion // Tables
 }
 

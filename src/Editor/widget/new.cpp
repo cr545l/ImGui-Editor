@@ -105,6 +105,9 @@ namespace imgui_editor
 
 		// Tables
 		case widget_type::widget_type_begin_end_table:			return new widget_begin_end_table();
+		case widget_type::widget_type_table_next_row:			return new widget_table_next_row();
+		case widget_type::widget_type_table_next_column:		return new widget_table_next_column();
+		case widget_type::widget_type_table_set_column_index:	return new widget_table_set_column_index();
 		}
 		return nullptr;
 	}

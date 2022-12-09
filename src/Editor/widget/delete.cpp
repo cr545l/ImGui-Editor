@@ -104,6 +104,9 @@ namespace imgui_editor
 
 		// Tables
 		case widget_type::widget_type_begin_end_table:			delete (widget_begin_end_table*)target;			break;
+		case widget_type::widget_type_table_next_row: 			delete (widget_table_next_row*)target;			break;
+		case widget_type::widget_type_table_next_column:		delete (widget_table_next_column*)target;		break;
+		case widget_type::widget_type_table_set_column_index:	delete (widget_table_set_column_index*)target;	break;
 		}
 	}
 }

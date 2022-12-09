@@ -86,6 +86,14 @@ namespace imgui_editor
 		col = (ImGuiComboFlags_)i;
 		return stream;
 	}
+
+	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiTableRowFlags_& col)
+	{
+		int i = 0;
+		stream >> i;
+		// col = (ImGuiTableRowFlags_)i;
+		return stream;
+	}
     
     template<typename ... Args>
     std::string string_format(const std::string& format, Args ... args)

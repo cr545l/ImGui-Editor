@@ -691,6 +691,21 @@ namespace imgui_editor
             stream >> wd->inner_width;
         }
         break;
+        case widget_type::widget_type_table_next_row:
+        {
+            widget_table_next_row* wd = (widget_table_next_row*)data;
+            stream >> wd->flags;
+            stream >> comma;
+            stream >> wd->min_row_height;
+        }
+        break;
+        case widget_type::widget_type_table_next_column: return;        
+        case widget_type::widget_type_table_set_column_index:
+        {
+            widget_table_set_column_index* wd = (widget_table_set_column_index*)data;
+            stream >> wd->column_n;
+        }
+        break;
 #pragma endregion // Tables
 		}
 	}

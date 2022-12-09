@@ -593,6 +593,22 @@ namespace imgui_editor
 			ImGui::DragFloat("inner_width", &args->inner_width);
 		}
 		break;
+        case widget_type::widget_type_table_next_row:
+        {
+            widget_table_next_row* args = (widget_table_next_row*)ctx->args;
+
+            ImGui::Combo("flags", &args->flags);
+            ImGui::DragFloat("min_row_height", &args->min_row_height);
+        }
+        break;
+        case widget_type::widget_type_table_next_column: break;
+        case widget_type::widget_type_table_set_column_index:
+        {
+            widget_table_set_column_index* args = (widget_table_set_column_index*)ctx->args;
+
+            ImGui::DragInt("column_n", &args->column_n);
+        }
+        break;
 #pragma endregion // Tables
 		default:
 			debug_break();

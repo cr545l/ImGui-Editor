@@ -116,6 +116,9 @@ namespace imgui_editor
 		
 #pragma region // Tables
 		widget_type_begin_end_table				,
+		widget_type_table_next_row				,
+		widget_type_table_next_column			,
+		widget_type_table_set_column_index		,
 #pragma endregion // Tables
 	};
 }

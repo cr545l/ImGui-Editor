@@ -506,6 +506,24 @@ namespace imgui_editor
 			}
 		}
 		break;
+		case widget_type::widget_type_table_next_row:
+		{
+			widget_table_next_row* args = (widget_table_next_row*)ctx->args;
+			ImGui::TableNextRow(args->flags, args->min_row_height);
+		}
+		break;
+		case widget_type::widget_type_table_next_column:
+		{
+			widget_table_next_column* args = (widget_table_next_column*)ctx->args;
+			ImGui::TableNextColumn();
+		}
+		break;
+		case widget_type::widget_type_table_set_column_index:
+		{
+			widget_table_set_column_index* args = (widget_table_set_column_index*)ctx->args;
+			ImGui::TableSetColumnIndex(args->column_n);
+		}
+		break;
 #pragma endregion // Tables
 
 		default:

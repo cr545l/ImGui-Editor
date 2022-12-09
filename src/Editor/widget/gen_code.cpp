@@ -688,6 +688,29 @@ namespace imgui_editor
                 result += indent + "}\n";
             }
             break;
+            case widget_type::widget_type_table_next_row:
+            {
+                widget_table_next_row* args = (widget_table_next_row*)ctx->args;
+
+                result += indent + string_format("ImGui::TableNextRow((ImGuiTableRowFlags_)%d, %f);\n",
+                    (int)args->flags,
+                    args->min_row_height);
+            }
+            break;
+            case widget_type::widget_type_table_next_column:
+            {
+                widget_table_next_column* args = (widget_table_next_column*)ctx->args;
+
+                result += indent + string_format("ImGui::TableNextColumn();\n");
+            }
+            break;
+            case widget_type::widget_type_table_set_column_index:
+            {
+                widget_table_set_column_index* args = (widget_table_set_column_index*)ctx->args;
+
+                result += indent + string_format("ImGui::TableSetColumnIndex(%d);\n", args->column_n);
+            }
+            break;
 #pragma endregion // Tables
 
             default:

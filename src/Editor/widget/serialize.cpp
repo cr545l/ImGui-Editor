@@ -392,6 +392,19 @@ namespace imgui_editor
             widget_begin_end_table* wd = (widget_begin_end_table*)data;
             return string_format("%d,%d,%f,%f,%f",wd->columns,wd->flags,wd->outer_size.x,wd->outer_size.y,wd->inner_width);
         }
+        case widget_type::widget_type_table_next_row:
+        {
+            version = "0";
+            widget_table_next_row* wd = (widget_table_next_row*)data;
+            return string_format("%d,%f", wd->flags, wd->min_row_height);
+        }
+        case widget_type::widget_type_table_next_column: return "";
+        case widget_type::widget_type_table_set_column_index:
+        {
+            version = "0";
+            widget_table_set_column_index* wd = (widget_table_set_column_index*)data;
+            return string_format("%d", wd->column_n);
+        }
 #pragma endregion // Tables
 
         default:
