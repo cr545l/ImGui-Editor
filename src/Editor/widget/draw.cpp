@@ -79,7 +79,7 @@ namespace imgui_editor
 			widget_push_pop_text_wrap_pos* args = (widget_push_pop_text_wrap_pos*)ctx->args;
 			ImGui::PushTextWrapPos(args->item_width);
 			draw_children(ctx);
-			ImGui::EndMenu();
+			ImGui::PopTextWrapPos();
 		}
 		break;
 #pragma endregion // Parameters stacks (current window)

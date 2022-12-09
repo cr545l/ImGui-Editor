@@ -43,21 +43,15 @@ namespace imgui_editor
 		g_windowSize = io.DisplaySize;
 		g_unitSize = ImGui::CalcTextSize(" ");
 				
-		const bool is_shortcut_key = i.ConfigMacOSXBehaviors ? (io.KeyMods == ImGuiModFlags_Super) : (io.KeyMods == ImGuiModFlags_Ctrl);
+		const bool is_shortcut_key = io.ConfigMacOSXBehaviors ? (io.KeyMods == ImGuiModFlags_Super) : (io.KeyMods == ImGuiModFlags_Ctrl);
         const bool is_undo  = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Z)) && has_undo_command());
 
         const bool is_osx = io.ConfigMacOSXBehaviors;
 		const bool is_osx_shift_shortcut = is_osx && (io.KeyMods == (ImGuiModFlags_Super | ImGuiModFlags_Shift));
         const bool is_redo  = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Y)) || (is_osx_shift_shortcut && ImGui::IsKeyPressed(ImGuiKey_Z))) && has_redo_command();
 
-		if(is_undo)
-		{
-			undo();
-		}
-		if(is_redo)
-		{
-			redo();
-		}
+		if(is_undo) undo();
+		if(is_redo) redo();	
 
 		if (ImGui::BeginMainMenuBar())
 		{
