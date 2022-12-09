@@ -43,7 +43,7 @@ namespace imgui_editor
 	    void create_widget(widget* parent, const widget_type& type)
         {
             imgui_editor::command_data* cmd = new imgui_editor::command_data();
-            cmd->label = "Create widget";
+            cmd->label = string_format("Create widget (%s)", get_pretty_name(type));
 
             create_widget_command::data* ctx = new create_widget_command::data();
 

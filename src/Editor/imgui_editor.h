@@ -7,6 +7,7 @@ namespace imgui_editor
 {
 	struct widget;
 	struct widget_editor;
+	struct history;
 
 	struct widget_tool
 	{
@@ -36,13 +37,14 @@ namespace imgui_editor
 		widget_inspector inspector;
 	};
 
-	void init_widget_editor(widget_editor* context, const char* init);
+	void initialize(widget_editor* context, const char* init);
 
-	void draw_widget_tool(widget_tool* context);
-	void draw_widget_hierarchy(widget_hierarchy* context);
-	void draw_widget_inspector(widget_inspector* context);
+	void draw_tool(widget_tool* context);
+	void draw_hierarchy(widget_hierarchy* context);
+	void draw_inspector(widget_inspector* context);
+	void draw_histroy(history* ctx);
 
-	void draw_widget_editor(widget_editor* context);
+	void draw(widget_editor* context, history* history);
 }
 
 #endif

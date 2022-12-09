@@ -1,4 +1,5 @@
 #include "Precompiled.h"
+#include "editor/imgui_editor.h"
 
 #include <algorithm>
 #include <fstream>
@@ -7,7 +8,6 @@
 #include <portable-file-dialogs/portable-file-dialogs.h>
 #include <simpleini/SimpleIni.h>
 
-#include "editor/widget_editor.h"
 #include "editor/selection.h"
 #include "editor/history.h"
 
@@ -17,7 +17,7 @@ size_t g_widget_id = 0;
 
 namespace imgui_editor
 {
-	void init_widget_editor(widget_editor *ctx, const char* init)
+	void initialize(widget_editor *ctx, const char* init)
 	{
 		g_widget_id = 0;
 		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
@@ -37,11 +37,28 @@ namespace imgui_editor
 		ctx->inspector.editor = ctx;
 	}
 	
-	void draw_widget_editor(widget_editor *ctx)
+	void draw(widget_editor *ctx, history* history)
 	{
-		g_windowSize = ImGui::GetIO().DisplaySize;
+		auto& io = ImGui::GetIO();
+		g_windowSize = io.DisplaySize;
 		g_unitSize = ImGui::CalcTextSize(" ");
 				
+		const bool is_shortcut_key = i.ConfigMacOSXBehaviors ? (io.KeyMods == ImGuiModFlags_Super) : (io.KeyMods == ImGuiModFlags_Ctrl);
+        const bool is_undo  = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Z)) && has_undo_command());
+
+        const bool is_osx = io.ConfigMacOSXBehaviors;
+		const bool is_osx_shift_shortcut = is_osx && (io.KeyMods == (ImGuiModFlags_Super | ImGuiModFlags_Shift));
+        const bool is_redo  = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Y)) || (is_osx_shift_shortcut && ImGui::IsKeyPressed(ImGuiKey_Z))) && has_redo_command();
+
+		if(is_undo)
+		{
+			undo();
+		}
+		if(is_redo)
+		{
+			redo();
+		}
+
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -107,8 +124,8 @@ namespace imgui_editor
 			{
 				ImGui::ShowDemoWindow(&demo);
 			}
-			draw_widget_tool(&ctx->tool);
-			draw_widget_hierarchy(&ctx->hirarchy);
+			draw_tool(&ctx->tool);
+			draw_hierarchy(&ctx->hirarchy);
 		}
 		ImGui::End();
 
@@ -119,9 +136,11 @@ namespace imgui_editor
 		ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, mainMenuSizeY });
 		if (ImGui::Begin("inspector", nullptr, flag))
 		{
+			draw_histroy(history);
+
 			inspectorSize = ImGui::GetWindowSize();
 			inspectorSize.y = g_windowSize.y - mainMenuSizeY;
-			draw_widget_inspector(&ctx->inspector);
+			draw_inspector(&ctx->inspector);
 		}
 		ImGui::End();			
 	}

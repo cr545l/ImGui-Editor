@@ -17,7 +17,7 @@
 
 #include "editor/history.h"
 #include "editor/selection.h"
-#include "editor/widget_editor.h"
+#include "editor/imgui_editor.h"
 
 const char *plugin = DEPLOY_PATH "/" CR_PLUGIN("editor");
 

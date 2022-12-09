@@ -1,13 +1,13 @@
 #include "Precompiled.h"
 #include "editor/widget.h"
-#include "editor/widget_editor.h"
+#include "editor/imgui_editor.h"
 #include "editor/selection.h"
 
 extern ImVec2 g_unitSize;
 
 namespace imgui_editor
 {
-	void draw_widget_inspector(widget_inspector* context)
+	void draw_inspector(widget_inspector* context)
 	{
 		auto selected = selection::get_targets();
 		ImGui::Text("Selected %lu", selected.size());

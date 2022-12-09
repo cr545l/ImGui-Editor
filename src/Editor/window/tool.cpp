@@ -2,7 +2,7 @@
 
 #include <magic_enum/magic_enum.hpp>
 
-#include "editor/widget_editor.h"
+#include "editor/imgui_editor.h"
 #include "editor/selection.h"
 #include "editor/command.h"
 
@@ -10,7 +10,7 @@ extern ImVec2 g_unitSize;
 
 namespace imgui_editor
 {
-    void draw_widget_tool(widget_tool *ctx)
+    void draw_tool(widget_tool *ctx)
     {
         if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unitSize.y * 25), true))
         {

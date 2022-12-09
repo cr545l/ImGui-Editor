@@ -47,7 +47,6 @@ static const ImGuiStyleVarInfo GStyleVarInfo[] =
 
 namespace imgui_editor
 {
-
     void draw_inspector_widget(widget *ctx)
     {
         ImGui::InputText("label", &ctx->label);

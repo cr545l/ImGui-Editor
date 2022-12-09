@@ -3,14 +3,13 @@
 #include <algorithm>
 
 #include "editor/selection.h"
-#include "editor/widget_editor.h"
+#include "editor/imgui_editor.h"
 #include "editor/widget.h"
 #include "editor/command.h"
 
 namespace imgui_editor
 {
-
-	void drawNode(std::vector<widget*>& selected, widget* current_widget)
+	static void draw_node(std::vector<widget*>& selected, widget* current_widget)
 	{
 		ImGui::PushID(current_widget->label.c_str());
 		ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -52,7 +51,7 @@ namespace imgui_editor
 					for (size_t i = 0, max = children.size(); i < max; ++i)
 					{
 						ImGui::PushID(i);
-						drawNode(selected, children[i]);
+						draw_node(selected, children[i]);
 						ImGui::PopID();
 					}
 					ImGui::TreePop();
@@ -63,9 +62,9 @@ namespace imgui_editor
 	};
 
 
-	void draw_widget_hierarchy(widget_hierarchy *context)
+	void draw_hierarchy(widget_hierarchy *context)
 	{
 		std::vector<widget*> selected = selection::get_targets();
-		drawNode(selected, context->root);
+		draw_node(selected, context->root);
 	}
 }

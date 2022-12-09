@@ -5,7 +5,7 @@ namespace imgui_editor
 {
 	struct command_data
 	{
-		const char* label = "empty";
+		std::string label = "empty";
 		void* argument_data;
 		void(*undo)(void*);
 		void(*redo)(void*);

@@ -46,7 +46,7 @@ namespace imgui_editor
 		void select(widget* target)
 		{
 			command_data* cmd = new imgui_editor::command_data();
-			cmd->label = "select";
+			cmd->label = "Select";
 
 			command_select_context* ctx = new command_select_context();
 

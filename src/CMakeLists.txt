@@ -20,12 +20,13 @@ fips_begin_sharedlib(editor cmdline)
     fips_files(editor/widget/serialize.cpp)
     fips_files(editor/widget/to_enum_type.cpp)
     
-    fips_files(editor/widget_editor.h)
-
-    fips_files(editor/window/editor.cpp)    
+    fips_files(editor/imgui_editor.h)
+    fips_files(editor/imgui_editor.cpp)   
+    
     fips_files(editor/window/hierarchy.cpp)
     fips_files(editor/window/inspector.cpp)
     fips_files(editor/window/tool.cpp)
+    fips_files(editor/window/history.cpp)
         
     fips_files(editor/history.h)
     fips_files(editor/history.cpp)

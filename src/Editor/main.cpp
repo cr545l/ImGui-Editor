@@ -5,7 +5,7 @@
 #include <GL/gl3w.h> // gl*
 #include <GLFW/glfw3.h> // GLFW_KEY*
 
-#include "editor/widget_editor.h"
+#include "editor/imgui_editor.h"
 #include "editor/history.h"
 #include "editor/selection.h"
 #include "editor/widget.h"
@@ -457,7 +457,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     switch (operation) {
         case CR_LOAD:
             imui_init();
-            init_widget_editor(g_data->widget_editor, g_data->root->c_str());
+            imgui_editor::initialize(g_data->widget_editor, g_data->root->c_str());
             init_history(g_data->history);
             init_selection(g_data->selection);
 			g_data->widget_deserialize = imgui_editor::widget_deserialize;
@@ -472,7 +472,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
             return 0;
         case CR_STEP:
             imui_frame_begin();
-            imgui_editor::draw_widget_editor(g_data->widget_editor);
+            imgui_editor::draw(g_data->widget_editor, g_data->history);
             imui_frame_end();
             return 0;
     }
