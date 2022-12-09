@@ -554,13 +554,12 @@ namespace imgui_editor
 			ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
 		}
 
-		// TODO
-		// if(ImGui::BeginDragDropSource( ImGuiDragDropFlags_SourceAllowNullID))
-		// {
-		// 	ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
-		// 	ImGui::Text(ctx->label.c_str());
-		// 	ImGui::EndDragDropSource();
-		// }
+		if(ImGui::BeginDragDropSource( ImGuiDragDropFlags_SourceAllowNullID))
+		{
+			ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
+			ImGui::Text(ctx->label.c_str());
+			ImGui::EndDragDropSource();
+		}
 
 		if(ImGui::BeginDragDropTarget())
 		{
@@ -569,11 +568,6 @@ namespace imgui_editor
 				widget* source = *(widget**)payload->Data;
 				if(source != ctx)
 				{
-					// command::select(source);
-					// command::select(ctx);
-					// source->parent->children.erase(std::find(source->parent->children.begin(), source->parent->children.end(), source));
-					// ctx->children.push_back(source);
-					// source->parent = ctx;
 					command::attach_child(ctx, source);
 				}
 			}
