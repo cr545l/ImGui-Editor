@@ -67,13 +67,13 @@ namespace imgui_editor
                 }
                 indent.pop_back();
                 result += indent + "}\n";
-
                 result += indent + string_format("ImGui::End();\n");
             }
             break;
             case widget_type::widget_type_begin_end_child:
             {
                 begin_type = true;
+
                 widget_begin_end_child* args = (widget_begin_end_child*)ctx->args;
 
                 result += indent + string_format("bool open_%zu =ImGui::BeginChild(\"%s\", ImVec2(%f, %f), %s, (ImGuiWindowFlags_)%d);\n",
@@ -93,7 +93,6 @@ namespace imgui_editor
                 }
                 indent.pop_back();
                 result += indent + "}\n";
-
                 result += indent + string_format("ImGui::EndChild();\n");
             }
             break;
@@ -103,6 +102,7 @@ namespace imgui_editor
             case widget_type::widget_type_push_pop_item_width:
             {
                 begin_type = true;
+
                 widget_push_pop_item_width* args = (widget_push_pop_item_width*)ctx->args;
                 result += indent + string_format("ImGui::PushItemWidth(%f);\n", args->item_width);
 
@@ -110,13 +110,13 @@ namespace imgui_editor
                 {
                     result += widget_generate(code, ctx->children[i]);
                 }
-
                 result += indent + string_format("ImGui::PopItemWidth();\n");
             }
             break;
             case widget_type::widget_type_push_pop_text_wrap_pos:
             {
                 begin_type = true;
+
                 widget_push_pop_text_wrap_pos* args = (widget_push_pop_text_wrap_pos*)ctx->args;
                 result += indent + string_format("ImGui::PushTextWrapPos(%f);\n", args->item_width);
 
@@ -124,7 +124,6 @@ namespace imgui_editor
                 {
                     result += widget_generate(code, ctx->children[i]);
                 }
-
                 result += indent + string_format("ImGui::PopTextWrapPos();\n");
             }
             break;
@@ -165,15 +164,14 @@ namespace imgui_editor
             break;
             case widget_type::widget_type_begin_end_group:
             {
-                result += indent + string_format("ImGui::BeginGroup();\n");
-
                 begin_type = true;
+
+                result += indent + string_format("ImGui::BeginGroup();\n");
 
                 for(size_t i =0, max = ctx->children.size(); i < max; ++i)
                 {
                     result += widget_generate(code, ctx->children[i]);
-                }
-                
+                }                
                 result += indent + "ImGui::EndGroup();\n";
             }
             break;
@@ -245,6 +243,8 @@ namespace imgui_editor
 #pragma region // Widgets: Combo Box
             case widget_type::widget_type_begin_end_combo:
             {
+                begin_type = true;
+
                 widget_begin_end_combo* args = (widget_begin_end_combo*)ctx->args;
 
                 result += indent + string_format("bool open_%zu =ImGui::BeginCombo(\"%s\", \"%s\", (ImGuiComboFlags_)%d);\n",
@@ -253,21 +253,15 @@ namespace imgui_editor
                     args->preview_value.c_str(),
                     (int)args->flags);
 
-                begin_type = true;
-
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
-
                 indent += '\t';
                 for(size_t i =0, max = ctx->children.size(); i < max; ++i)
                 {
                     result += widget_generate(code, ctx->children[i]);
                 }
-
                 result += indent + string_format("ImGui::EndCombo();\n");
-
                 indent.pop_back();
-
                 result += indent + "}\n";
             }
             break;
@@ -526,34 +520,42 @@ namespace imgui_editor
 #pragma region // Widgets: Trees
             case widget_type::widget_type_push_pop_tree_node:
             {
+                begin_type = true;
+
                 widget_push_pop_tree_node* args = (widget_push_pop_tree_node*)ctx->args;
 
                 result += indent + string_format("bool open_%zu =ImGui::TreeNode(\"%s\");\n",
                     ctx->id,
                     ctx->label.c_str());
 
-                begin_type = true;
-
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
-
                 indent += '\t';
                 for(size_t i =0, max = ctx->children.size(); i < max; ++i)
                 {
                     result += widget_generate(code, ctx->children[i]);
                 }
-
                 result += indent + string_format("ImGui::TreePop();\n");
-
                 indent.pop_back();
-
                 result += indent + "}\n";
             }
             break;
 		    case widget_type::widget_type_collapsing_header:
             {
+                begin_type = true;
+
                 widget_collapsing_header* args = (widget_collapsing_header*)ctx->args;
-                result += indent + string_format("ImGui::CollapsingHeader(\"%s\", %s, %s);\n", ctx->label.c_str(), args->flags?"ImGuiTreeNodeFlags_DefaultOpen":"0", args->flags?"ImGuiTreeNodeFlags_DefaultOpen":"0");
+                result += indent + string_format("bool open_%zu =ImGui::CollapsingHeader(\"%s\", %s, %s);\n", ctx->label.c_str(), args->flags?"ImGuiTreeNodeFlags_DefaultOpen":"0", args->flags?"ImGuiTreeNodeFlags_DefaultOpen":"0");
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+                indent.pop_back();
+                result += indent + "}\n";
             }
             break;
 #pragma endregion // Widgets: Trees
@@ -571,29 +573,25 @@ namespace imgui_editor
 #pragma region // Widgets: List Boxes
             case widget_type::widget_type_begin_end_list_box:
             {
+                begin_type = true;
+
                 widget_begin_end_list_box* args = (widget_begin_end_list_box*)ctx->args;
 
-                result += indent + string_format("bool open_%zu =ImGui::BeginListBox(\"%s\", ImVec2(%f, %f));\n",
+                result += indent + string_format("bool open_%zu = ImGui::BeginListBox(\"%s\", ImVec2(%f, %f));\n",
                     ctx->id,
                     ctx->label.c_str(),
                     ctx->size.x,
                     ctx->size.y);
 
-                begin_type = true;
-
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
-
                 indent += '\t';
                 for(size_t i =0, max = ctx->children.size(); i < max; ++i)
                 {
                     result += widget_generate(code, ctx->children[i]);
                 }
-
                 result += indent + string_format("ImGui::EndListBox();\n");
-
                 indent.pop_back();
-
                 result += indent + "}\n";
             }
             break;
@@ -602,25 +600,21 @@ namespace imgui_editor
 #pragma region // Widgets: Menus
             case widget_type::widget_type_begin_end_menu:
             {
+                begin_type = true;
+
                 result += indent + string_format("bool open_%zu =ImGui::BeginMenu(\"%s\");\n",
                     ctx->id,
                     ctx->label.c_str());
 
-                begin_type = true;
-
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
-
                 indent += '\t';
                 for(size_t i =0, max = ctx->children.size(); i < max; ++i)
                 {
                     result += widget_generate(code, ctx->children[i]);
                 }
-
                 result += indent + string_format("ImGui::EndMenu();\n");
-
                 indent.pop_back();
-
                 result += indent + "}\n";
             }
             break;
@@ -629,6 +623,8 @@ namespace imgui_editor
 #pragma region // Popups, Modals
 		    case widget_type::widget_type_begin_end_popup:
             {
+                begin_type = true;
+
                 widget_begin_end_popup* args = (widget_begin_end_popup*)ctx->args;
 
                 result += indent + string_format("bool open_%zu =ImGui::BeginPopup(\"%s\", (ImGuiWindowFlags_)%d);\n",
@@ -636,21 +632,15 @@ namespace imgui_editor
                     ctx->label.c_str(),
                     (int)args->flags);
 
-                begin_type = true;
-
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
-
                 indent += '\t';
                 for(size_t i =0, max = ctx->children.size(); i < max; ++i)
                 {
                     result += widget_generate(code, ctx->children[i]);
                 }
-
                 result += indent + string_format("ImGui::EndPopup();\n");
-
                 indent.pop_back();
-
                 result += indent + "}\n";
             }
             break;
@@ -659,6 +649,8 @@ namespace imgui_editor
 #pragma region // Tables
             case widget_type::widget_type_begin_end_table:
             {
+                begin_type = true;
+
                 widget_begin_end_table* args = (widget_begin_end_table*)ctx->args;
 
                 result += indent + string_format("bool open_%zu =ImGui::BeginTable(\"%s\", %d, (ImGuiTableFlags_)%d, ImVec2(%f, %f), %f);\n",
@@ -670,21 +662,15 @@ namespace imgui_editor
                     ctx->size.y,
                     args->inner_width);
 
-                begin_type = true;
-
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
-
                 indent += '\t';
                 for(size_t i =0, max = ctx->children.size(); i < max; ++i)
                 {
                     result += widget_generate(code, ctx->children[i]);
                 }
-
                 result += indent + string_format("ImGui::EndTable();\n");
-
                 indent.pop_back();
-
                 result += indent + "}\n";
             }
             break;
