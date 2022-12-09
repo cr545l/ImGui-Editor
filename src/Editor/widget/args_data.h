@@ -5,8 +5,7 @@ namespace imgui_editor
 {	
 	struct widget_none {};
 	
-	// Windows
-
+#pragma region // Windows
 	struct widget_begin_end_window
 	{
 		bool open = true;
@@ -18,9 +17,9 @@ namespace imgui_editor
 		bool border = 1;
 		ImGuiWindowFlags_ flags;
 	};
+#pragma endregion // Windows
 
-	// Parameters stacks (current window)
-	
+#pragma region // Parameters stacks (current window)	
 	struct widget_push_pop_item_width
 	{
 		float item_width;
@@ -30,9 +29,9 @@ namespace imgui_editor
 	{
 		float item_width;
 	};
+#pragma endregion // Parameters stacks (current window)
 
-	// Cursor / Layout
-
+#pragma region // Cursor / Layout
 	struct widget_separator { };
 
 	struct widget_same_line
@@ -58,9 +57,9 @@ namespace imgui_editor
 	};
 
 	struct widget_begin_end_group { };
+#pragma endregion // Cursor / Layout
 
-	// Widgets: Text
-	
+#pragma region // Widgets: Text	
 	struct widget_text {};
 
 	struct widget_text_colored
@@ -74,9 +73,9 @@ namespace imgui_editor
 	};
 
 	struct widget_bullet_text { };
+#pragma endregion // Widgets: Text
 
-	// Widgets: Main
-
+#pragma region // Widgets: Main
 	struct widget_button { };
 
 	struct widget_small_button { };
@@ -98,17 +97,17 @@ namespace imgui_editor
 	};
 
 	struct widget_bullet { };
+#pragma endregion // Widgets: Main
 
-	// Widgets: Combo Box
-	
+#pragma region // Widgets: Combo Box
 	struct widget_begin_end_combo
 	{
 		std::string preview_value;
 		ImGuiComboFlags_ flags;
 	};
+#pragma endregion // Widgets: Combo Box
 
-	// Widgets: Drag Sliders
-	
+#pragma region // Widgets: Drag Sliders
 	struct widget_drag_float
 	{
 		float value;
@@ -188,9 +187,9 @@ namespace imgui_editor
 		std::string format;
 		ImGuiSliderFlags_ flags;
 	};
+#pragma endregion // Widgets: Drag Sliders
 
-	// Widgets: Regular Sliders
-
+#pragma region // Widgets: Regular Sliders
 	struct widget_slider_float
 	{
 		float value = 0.0f;
@@ -271,9 +270,9 @@ namespace imgui_editor
 		std::string format;
 		ImGuiSliderFlags_ flags;
 	};
+#pragma endregion // Widgets: Regular Sliders
 
-	// Widgets: Input with Keyboard
-
+#pragma region // Widgets: Input with Keyboard
 	struct widget_input_text
 	{
 		std::string text;
@@ -357,9 +356,9 @@ namespace imgui_editor
 		std::string format;
 		ImGuiInputTextFlags_ flags;
 	};
+#pragma endregion // Widgets: Input with Keyboard
 
-	// Widgets: Color Editor/Picker 
-
+#pragma region // Widgets: Color Editor/Picker 
 	struct widget_color_edit3
 	{
 		float value[3] = {0.0f,};
@@ -388,10 +387,11 @@ namespace imgui_editor
 	{
 		ImVec4 col;
 		ImGuiColorEditFlags_ flags;
+		ImVec2 size;
 	};
+#pragma endregion // Widgets: Color Editor/Picker 
 
-	// Widgets: Trees
-
+#pragma region // Widgets: Trees
 	struct widget_push_pop_tree_node
 	{
 		ImGuiTreeNodeFlags_ flags;
@@ -401,46 +401,39 @@ namespace imgui_editor
 	{
 		ImGuiTreeNodeFlags_ flags;
 	};
+#pragma endregion // Widgets: Trees
 
-	// Widgets: Selectables
-
+#pragma region // Widgets: Selectables
 	struct widget_selectable
 	{
 		bool selected = false;
 		ImGuiSelectableFlags_ flags;
 	};
+#pragma endregion // Widgets: Selectables
 
-	// Widgets: List Boxes
-
-	struct widget_list_box
-	{
-		int current_item = 0;
-		std::vector<std::string> items;
-		int height_in_items = -1;
-	};
-
+#pragma region // Widgets: List Boxes
 	struct widget_begin_end_list_box
 	{
 		int items_count;
 		int items_height;
 	};
-
-	// Widgets: Menus
-
+#pragma endregion // Widgets: List Boxes
+		
+#pragma region // Widgets: Menus
 	struct widget_begin_end_menu
 	{
 		bool enabled = true;
 	};
+#pragma endregion // Widgets: Menus
 
-	// Popups, Modals
-
+#pragma region // Popups, Modals
 	struct widget_begin_end_popup
 	{
 		ImGuiWindowFlags_ flags;
-	};
-	
-	// Tables
-
+	};	
+#pragma endregion // Popups, Modals
+		
+#pragma region // Tables
 	struct widget_begin_end_table
 	{
 		int columns = 1;
@@ -448,6 +441,7 @@ namespace imgui_editor
 		ImVec2 outer_size;
 		float inner_width = 0;
 	};
+#pragma endregion // Tables
 }
 
 #endif

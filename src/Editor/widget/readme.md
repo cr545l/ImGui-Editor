@@ -12,3 +12,10 @@ Logic required by the widget
 - Pretty name.cpp
 - Serialize.cpp
 - To enum type.cpp
+
+Files affected when the `args_data.h` struct field is changed
+
+- Deserialize.cpp
+- Draw.cpp
+- Gen code.cpp
+- Inspector.cpp
