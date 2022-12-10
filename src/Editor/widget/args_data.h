@@ -419,14 +419,24 @@ namespace imgui_editor
 #pragma region // Widgets: List Boxes
 	struct widget_begin_end_list_box
 	{
-		int items_count;
-		int items_height;
+		int items_count = 0;
+		int items_height = 0;
 	};
 #pragma endregion // Widgets: List Boxes
 		
 #pragma region // Widgets: Menus
+
+	struct widget_begin_end_menu_bar
+	{
+	};
 	struct widget_begin_end_menu
 	{
+		bool enabled = true;
+	};
+	struct widget_menu_item
+	{
+		std::string shortcut;
+		bool selected = false;
 		bool enabled = true;
 	};
 #pragma endregion // Widgets: Menus

@@ -97,7 +97,9 @@ namespace imgui_editor
 			case widget_type::widget_type_begin_end_list_box			: return 13001;
 
 			// Widgets: Menus
+            case widget_type::widget_type_begin_end_menu_bar	    	: return 14002;
 			case widget_type::widget_type_begin_end_menu				: return 14001;
+            case widget_type::widget_type_menu_item					    : return 14003;
 
 			// Popups; Modals
 			case  widget_type::widget_type_begin_end_popup				: return 15001;

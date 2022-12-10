@@ -604,6 +604,25 @@ namespace imgui_editor
 #pragma endregion // Widgets: List Boxes
 		
 #pragma region // Widgets: Menus
+            case widget_type::widget_type_begin_end_menu_bar:
+            {
+                begin_type = true;
+
+                result += indent + string_format("bool open_%zu =ImGui::BeginMenuBar();\n",
+                    ctx->id);
+
+                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + "{\n";
+                indent += '\t';
+                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                {
+                    result += widget_generate(code, ctx->children[i]);
+                }
+                result += indent + string_format("ImGui::EndMenuBar();\n");
+                indent.pop_back();
+                result += indent + "}\n";
+            }
+            break;
             case widget_type::widget_type_begin_end_menu:
             {
                 begin_type = true;
@@ -622,6 +641,13 @@ namespace imgui_editor
                 result += indent + string_format("ImGui::EndMenu();\n");
                 indent.pop_back();
                 result += indent + "}\n";
+            }
+            break;
+            case widget_type::widget_type_menu_item:
+            {
+                widget_menu_item* args = (widget_menu_item*)ctx->args;
+                result += indent + string_format("bool selected_%zu = %s;\n", ctx->id, args->selected?"true":"false");
+                result += indent + string_format("ImGui::MenuItem(\"%s\", \"%s\", &selected_%zu, %s);\n", ctx->label.c_str(), args->shortcut.c_str(), ctx->id, args->enabled?"true":"false");
             }
             break;
 #pragma endregion // Widgets: Menus

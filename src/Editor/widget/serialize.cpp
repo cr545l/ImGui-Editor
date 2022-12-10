@@ -374,11 +374,18 @@ namespace imgui_editor
 #pragma endregion // Widgets: List Boxes
 		
 #pragma region // Widgets: Menus
+        case widget_type::widget_type_begin_end_menu_bar: return "";
         case widget_type::widget_type_begin_end_menu:
         {
             version = "0";
             widget_begin_end_menu* wd = (widget_begin_end_menu*)data;
             return string_format("%d", wd->enabled);
+        }
+        case widget_type::widget_type_menu_item:
+        {
+            version = "0";
+            widget_menu_item* wd = (widget_menu_item*)data;
+            return string_format("%s,%d,%d",wd->shortcut.c_str(), wd->selected, wd->enabled);
         }
 #pragma endregion // Widgets: Menus
 

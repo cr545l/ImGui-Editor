@@ -560,6 +560,7 @@ namespace imgui_editor
 #pragma endregion // Widgets: List Boxes
 		
 #pragma region // Widgets: Menus
+        case widget_type::widget_type_begin_end_menu_bar: break;
 		case widget_type::widget_type_begin_end_menu:
 		{
             widget_begin_end_menu* args = (widget_begin_end_menu*)ctx->args;
@@ -567,6 +568,14 @@ namespace imgui_editor
             ImGui::Checkbox("enabled", &args->enabled);
         }
         break;
+        case widget_type::widget_type_menu_item:
+        {
+            widget_menu_item* args = (widget_menu_item*)ctx->args;
+
+            ImGui::InputText("shortcut", &args->shortcut);
+            ImGui::Checkbox("selected", &args->selected);
+            ImGui::Checkbox("enabled", &args->enabled);
+        }
 #pragma endregion // Widgets: Menus
 
 #pragma region // Popups, Modals

@@ -98,7 +98,9 @@ namespace imgui_editor
 		case widget_type::widget_type_begin_end_list_box:		delete (widget_begin_end_list_box*)target;		break;
 
 		// Widgets: Menus
+		case widget_type::widget_type_begin_end_menu_bar:		delete (widget_begin_end_menu_bar*)target;		break;
 		case widget_type::widget_type_begin_end_menu:			delete (widget_begin_end_menu*)target;			break;
+		case widget_type::widget_type_menu_item:				delete (widget_menu_item*)target;				break;
 
     	// Popups, Modals
 		case widget_type::widget_type_begin_end_popup:			delete (widget_begin_end_popup*)target;			break;

@@ -108,7 +108,9 @@ namespace imgui_editor
 #pragma endregion // Widgets: List Boxes
 		
 #pragma region // Widgets: Menus
+		widget_type_begin_end_menu_bar		,
 		widget_type_begin_end_menu				,
+		widget_type_menu_item					,
 #pragma endregion // Widgets: Menus
 
 #pragma region // Popups, Modals

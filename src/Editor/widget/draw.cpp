@@ -11,7 +11,7 @@ namespace imgui_editor
 	{
 		for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
 		{
-			ImGui::PushID(i);
+			ImGui::PushID(ctx->children[i]->id);
 			draw_widget(ctx->children[i]);
 			ImGui::PopID();
 		}
@@ -473,6 +473,19 @@ namespace imgui_editor
 #pragma endregion // Widgets: List Boxes
 		
 #pragma region // Widgets: Menus
+		case widget_type::widget_type_begin_end_menu_bar:
+		{
+			begin_type = true;
+			// ImGui::MenuItem("New");
+			ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
+
+			if (ImGui::BeginMenuBar())
+			{
+				draw_children(ctx);
+				ImGui::EndMenuBar();
+			}
+		}
+		break;
 		case widget_type::widget_type_begin_end_menu:
 		{
 			begin_type = true;
@@ -484,6 +497,11 @@ namespace imgui_editor
 			}
 		}
 		break;
+		case widget_type::widget_type_menu_item:
+		{
+			widget_menu_item* args = (widget_menu_item*)ctx->args;
+			ImGui::MenuItem(ctx->label.c_str(), args->shortcut.c_str(), args->selected, args->enabled);
+		}
 #pragma endregion // Widgets: Menus
 
 #pragma region // Popups, Modals

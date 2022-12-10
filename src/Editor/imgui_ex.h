@@ -101,6 +101,51 @@ namespace ImGui
     bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
     
     template <typename T>
+	inline std::string ToString(T t)
+	{
+        std::string name = std::string(magic_enum::enum_name(t));
+		return name;
+	}
+	
+    template <>
+	inline std::string ToString(ImGuiWindowFlags_ t)
+	{
+		switch(t)
+		{
+			case ImGuiWindowFlags_None: return "ImGuiWindowFlags_None";
+			case ImGuiWindowFlags_NoTitleBar: return "ImGuiWindowFlags_NoTitleBar";
+			case ImGuiWindowFlags_NoResize: return "ImGuiWindowFlags_NoResize";
+			case ImGuiWindowFlags_NoMove: return "ImGuiWindowFlags_NoMove";
+			case ImGuiWindowFlags_NoScrollbar: return "ImGuiWindowFlags_NoScrollbar";
+			case ImGuiWindowFlags_NoScrollWithMouse: return "ImGuiWindowFlags_NoScrollWithMouse";
+			case ImGuiWindowFlags_NoCollapse: return "ImGuiWindowFlags_NoCollapse";
+			case ImGuiWindowFlags_AlwaysAutoResize: return "ImGuiWindowFlags_AlwaysAutoResize";
+			case ImGuiWindowFlags_NoBackground: return "ImGuiWindowFlags_NoBackground";
+			case ImGuiWindowFlags_NoSavedSettings: return "ImGuiWindowFlags_NoSavedSettings";
+			case ImGuiWindowFlags_NoMouseInputs: return "ImGuiWindowFlags_NoMouseInputs";
+			case ImGuiWindowFlags_MenuBar: return "ImGuiWindowFlags_MenuBar";
+			case ImGuiWindowFlags_HorizontalScrollbar: return "ImGuiWindowFlags_HorizontalScrollbar";
+			case ImGuiWindowFlags_NoFocusOnAppearing: return "ImGuiWindowFlags_NoFocusOnAppearing";
+			case ImGuiWindowFlags_NoBringToFrontOnFocus: return "ImGuiWindowFlags_NoBringToFrontOnFocus";
+			case ImGuiWindowFlags_AlwaysVerticalScrollbar: return "ImGuiWindowFlags_AlwaysVerticalScrollbar";
+			case ImGuiWindowFlags_AlwaysHorizontalScrollbar: return "ImGuiWindowFlags_AlwaysHorizontalScrollbar";
+			case ImGuiWindowFlags_AlwaysUseWindowPadding: return "ImGuiWindowFlags_AlwaysUseWindowPadding";
+			case ImGuiWindowFlags_NoNavInputs: return "ImGuiWindowFlags_NoNavInputs";
+			case ImGuiWindowFlags_NoNavFocus: return "ImGuiWindowFlags_NoNavFocus";
+			case ImGuiWindowFlags_UnsavedDocument: return "ImGuiWindowFlags_UnsavedDocument";
+			case ImGuiWindowFlags_NoNav: return "ImGuiWindowFlags_NoNav";
+			case ImGuiWindowFlags_NoDecoration: return "ImGuiWindowFlags_NoDecoration";
+			case ImGuiWindowFlags_NoInputs: return "ImGuiWindowFlags_NoInputs";
+			case ImGuiWindowFlags_NavFlattened: return "ImGuiWindowFlags_NavFlattened";
+			case ImGuiWindowFlags_ChildWindow: return "ImGuiWindowFlags_ChildWindow";
+			case ImGuiWindowFlags_Tooltip: return "ImGuiWindowFlags_Tooltip";
+			case ImGuiWindowFlags_Popup: return "ImGuiWindowFlags_Popup";
+			case ImGuiWindowFlags_Modal: return "ImGuiWindowFlags_Modal";
+			case ImGuiWindowFlags_ChildMenu: return "ImGuiWindowFlags_ChildMenu";
+		}
+	}
+
+    template <typename T>
     std::string GetEnumName(const T& value, bool bit_flag = true)
     {
         constexpr std::string_view type_name =  magic_enum::enum_type_name<T>();
@@ -115,13 +160,13 @@ namespace ImGui
                     {
                         name += "|";
                     }
-                    std::string n = std::string(magic_enum::enum_name(t));
+                    std::string n = ToString(t);
                     n = n.substr(type_name.length(), n.length() - type_name.length());
                     std::replace(n.begin(), n.end(), '_', ' ');
                     name += n;
                 }
 
-            std::string name = std::string(magic_enum::enum_name(t));
+            std::string name = ToString(t);
             // name = name.substr(12, name.length() - 12);
             std::replace(name.begin(), name.end(), '_', ' ');
             
@@ -129,7 +174,7 @@ namespace ImGui
         }
         else
         {
-            std::string n = std::string(magic_enum::enum_name(value));
+            std::string n = ToString(value);
             n = n.substr(type_name.length(), n.length() - type_name.length());
             std::replace(n.begin(), n.end(), '_', ' ');
             name = n;
@@ -160,6 +205,69 @@ namespace ImGui
                     result = true;
                 } 
                 });
+            ImGui::EndCombo();
+        }
+        return result;
+    }
+
+    template <>
+    inline bool Combo(const char* label, ImGuiWindowFlags_* value, bool bit_flag)
+    {
+        constexpr std::string_view type_name =  magic_enum::enum_type_name<ImGuiWindowFlags_>();
+        bool result = false;
+
+        if (ImGui::BeginCombo(label, GetEnumName(*value, bit_flag).c_str()))
+        {
+			constexpr ImGuiWindowFlags_ enums [] = {
+				ImGuiWindowFlags_None,
+				ImGuiWindowFlags_NoTitleBar,
+				ImGuiWindowFlags_NoResize,
+				ImGuiWindowFlags_NoMove,
+				ImGuiWindowFlags_NoScrollbar,
+				ImGuiWindowFlags_NoScrollWithMouse,
+				ImGuiWindowFlags_NoCollapse,
+				ImGuiWindowFlags_AlwaysAutoResize,
+				ImGuiWindowFlags_NoBackground,
+				ImGuiWindowFlags_NoSavedSettings,
+				ImGuiWindowFlags_NoMouseInputs,
+				ImGuiWindowFlags_MenuBar,
+				ImGuiWindowFlags_HorizontalScrollbar,
+				ImGuiWindowFlags_NoFocusOnAppearing,
+				ImGuiWindowFlags_NoBringToFrontOnFocus,
+				ImGuiWindowFlags_AlwaysVerticalScrollbar,
+				ImGuiWindowFlags_AlwaysHorizontalScrollbar,
+				ImGuiWindowFlags_AlwaysUseWindowPadding,
+				ImGuiWindowFlags_NoNavInputs,
+				ImGuiWindowFlags_NoNavFocus,
+				ImGuiWindowFlags_UnsavedDocument,
+				ImGuiWindowFlags_NoNav,
+				ImGuiWindowFlags_NoDecoration,
+				ImGuiWindowFlags_NoInputs,
+				ImGuiWindowFlags_NavFlattened,
+				ImGuiWindowFlags_ChildWindow,
+				ImGuiWindowFlags_Tooltip,
+				ImGuiWindowFlags_Popup,
+				ImGuiWindowFlags_Modal,
+				ImGuiWindowFlags_ChildMenu
+			};
+
+			for(size_t i = 0, max = sizeof(enums) / sizeof(enums[0]); i < max; ++i)
+			{
+				ImGuiWindowFlags_ t = enums[i];
+				std::string name = GetEnumName(t, false);
+				if (ImGui::Selectable(name.c_str(), bit_flag?static_cast<int>(t) & static_cast<int>(*value) : t == *value))
+				{
+					if (bit_flag && ImGui::GetIO().KeyCtrl)
+					{
+						*value = static_cast<ImGuiWindowFlags_>(static_cast<int>(*value) | static_cast<int>(t));
+					}
+					else
+					{
+						*value = t;
+					}
+					result = true;
+				}
+			}
             ImGui::EndCombo();
         }
         return result;

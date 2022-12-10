@@ -667,12 +667,23 @@ namespace imgui_editor
 #pragma endregion // Widgets: List Boxes
 		
 #pragma region // Widgets: Menus
+        case widget_type::widget_type_begin_end_menu_bar: return;
         case widget_type::widget_type_begin_end_menu:
         {
             widget_begin_end_menu* wd = (widget_begin_end_menu*)data;
             stream >> wd->enabled;
         }
-        // break;
+        break;
+        case widget_type::widget_type_menu_item:
+        {
+            widget_menu_item* wd = (widget_menu_item*)data;
+            stream >> wd->shortcut;
+            stream >> comma;
+            stream >> wd->selected;
+            stream >> comma;
+            stream >> wd->enabled;
+        }
+        break;
 #pragma endregion // Widgets: Menus
 
 #pragma region // Popups, Modals
