@@ -11,7 +11,6 @@ namespace imgui_editor
 {
 	static void draw_node(std::vector<widget*>& selected, widget* current_widget)
 	{
-		ImGui::PushID(current_widget->label.c_str());
 		ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (std::any_of(selected.begin(), selected.end(), [&](widget* w)
@@ -24,7 +23,9 @@ namespace imgui_editor
 		{
 			bool remove = false;
 			
+			ImGui::PushID(current_widget->id);
 			bool showChildren = ImGui::TreeNodeEx(current_widget->label.c_str(), flag, "%s (%s)", current_widget->label.c_str(), get_pretty_name(current_widget->type));
+			ImGui::PopID();
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			{
 				command::select(current_widget);
@@ -43,6 +44,11 @@ namespace imgui_editor
 			if (remove)
 			{
 				command::remove_widget(current_widget);
+				
+				if (showChildren)
+				{
+					ImGui::TreePop();
+				}
 			}
 			else
 			{
@@ -51,15 +57,12 @@ namespace imgui_editor
 					const auto& children = current_widget->children;
 					for (size_t i = 0, max = children.size(); i < max; ++i)
 					{
-						ImGui::PushID(i);
 						draw_node(selected, children[i]);
-						ImGui::PopID();
 					}
 					ImGui::TreePop();
 				}
 			}
 		}
-		ImGui::PopID();
 	};
 
 
