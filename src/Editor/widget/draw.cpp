@@ -128,6 +128,12 @@ namespace imgui_editor
 			ImGui::EndGroup();
 		}
 		break;
+		case widget_type::widget_type_set_cursor_pos:
+		{
+			widget_set_cursor_pos* args = (widget_set_cursor_pos*)ctx->args;
+			ImGui::SetCursorPos(args->local_pos);
+		}
+		break;
 #pragma endregion // Cursor / Layout
 
 #pragma region // Widgets: Text

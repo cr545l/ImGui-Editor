@@ -32,12 +32,43 @@ namespace imgui_editor
             ImGui::Separator();
             const bool disable = nullptr == ctx->root;
             ImGui::BeginDisabled(disable);
-            if (ImGui::Button("Add Widget"))
+
+            auto selects = selection::get_targets();
+            const bool selected = 0 < selects.size();
+            const bool disabled= !selected || selected&& nullptr==selects[0]->parent;
+
+            ImGui::BeginDisabled(disabled);
+            if (ImGui::Button("Insert front"))
             {
-                auto selected = selection::get_targets();
-                if (selected.size())
+                auto target = selects[0];
+                auto parent = target->parent;
+                auto it = std::find(parent->children.begin(), parent->children.end(), target);
+                if (it != parent->children.end())
                 {
-                    for (auto i : selected)
+                    auto index = std::distance(parent->children.begin(), it);
+                    command::create_widget(parent, ctx->type, index);
+                }
+            }
+            ImGui::SameLine();
+            if(ImGui::Button("Insert back"))
+            {
+                auto target = selects[0];
+                auto parent = target->parent;
+                auto it = std::find(parent->children.begin(), parent->children.end(), target);
+                if (it != parent->children.end())
+                {
+                    auto index = std::distance(parent->children.begin(), it);
+                    command::create_widget(parent, ctx->type, index+1);
+                }
+            }
+            ImGui::EndDisabled();
+
+            ImGui::SameLine();
+            if (ImGui::Button("Add Child"))
+            {
+                if (selected)
+                {
+                    for (auto i : selects)
                     {
                         command::create_widget(i, ctx->type);
                     }

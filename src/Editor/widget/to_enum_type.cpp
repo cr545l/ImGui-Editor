@@ -25,6 +25,7 @@ namespace imgui_editor
 		case 3005: return widget_type::widget_type_indent					;
 		case 3006: return widget_type::widget_type_unindent					;
 		case 3007: return widget_type::widget_type_begin_end_group			;
+		case 3008: return widget_type::widget_type_set_cursor_pos			;
 
 		// Widgets: Text
 		case 4001: return widget_type::widget_type_text						;

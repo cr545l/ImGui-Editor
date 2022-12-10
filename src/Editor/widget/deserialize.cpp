@@ -74,6 +74,14 @@ namespace imgui_editor
         }
         break;
         case widget_type::widget_type_begin_end_group: return;
+        case widget_type::widget_type_set_cursor_pos:
+        {
+            widget_set_cursor_pos* wd = (widget_set_cursor_pos*)data;
+            stream >> wd->local_pos.x;
+            stream >> comma;
+            stream >> wd->local_pos.y;
+        }
+        break;
 #pragma endregion // Cursor / Layout
 
 #pragma region // Widgets: Text

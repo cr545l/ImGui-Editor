@@ -57,6 +57,11 @@ namespace imgui_editor
 	};
 
 	struct widget_begin_end_group { };
+
+	struct widget_set_cursor_pos
+	{
+		ImVec2 local_pos;
+	};
 #pragma endregion // Cursor / Layout
 
 #pragma region // Widgets: Text	

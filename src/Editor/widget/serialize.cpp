@@ -65,6 +65,12 @@ namespace imgui_editor
             return string_format("%f", wd->indent_w);
         }
         case widget_type::widget_type_begin_end_group: return "";
+        case widget_type::widget_type_set_cursor_pos:
+        {
+            version = "0";
+            widget_set_cursor_pos* wd = (widget_set_cursor_pos*)data;
+            return string_format("%f,%f", wd->local_pos.x, wd->local_pos.y);
+        }
 #pragma endregion // Cursor / Layout
 
 #pragma region // Widgets: Text

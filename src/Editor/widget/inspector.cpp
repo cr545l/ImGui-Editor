@@ -49,7 +49,7 @@ namespace imgui_editor
 {
     void draw_inspector_widget(widget *ctx)
     {
-        ImGui::Text("ID : %zx", ctx->id);
+        ImGui::Text("ID : %zx / %s", ctx->id, get_pretty_name(ctx->type));
         ImGui::InputText("label", &ctx->label);
         ImGui::DragFloat2("size", &ctx->size.x);
 
@@ -94,8 +94,7 @@ namespace imgui_editor
 #pragma endregion // Parameters stacks (current window)
 
 #pragma region // Cursor / Layout
-        case widget_type::widget_type_separator:
-            break;
+        case widget_type::widget_type_separator: break;
         case widget_type::widget_type_same_line:
         {
             widget_same_line* args = (widget_same_line*)ctx->args;
@@ -103,10 +102,8 @@ namespace imgui_editor
             ImGui::DragFloat("offset_from_start_x", &args->offset_from_start_x);
             ImGui::DragFloat("spacing", &args->spacing);
         }
-        case widget_type::widget_type_spacing:
-            break;
-        case widget_type::widget_type_dummy:
-            break;
+        case widget_type::widget_type_spacing: break;
+        case widget_type::widget_type_dummy: break;
         case widget_type::widget_type_indent:
         {
             widget_indent* args = (widget_indent*)ctx->args;
@@ -121,30 +118,31 @@ namespace imgui_editor
             ImGui::DragFloat("indent_w", &args->indent_w);
         }
         break;
-		case widget_type::widget_type_begin_end_group:
-			break;
+		case widget_type::widget_type_begin_end_group: break;
+        case widget_type::widget_type_set_cursor_pos:
+        {
+            widget_set_cursor_pos* args = (widget_set_cursor_pos*)ctx->args;
+
+            ImGui::DragFloat2("local_pos", &args->local_pos.x);
+        }
+        break;
 #pragma endregion // Cursor / Layout
 
 #pragma region // Widgets: Text
-        case widget_type::widget_type_text:
-            break;
+        case widget_type::widget_type_text: break;
         case widget_type::widget_type_text_colored:
         {
             widget_text_colored* args = (widget_text_colored*)ctx->args;
             ImGui::ColorEdit4("color", &args->color.Value.x);
         }
         break;
-        case widget_type::widget_type_label_text:
-            break;
-        case widget_type::widget_type_bullet_text:
-            break;
+        case widget_type::widget_type_label_text: break;
+        case widget_type::widget_type_bullet_text: break;
 #pragma endregion // Widgets: Text
 
 #pragma region // Widgets: Main
-        case widget_type::widget_type_button:
-            break;
-        case widget_type::widget_type_small_button:
-            break;
+        case widget_type::widget_type_button: break;
+        case widget_type::widget_type_small_button: break;
         case widget_type::widget_type_checkbox:
         {
             widget_checkbox* args = (widget_checkbox*)ctx->args;
@@ -164,8 +162,7 @@ namespace imgui_editor
             ImGui::Checkbox("active", &args->active);
         }
         break;
-        case widget_type::widget_type_bullet:
-            break;
+        case widget_type::widget_type_bullet: break;
 #pragma endregion // Widgets: Main
 
 #pragma region // Widgets: Combo Box

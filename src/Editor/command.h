@@ -9,7 +9,7 @@ namespace imgui_editor
     // Support Undo / Redo
     namespace command
     {
-	    void create_widget(widget* parent, const widget_type& type);
+	    void create_widget(widget* parent, const widget_type& type, size_t index = -1);
 
 	    void attach_child(widget* parent, widget* child);
 

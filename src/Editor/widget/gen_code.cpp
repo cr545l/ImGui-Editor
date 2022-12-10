@@ -175,6 +175,12 @@ namespace imgui_editor
                 result += indent + "ImGui::EndGroup();\n";
             }
             break;
+            case widget_type::widget_type_set_cursor_pos:
+            {
+                widget_set_cursor_pos* args = (widget_set_cursor_pos*)ctx->args;
+                result += indent + string_format("ImGui::SetCursorPos(ImVec2(%f, %f));\n", args->local_pos.x, args->local_pos.y);
+            }
+            break;
 #pragma endregion // Cursor / Layout
 
 #pragma region // Widgets: Text

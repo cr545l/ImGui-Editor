@@ -26,6 +26,7 @@ namespace imgui_editor
 		case widget_type::widget_type_indent:					delete (widget_indent*)target;					break;
 		case widget_type::widget_type_unindent:					delete (widget_unindent*)target;				break;
 		case widget_type::widget_type_begin_end_group:			delete (widget_begin_end_group*)target;			break;
+		case widget_type::widget_type_set_cursor_pos:			delete (widget_set_cursor_pos*)target;			break;
 
 		// Widgets: Text
 		case widget_type::widget_type_text:						delete (widget_text*)target;					break;

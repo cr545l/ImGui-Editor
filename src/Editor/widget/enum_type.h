@@ -25,6 +25,7 @@ namespace imgui_editor
 		widget_type_indent						,
 		widget_type_unindent					,
 		widget_type_begin_end_group				,
+		widget_type_set_cursor_pos				,
 #pragma endregion // Cursor / Layout
 
 #pragma region // Widgets: Text

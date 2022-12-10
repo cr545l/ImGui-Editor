@@ -27,6 +27,7 @@ namespace imgui_editor
 		case widget_type::widget_type_indent:					return new widget_indent();
 		case widget_type::widget_type_unindent:					return new widget_unindent();
 		case widget_type::widget_type_begin_end_group:			return new widget_begin_end_group();
+		case widget_type::widget_type_set_cursor_pos:			return new widget_set_cursor_pos();
 
 		// Widgets: Text
 		case widget_type::widget_type_text:						return new widget_text();
