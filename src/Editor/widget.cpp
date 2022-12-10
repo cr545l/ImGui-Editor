@@ -8,13 +8,6 @@ extern size_t g_widget_id;
 
 namespace imgui_editor
 {
-	// TODO
-	// widget_args_required w[(size_t)widget_type::count];
-	// widget_args_required& get_widget_args_required(widget_type type)
-	// {
-	// 	return w[(size_t)type];
-	// }
-
 	widget* new_widget(widget_type type)
 	{
 		auto w = new widget();
@@ -63,7 +56,7 @@ namespace imgui_editor
 		}
         const char* version = "";
         std::string args = widget_data_serialize(target->type, target->args, version);
-        return string_format("{%lu,%s,{%s},%s,%f,%f,[%s],[%s],[%s],[%s]}", 
+        return string_format("{%lu,\"%s\",{%s},\"%s\",%f,%f,[%s],[%s],[%s],[%s]}", 
         to_fixed_type(target->type),
         version,
         args.c_str(),
@@ -149,6 +142,10 @@ namespace imgui_editor
         size_t fixed_type = strtoul(read.c_str(), &pos, 0);
         target_widget->type = to_widget_type(fixed_type);
 
+		// std::string 읽는 규칙
+		// - ," 여기서부터 시작한다
+		// - ", 여기까지 읽는다
+		// - 도중 ",가 있을 수 있는데 \",라면 무시한다
         std::getline(widget_stream, read, ',');
         const std::string version = read;
 

@@ -94,6 +94,69 @@ namespace imgui_editor
 		// col = (ImGuiTableRowFlags_)i;
 		return stream;
 	}    
+
+	inline std::string to_safe_string(const std::string& v) 
+	{
+		std::string s = v;
+
+		static const std::string search = "\"";
+		static const std::string replace = "\\\"";
+
+		size_t pos = 0;
+		while ((pos = s.find(search, pos)) != std::string::npos)
+		{
+			s.replace(pos, search.length(), replace);
+			pos += replace.length();
+		}
+		return s;
+	}
+
+	inline std::string read_string(std::istringstream& stream)
+	{
+		std::string result;
+		char c;
+		bool isStart = false;
+		bool isEscape = false;
+		while(stream.get(c))
+		{
+			if(c == '"')
+			{
+				if(isStart)
+				{
+					if(isEscape)
+					{
+						result += c;
+						isEscape = false;
+					}
+					else
+					{
+						break;
+					}
+				}
+				else
+				{
+					isStart = true;
+				}
+			}
+			else
+			{
+				if(isEscape)
+				{
+					result += '\\';
+					isEscape = false;
+				}
+				if(c == '\\')
+				{
+					isEscape = true;
+				}
+				else
+				{
+					result += c;
+				}
+			}
+		}
+		return result;
+	}
 }
 
 namespace ImGui
@@ -106,7 +169,7 @@ namespace ImGui
         std::string name = std::string(magic_enum::enum_name(t));
 		return name;
 	}
-	
+
     template <>
 	inline std::string ToString(ImGuiWindowFlags_ t)
 	{

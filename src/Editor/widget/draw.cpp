@@ -575,8 +575,10 @@ namespace imgui_editor
 
 		if (ImGui::IsItemHovered(ImGuiMouseButton_Left))
 		{
-			ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255));
-			ImGui::GetWindowDrawList()->AddText(ImGui::GetItemRectMax(), IM_COL32(255, 0, 0, 255), string_format("%s[%zx]",ctx->label.c_str(), ctx->id).c_str());
+			const auto& max = ImGui::GetItemRectMax();
+			ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), max, IM_COL32(255, 0, 0, 255));
+			const std::string info = string_format("%s[%zx]",ctx->label.c_str(), ctx->id);
+			ImGui::GetWindowDrawList()->AddText(max, IM_COL32(255, 0, 0, 255), info.c_str());
 		}
 
 		if(ImGui::BeginDragDropSource( ImGuiDragDropFlags_SourceAllowNullID))
