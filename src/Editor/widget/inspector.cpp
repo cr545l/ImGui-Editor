@@ -49,7 +49,7 @@ namespace imgui_editor
 {
     void draw_inspector_widget(widget *ctx)
     {
-        ImGui::Text("ID : %zx / %s", ctx->id, get_pretty_name(ctx->type));
+        ImGui::Text("ID : %zu / %s", ctx->id, get_pretty_name(ctx->type));
         ImGui::InputText("label", &ctx->label);
         ImGui::DragFloat2("size", &ctx->size.x);
 

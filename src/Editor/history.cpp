@@ -20,6 +20,17 @@ namespace imgui_editor
         g_context = history;
     }
 
+    void finalize_history(history* history)
+    {
+        for (size_t i = 0, max = history->commands.size(); i < max; ++i)
+        {
+            history->commands[i]->destructor(history->commands[i]->argument_data);
+            delete history->commands[i];
+        }
+        history->commands.clear();
+        history->index = SIZE_MAX;
+    }
+
     void commit(command_data* ctx)
     {
         for (size_t i = g_context->index + 1, max = g_context->commands.size(); i < max; ++i)

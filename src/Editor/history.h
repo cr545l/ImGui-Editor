@@ -20,6 +20,8 @@ namespace imgui_editor
 
 	void init_history(history* history);
 
+	void finalize_history(history* history);
+
 	void commit(command_data* ctx);
 
 	void undo();

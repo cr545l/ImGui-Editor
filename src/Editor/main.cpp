@@ -453,7 +453,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     g_data = (HostData *)ctx->userdata;
     g_version = ctx->version;
     g_failure = ctx->failure;
-
+    
     switch (operation) {
         case CR_LOAD:
             imui_init();
@@ -466,6 +466,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
             // if needed, save stuff to pass over to next instance
             // 필요한 경우 다음 인스턴스로 전달할 항목을 저장합니다.
             *g_data->root = widget_serialize(g_data->widget_editor->root);
+            finalize_history(g_data->history);
             return 0;
         case CR_CLOSE:
             imui_shutdown();
