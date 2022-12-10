@@ -11,12 +11,12 @@
 #include "editor/selection.h"
 #include "editor/history.h"
 
-ImVec2 g_windowSize;
-ImVec2 g_unitSize;
-size_t g_widget_id = 0;
-
 namespace imgui_editor
 {
+	ImVec2 g_windowSize;
+	ImVec2 g_unitSize;
+	size_t g_widget_id = 0;
+
 	void initialize(widget_editor *ctx, const char* init)
 	{
 		g_widget_id = 0;

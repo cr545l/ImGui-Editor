@@ -3,10 +3,10 @@
 #include "editor/imgui_editor.h"
 #include "editor/selection.h"
 
-extern ImVec2 g_unitSize;
-
 namespace imgui_editor
 {
+	extern ImVec2 g_unitSize;
+
 	void draw_inspector(widget_inspector* context)
 	{
 		auto selected = selection::get_targets();
@@ -49,7 +49,7 @@ namespace imgui_editor
 			}
 
 			ImGui::Separator();
-
+			
 			for (auto i : selected)
 			{
 				draw_inspector_widget(i);

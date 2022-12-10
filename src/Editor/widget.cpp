@@ -1,24 +1,48 @@
 #include "Precompiled.h"
 
+#include <unordered_map>
+
 #include "editor/widget.h"
 #include "editor/imgui_ex.h"
 
-
-extern size_t g_widget_id;
-
 namespace imgui_editor
 {
-	widget* new_widget(widget_type type)
+	extern size_t g_widget_id;
+
+	extern std::unordered_map<size_t, widget*>* g_widget_table;
+
+	widget* find(size_t id)
 	{
-		auto w = new widget();
-		w->type = type;
-		w->args = new_widget_arg(type);
-		w->id = g_widget_id++;
-		return w;
+		auto it = (*g_widget_table).find(id);
+        assert(it != (*g_widget_table).end());
+		return it->second;
 	}
+
+    widget* new_widget(widget_type type)
+    {
+        auto w = new widget();
+        w->type = type;
+        w->args = new_widget_arg(type);
+        assert(nullptr!= w->args); // Failed to create widget argument
+        w->id = g_widget_id++;
+        (*g_widget_table)[w->id] = w;
+        return w;
+    }
+
+    widget* new_widget_by_id(widget_type type, size_t id)
+    {
+        auto w = new widget();
+        w->type = type;
+        w->args = new_widget_arg(type);
+        assert(nullptr!= w->args); // Failed to create widget argument
+        w->id = id;
+        (*g_widget_table)[w->id] = w;
+        return w;
+    }
 
 	void delete_widget(widget* target)
 	{
+		(*g_widget_table).erase(target->id);
 		delete_widget_args(target->type, target->args);
 		target->args = nullptr;
 

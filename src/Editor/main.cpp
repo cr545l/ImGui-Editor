@@ -1,5 +1,7 @@
 #include "Precompiled.h"
 
+#include <unordered_map>
+
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <GL/gl3w.h> // gl*
@@ -43,6 +45,7 @@ struct HostData {
 
     std::string* root = nullptr;
     void (*widget_deserialize)(imgui_editor::widget* target, const char* data);
+    std::unordered_map<size_t, imgui_editor::widget*>* widgets;
 };
 
 static uint32_t     g_failure = 0;
@@ -448,6 +451,11 @@ void test_crash() {
     (void)i;
 }
 
+namespace imgui_editor
+{
+    std::unordered_map<size_t, imgui_editor::widget*>* g_widget_table = nullptr;
+}
+
 CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     assert(ctx);
     g_data = (HostData *)ctx->userdata;
@@ -457,6 +465,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
     switch (operation) {
         case CR_LOAD:
             imui_init();
+            imgui_editor::g_widget_table = g_data->widgets;
             imgui_editor::initialize(g_data->widget_editor, g_data->root->c_str());
             init_history(g_data->history);
             init_selection(g_data->selection);

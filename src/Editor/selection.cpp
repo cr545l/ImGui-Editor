@@ -15,29 +15,47 @@ namespace imgui_editor
 
 	namespace command
 	{
+		void push_back_widgets(std::vector<widget*>& widgets, std::vector<size_t> ids)
+		{
+			for (auto id : ids)
+			{
+				widgets.push_back(find(id));
+			}
+		}
+
+		void push_back_ids(std::vector<size_t>& ids, std::vector<widget*> targets)
+		{
+			for (auto target : targets)
+			{
+				ids.push_back(target->id);
+			}
+		}
+
 		namespace select_context_command
 		{
 			struct data
 			{
-				widget* select = nullptr;
-				std::vector<widget*> selects;
+				size_t select = -1;
+				std::vector<size_t> selects;
 
-				widget* original = nullptr;
-				std::vector<widget*> originals;
+				size_t original = -1;
+				std::vector<size_t> originals;
 			};
 
 			void undo(void* _context)
 			{
 				data* ctx = (data*)_context;
-				g_context->target = ctx->original;
-				g_context->targets = ctx->originals;
+				g_context->target = find(ctx->original);
+                g_context->targets.clear();
+				push_back_widgets(g_context->targets, ctx->originals);
 			}
 
 			void redo(void* _context)
 			{
 				data* ctx = (data*)_context;
-				g_context->target = ctx->select;
-				g_context->targets = ctx->selects;
+				g_context->target = find(ctx->select);
+                g_context->targets.clear();
+				push_back_widgets(g_context->targets, ctx->selects);
 			}
 
 			void destructor(void* ctx)
@@ -54,10 +72,10 @@ namespace imgui_editor
 
 			select_context_command::data* ctx = new select_context_command::data();
 
-			ctx->select = target;
-			ctx->selects.push_back(target);
-			ctx->original = target;
-			ctx->originals = g_context->targets;
+			ctx->select = target->id;
+			ctx->selects.push_back(target->id);
+			ctx->original = target->id;
+			push_back_ids(ctx->originals,g_context->targets);
 
 			cmd->argument_data = ctx;
 			cmd->undo = select_context_command::undo;
@@ -75,11 +93,11 @@ namespace imgui_editor
 			assert(0 < targets.size());
 			for (auto target : targets)
 			{
-				if (nullptr == ctx->select) ctx->select = target;
-				ctx->selects.push_back(target);
+				if (-1 == ctx->select) ctx->select = target->id;
+				ctx->selects.push_back(target->id);
 			}
-			ctx->original = g_context->target;
-			ctx->originals = targets;
+			ctx->original = g_context->target->id;
+			push_back_ids(ctx->originals,g_context->targets);
 
 			cmd->argument_data = ctx;
 			cmd->undo = select_context_command::undo;

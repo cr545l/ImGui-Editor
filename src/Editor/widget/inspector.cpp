@@ -6,8 +6,6 @@
 #include "editor/widget/args_data.h"
 #include "editor/selection.h"
 
-extern ImVec2 g_unitSize;
-
 struct ImGuiStyleVarInfo
 {
     ImGuiDataType   Type;
@@ -47,6 +45,8 @@ static const ImGuiStyleVarInfo GStyleVarInfo[] =
 
 namespace imgui_editor
 {
+    extern ImVec2 g_unitSize;
+
     void draw_inspector_widget(widget *ctx)
     {
         ImGui::Text("ID : %zu / %s", ctx->id, get_pretty_name(ctx->type));

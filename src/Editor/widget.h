@@ -44,6 +44,7 @@ namespace imgui_editor
 		void(*draw_inspector)(widget*) = nullptr;
 	};	
 
+	widget* find(size_t id);
 	const char* get_pretty_name(widget_type type);
 
 	int32_t to_fixed_type(widget_type type);
@@ -52,7 +53,8 @@ namespace imgui_editor
 	void draw_widget(widget* context);
 	void draw_inspector_widget(widget* context);
 
-	CR_EXPORT widget* new_widget(widget_type type);
+    CR_EXPORT widget* new_widget(widget_type type);
+    CR_EXPORT widget* new_widget_by_id(widget_type type, size_t id);
 	CR_EXPORT void* new_widget_arg(widget_type type);
 	CR_EXPORT void delete_widget(widget* target);
 	CR_EXPORT void delete_widget_args(widget_type type, void* target);

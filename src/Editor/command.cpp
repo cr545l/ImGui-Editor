@@ -12,9 +12,10 @@ namespace imgui_editor
         {
             struct data
             {
-                widget* parent;
-                widget_type type;
-                size_t index;
+                widget* parent = nullptr;
+                widget_type type = widget_type::widget_type_none;
+                size_t index = -1;
+                size_t id = -1;
             };
 
             void undo(void* ctx)
@@ -27,7 +28,16 @@ namespace imgui_editor
             void redo(void* ctx)
             {
                 data* context = (data*)ctx;
-                widget* widget = new_widget(context->type);
+                widget* widget = nullptr;
+                if(-1 == context->id)
+                {
+                    widget = new_widget(context->type);
+                    context->id = widget->id;
+                }
+                else
+                {
+                    widget = new_widget_by_id(context->type, context->id);
+                }
 
                 if(context->index == -1)
                 {
@@ -131,8 +141,9 @@ namespace imgui_editor
         {
             struct data
             {
-                widget* parent;
-                size_t index;
+                widget* parent = nullptr;
+                size_t index = -1;
+                size_t id = -1;
 
                 std::string widget;
             };
@@ -141,7 +152,7 @@ namespace imgui_editor
             {
                 data* ctx = (data*)_context;
 
-                widget* w = new_widget(widget_type::widget_type_none);
+                widget* w = new_widget_by_id(widget_type::widget_type_none, w->id);
                 widget_deserialize(w,ctx->widget.c_str());
 
                 ctx->parent->children.insert(ctx->parent->children.begin() + ctx->index, w);
@@ -173,6 +184,7 @@ namespace imgui_editor
 
                 ctx->parent = target->parent;
                 ctx->index = index;
+                ctx->id = target->id;
                 ctx->widget = widget_serialize(target);
 
                 cmd->argument_data = ctx;

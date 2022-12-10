@@ -2,10 +2,10 @@
 #include "editor/imgui_editor.h"
 #include "editor/history.h"
 
-extern ImVec2 g_unitSize;
-
 namespace imgui_editor
 {
+    extern ImVec2 g_unitSize;
+
     static size_t last_index = 0;
     void draw_histroy(history* ctx)
     {

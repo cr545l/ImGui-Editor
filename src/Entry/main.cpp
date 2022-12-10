@@ -1,5 +1,6 @@
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -60,6 +61,7 @@ struct HostData {
 
     std::string* root = nullptr;
 	void (*widget_deserialize)(imgui_editor::widget* target, const char* data);
+    std::unordered_map<size_t, imgui_editor::widget*>* widgets;
 };
 
 // some global data from our libs we keep in the host so we
@@ -125,6 +127,7 @@ void glfw_funcs() {
 imgui_editor::widget_editor we;
 imgui_editor::history history;
 imgui_editor::selection_context selection;
+std::unordered_map<size_t, imgui_editor::widget*> widgets;
 
 void drop_callback(GLFWwindow* window, int count, const char** paths)
 {
@@ -188,6 +191,8 @@ int main(int argc, char **argv) {
 
     std::string rootBuffer;
     data.root = &rootBuffer;
+
+    data.widgets = &widgets;
     
     glfwSetMouseButtonCallback(window, ImGui_ImplGlfwGL3_MouseButtonCallback);
     glfwSetScrollCallback(window, ImGui_ImplGlfwGL3_ScrollCallback);
