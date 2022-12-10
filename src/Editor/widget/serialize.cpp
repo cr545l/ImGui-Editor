@@ -385,7 +385,10 @@ namespace imgui_editor
         {
             version = "0";
             widget_menu_item* wd = (widget_menu_item*)data;
-            return string_format("%s,%d,%d",wd->shortcut.c_str(), wd->selected, wd->enabled);
+            return string_format("\"%s\",%d,%d",
+                to_safe_string(wd->shortcut).c_str(),
+                wd->selected, 
+                wd->enabled);
         }
 #pragma endregion // Widgets: Menus
 

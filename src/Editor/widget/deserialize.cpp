@@ -677,7 +677,7 @@ namespace imgui_editor
         case widget_type::widget_type_menu_item:
         {
             widget_menu_item* wd = (widget_menu_item*)data;
-            stream >> wd->shortcut;
+            wd->shortcut = read_string(stream);
             stream >> comma;
             stream >> wd->selected;
             stream >> comma;

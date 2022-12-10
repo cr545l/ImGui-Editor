@@ -54,13 +54,18 @@ namespace imgui_editor
 		{
             style_var_vec2s += string_format("{%d,%f,%f},", (int)target->style_var_vec2s[i].idx, target->style_var_vec2s[i].val.x, target->style_var_vec2s[i].val.y);
 		}
+
         const char* version = "";
+		std::string safe_version = to_safe_string(version);
+
+		std::string safe_label = to_safe_string(target->label.c_str());
+		
         std::string args = widget_data_serialize(target->type, target->args, version);
         return string_format("{%lu,\"%s\",{%s},\"%s\",%f,%f,[%s],[%s],[%s],[%s]}", 
         to_fixed_type(target->type),
-        version,
+        safe_version.c_str(),
         args.c_str(),
-        target->label.c_str(), 
+        safe_label.c_str(), 
         target->size.x, 
         target->size.y, 
         children.c_str(),
@@ -142,12 +147,8 @@ namespace imgui_editor
         size_t fixed_type = strtoul(read.c_str(), &pos, 0);
         target_widget->type = to_widget_type(fixed_type);
 
-		// std::string 읽는 규칙
-		// - ," 여기서부터 시작한다
-		// - ", 여기까지 읽는다
-		// - 도중 ",가 있을 수 있는데 \",라면 무시한다
-        std::getline(widget_stream, read, ',');
-        const std::string version = read;
+        const std::string version = read_string(widget_stream);
+		std::getline(widget_stream, read, ',');
 
         std::getline(widget_stream, read, '{');
         std::getline(widget_stream, read, '}');
@@ -159,9 +160,9 @@ namespace imgui_editor
 
         std::getline(widget_stream, read, ',');
 
+		target_widget->label = read_string(widget_stream);
         std::getline(widget_stream, read, ',');
-        target_widget->label = read;
-
+		
         std::getline(widget_stream, read, ',');
         target_widget->size.x = strtof(read.c_str(), &pos);
         std::getline(widget_stream, read, ',');
