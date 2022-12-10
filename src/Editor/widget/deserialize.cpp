@@ -101,7 +101,7 @@ namespace imgui_editor
 		case widget_type::widget_type_label_text:
 		{
 			widget_label_text* wd = (widget_label_text*)data;
-            stream >> wd->text;
+            wd->text = read_string(stream);
 		}
         break;
 		case widget_type::widget_type_bullet_text: return;
@@ -137,7 +137,7 @@ namespace imgui_editor
         case widget_type::widget_type_begin_end_combo:
         {
             widget_begin_end_combo* wd = (widget_begin_end_combo*)data;
-            stream >> wd->preview_value;
+            wd->preview_value = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         } 
@@ -156,7 +156,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -168,7 +168,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[1];
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -182,7 +182,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[2];
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -198,7 +198,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[3];
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -214,7 +214,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -226,7 +226,15 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[1];
             stream >> comma;
-            stream >> wd->flags;
+            stream >> wd->speed;
+            stream >> comma;
+            stream >> wd->min;
+            stream >> comma;
+            stream >> wd->max;
+            stream >> comma;
+            wd->format = read_string(stream);
+            stream >> comma;
+            stream >> wd->flags;            
         }
         break;
         case widget_type::widget_type_drag_int3:
@@ -238,7 +246,15 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[2];
             stream >> comma;
-            stream >> wd->flags;
+            stream >> wd->speed;
+            stream >> comma;
+            stream >> wd->min;
+            stream >> comma;
+            stream >> wd->max;
+            stream >> comma;
+            wd->format = read_string(stream);
+            stream >> comma;
+            stream >> wd->flags;            
         }
         break;
         case widget_type::widget_type_drag_int4:
@@ -252,7 +268,15 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[3];
             stream >> comma;
-            stream >> wd->flags;
+            stream >> wd->speed;
+            stream >> comma;
+            stream >> wd->min;
+            stream >> comma;
+            stream >> wd->max;
+            stream >> comma;
+            wd->format = read_string(stream);
+            stream >> comma;
+            stream >> wd->flags;            
         }
         break;
 #pragma endregion // Widgets: Drag Sliders
@@ -267,7 +291,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }  
@@ -283,7 +307,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -301,7 +325,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -321,7 +345,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -335,7 +359,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -349,7 +373,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -365,7 +389,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -383,7 +407,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -403,7 +427,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->max;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -414,7 +438,7 @@ namespace imgui_editor
         case widget_type::widget_type_input_text:
         {
             widget_input_text* wd = (widget_input_text*)data;
-            stream >> wd->text;
+            wd->text = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -422,7 +446,7 @@ namespace imgui_editor
         case widget_type::widget_type_input_text_multiline:
         {
             widget_input_text_multiline* wd = (widget_input_text_multiline*)data;
-            stream >> wd->text;
+            wd->text = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -430,9 +454,9 @@ namespace imgui_editor
         case widget_type::widget_type_input_text_with_hint:
         {
             widget_input_text_with_hint* wd = (widget_input_text_with_hint*)data;
-            stream >> wd->text;
+            wd->text = read_string(stream);
             stream >> comma;
-            stream >> wd->hint;
+            wd->hint = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -446,7 +470,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->step_fast;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -458,7 +482,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[1];
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -472,7 +496,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[2];
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -488,7 +512,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->value[3];
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }
@@ -549,7 +573,7 @@ namespace imgui_editor
             stream >> comma;
             stream >> wd->step_fast;
             stream >> comma;
-            stream >> wd->format;
+            wd->format = read_string(stream);
             stream >> comma;
             stream >> wd->flags;
         }

@@ -85,7 +85,7 @@ namespace imgui_editor
         {
             version = "0";
             widget_label_text* wd = (widget_label_text*)data;
-            return string_format("%s,", wd->text.c_str());
+            return string_format("\"%s\",", to_safe_string(wd->text).c_str());
         }
         case widget_type::widget_type_bullet_text: return "";
 #pragma endregion // Widgets: Text
@@ -119,7 +119,7 @@ namespace imgui_editor
         {
             version = "0";
             widget_begin_end_combo* wd = (widget_begin_end_combo*)data;
-            return string_format("%s,%d", wd->preview_value.c_str(), wd->flags);
+            return string_format("\"%s\",%d", to_safe_string(wd->preview_value).c_str(), wd->flags);
         }
 #pragma endregion // Widgets: Combo Box
 
@@ -128,49 +128,57 @@ namespace imgui_editor
         {
             version = "0";
             widget_drag_float* wd = (widget_drag_float*)data;
-            return string_format("%f,%f,%f,%f,%s,%d", wd->value, wd->speed, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,%f,\"%s\",%d", wd->value, 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_drag_float2:
         {
             version = "0";
             widget_drag_float2* wd = (widget_drag_float2*)data;
-            return string_format("%f,%f,%f,%f,%f,%s,%d", wd->value[0], wd->value[1], wd->speed, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,%f,%f,\"%s\",%d", wd->value[0], wd->value[1], 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_drag_float3:
         {
             version = "0";
             widget_drag_float3* wd = (widget_drag_float3*)data;
-            return string_format("%f,%f,%f,%f,%f,%f,%s,%d", wd->value[0], wd->value[1], wd->value[2], wd->speed, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,%f,%f,%f,\"%s\",%d", wd->value[0], wd->value[1], wd->value[2],
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_drag_float4:
         {
             version = "0";
             widget_drag_float4* wd = (widget_drag_float4*)data;
-            return string_format("%f,%f,%f,%f,%f,%f,%f,%s,%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], wd->speed, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,%f,%f,%f,%f,\"%s\",%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3],
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_drag_int:
         {
             version = "0";
             widget_drag_int* wd = (widget_drag_int*)data;
-            return string_format("%d,%f,%d,%d,%s,%d", wd->value, wd->speed, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%d,%f,%d,%d,\"%s\",%d", wd->value, 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_drag_int2:
         {
             version = "0";
             widget_drag_int2* wd = (widget_drag_int2*)data;
-            return string_format("%d,%d,%f,%d,%d,%s,%d", wd->value[0], wd->value[1], wd->speed, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%d,%d,%f,%d,%d,\"%s\",%d", wd->value[0], wd->value[1], 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_drag_int3:
         {
             version = "0";
             widget_drag_int3* wd = (widget_drag_int3*)data;
-            return string_format("%d,%d,%d,%f,%d,%d,%s,%d", wd->value[0], wd->value[1], wd->value[2], wd->speed, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%d,%d,%d,%f,%d,%d,\"%s\",%d", wd->value[0], wd->value[1], wd->value[2], 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_drag_int4:
         {
             version = "0";
             widget_drag_int4* wd = (widget_drag_int4*)data;
-            return string_format("%d,%d,%d,%d,%f,%d,%d,%s,%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], wd->speed, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%d,%d,%d,%d,%f,%d,%d,\"%s\",%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
 #pragma endregion // Widgets: Drag Sliders
 
@@ -179,55 +187,64 @@ namespace imgui_editor
         {
             version = "0";
             widget_slider_float* wd = (widget_slider_float*)data;
-            return string_format("%f,%f,%f,%s,%d", wd->value, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,\"%s\",%d", wd->value, 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_slider_float2:
         {
             version = "0";
             widget_slider_float2* wd = (widget_slider_float2*)data;
-            return string_format("%f,%f,%f,%f,%s,%d", wd->value[0], wd->value[1], wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,%f,\"%s\",%d", wd->value[0], wd->value[1], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_slider_float3:
         {
             version = "0";
             widget_slider_float3* wd = (widget_slider_float3*)data;
-            return string_format("%f,%f,%f,%f,%f,%s,%d", wd->value[0], wd->value[1], wd->value[2], wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,%f,%f,\"%s\",%d", wd->value[0], wd->value[1], wd->value[2], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_slider_float4:
         {
             version = "0";
             widget_slider_float4* wd = (widget_slider_float4*)data;
-            return string_format("%f,%f,%f,%f,%f,%f,%s,%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,%f,%f,%f,\"%s\",%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_slider_angle:
         {
             version = "0";
             widget_slider_angle* wd = (widget_slider_angle*)data;
-            return string_format("%f,%f,%f,%s,%d", wd->value, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%f,%f,%f,\"%s\",%d", wd->value, 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_slider_int:
         {
             version = "0";
             widget_slider_int* wd = (widget_slider_int*)data;
-            return string_format("%d,%d,%d,%s,%d", wd->value, wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%d,%d,%d,\"%s\",%d", wd->value, 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_slider_int2:
         {
             version = "0";
             widget_slider_int2* wd = (widget_slider_int2*)data;
-            return string_format("%d,%d,%d,%d,%s,%d", wd->value[0], wd->value[1], wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%d,%d,%d,%d,\"%s\",%d", wd->value[0], wd->value[1], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_slider_int3:
         {
             version = "0";
             widget_slider_int3* wd = (widget_slider_int3*)data;
-            return string_format("%d,%d,%d,%d,%d,%s,%d", wd->value[0], wd->value[1], wd->value[2], wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%d,%d,%d,%d,%d,\"%s\",%d", wd->value[0], wd->value[1], wd->value[2], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_slider_int4:
         {
             version = "0";
             widget_slider_int4* wd = (widget_slider_int4*)data;
-            return string_format("%d,%d,%d,%d,%d,%d,%s,%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], wd->min, wd->max, wd->format.c_str(), wd->flags);
+            return string_format("%d,%d,%d,%d,%d,%d,\"%s\",%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
 #pragma endregion // Widgets: Regular Sliders
 
@@ -236,19 +253,22 @@ namespace imgui_editor
         {
             version = "0";
             widget_input_text* wd = (widget_input_text*)data;
-            return string_format("%s,%d,", wd->text.c_str(), wd->flags);
+            return string_format("\"%s\",%d,",
+                to_safe_string(wd->text).c_str(), wd->flags);
         }
         case widget_type::widget_type_input_text_multiline:
         {
             version = "0";
             widget_input_text_multiline* wd = (widget_input_text_multiline*)data;
-            return string_format("%s,%d,", wd->text.c_str(), wd->flags);
+            return string_format("\"%s\",%d,", 
+                to_safe_string(wd->text).c_str(), wd->flags);
         }
         case widget_type::widget_type_input_text_with_hint:
         {
             version = "0";
             widget_input_text_with_hint* wd = (widget_input_text_with_hint*)data;
-            return string_format("%s,%s,%d,", wd->text.c_str(), wd->hint.c_str(), wd->flags);
+            return string_format("\"%s\",\"%s\",%d,", 
+                to_safe_string(wd->text).c_str(), to_safe_string(wd->hint).c_str(), wd->flags);
         }
         case widget_type::widget_type_input_float:
         {
