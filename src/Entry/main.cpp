@@ -47,14 +47,17 @@ struct HostData {
 
     // glfw functions that imgui calls on guest side
     GLFWwindow *window = nullptr;
-    const char* (*get_clipboard_fn)(void* user_data);
-    void(*set_clipboard_fn)(void* user_data, const char* text);
-    void(*set_cursor_pos_fn)(GLFWwindow* handle, double xpos, double ypos);
-    void(*get_cursor_pos_fn)(GLFWwindow* handle, double* xpos, double* ypos);
-    int(*get_window_attrib_fn)(GLFWwindow* handle, int attrib);
-    int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
-    void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
-    
+    const char* (*ImGui_ImplGlfwGL3_GetClipboardText)(void* user_data);
+    void(*ImGui_ImplGlfwGL3_SetClipboardText)(void* user_data, const char* text);
+    void(*glfwSetCursorPos)(GLFWwindow* handle, double xpos, double ypos);
+    void(*glfwGetCursorPos)(GLFWwindow* handle, double* xpos, double* ypos);
+    int(*glfwGetWindowAttrib)(GLFWwindow* handle, int attrib);
+    int(*glfwGetMouseButton)(GLFWwindow* handle, int button);
+    void(*glfwSetInputMode)(GLFWwindow* handle, int mode, int value);
+    GLFWcursor* (*glfwCreateStandardCursor)(int shape);
+    int (*glfwGetInputMode)(GLFWwindow* handle, int mode);
+    void (*glfwSetCursor)(GLFWwindow* windowHandle, GLFWcursor* cursorHandle);
+
     imgui_editor::widget_editor* widget_editor = nullptr;
     imgui_editor::history* history = nullptr;
     imgui_editor::selection_context* selection = nullptr;
@@ -117,11 +120,16 @@ void ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c) {
 }
 
 void glfw_funcs() {
-    // Setup time stepØ    data.set_cursor_pos_fn = glfwSetCursorPos;
-    data.get_cursor_pos_fn = glfwGetCursorPos;
-    data.get_window_attrib_fn = glfwGetWindowAttrib;
-    data.get_mouse_button_fn = glfwGetMouseButton;
-    data.set_input_mode_fn = glfwSetInputMode;
+    // Setup time stepØ   
+    data.glfwSetCursorPos = glfwSetCursorPos;
+    data.glfwGetCursorPos = glfwGetCursorPos;
+    data.glfwGetWindowAttrib = glfwGetWindowAttrib;
+    data.glfwGetMouseButton = glfwGetMouseButton;
+    data.glfwSetInputMode = glfwSetInputMode;
+    data.glfwCreateStandardCursor = glfwCreateStandardCursor;
+    data.glfwGetInputMode = glfwGetInputMode;
+    data.glfwSetInputMode = glfwSetInputMode;
+    data.glfwSetCursor = glfwSetCursor;
 }
 
 imgui_editor::widget_editor we;
@@ -180,8 +188,8 @@ int main(int argc, char **argv) {
 #ifdef _WIN32
 	data.wndh = glfwGetWin32Window(window);
 #endif
-    data.set_clipboard_fn = ImGui_ImplGlfwGL3_SetClipboardText;
-    data.get_clipboard_fn = ImGui_ImplGlfwGL3_GetClipboardText;
+    data.ImGui_ImplGlfwGL3_SetClipboardText = ImGui_ImplGlfwGL3_SetClipboardText;
+    data.ImGui_ImplGlfwGL3_GetClipboardText = ImGui_ImplGlfwGL3_GetClipboardText;
     data.window = window;
     data.imgui_context = ImGui::CreateContext();
 
@@ -223,7 +231,6 @@ int main(int argc, char **argv) {
         sprintf(title, "ImGui Editor %.1ffps", ImGui::GetIO().Framerate);
         glfwSetWindowTitle(window, title);
         glfwSetDropCallback(window, drop_callback);
-
 
         if(data.w != current_width || data.h != current_height) 
         {
