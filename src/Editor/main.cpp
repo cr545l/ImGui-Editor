@@ -334,7 +334,6 @@ static void ImGui_ImplGlfw_UpdateMouseCursor()
     }
 }
 
-
 // Some customization to use data from host, call glfw functions
 // in the glfw case it is an internal static variable that indicates it
 // is already initialized, so we must call glfw functions on the host
@@ -342,7 +341,8 @@ static void ImGui_ImplGlfw_UpdateMouseCursor()
 // 호스트의 데이터를 사용하기 위한 일부 사용자 정의는 glfw의 경우 glfw 함수를 호출하여
 // 이미 초기화되었음을 나타내는 내부 정적 변수이므로 호스트에서 glfw 함수를 호출해야 합니다.
 // 그렇지 않으면 초기화되지 않았다고 표시됩니다(dll에서 true 문맥).
-bool imui_init() {
+bool imui_init()
+{
     gl3wInit();
 
 #if defined(IMGUI_GUEST_ONLY)
@@ -397,7 +397,7 @@ bool imui_init() {
     g_MouseCursors[ImGuiMouseCursor_ResizeEW] = g_data->glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_Hand] = g_data->glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 
-#if GLFW_HAS_NEW_CURSORS
+#if GLFW_HAS_NEW_CURSORS // 3.4
     g_MouseCursors[ImGuiMouseCursor_ResizeAll] = g_data->glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = g_data->glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = g_data->glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
@@ -442,6 +442,7 @@ static void imui_frame_end()
     glViewport(0, 0, g_data->display_w, g_data->display_h);
     glClearColor(g_clear_color.x, g_clear_color.y, g_clear_color.z, g_clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
+
     ImGui::Render();
     ImGui_ImplGlfwGL3_RenderDrawLists(ImGui::GetDrawData());
 }
@@ -535,15 +536,18 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
             init_selection(g_data->selection);
 			g_data->widget_deserialize = imgui_editor::widget_deserialize;
             return 0;
+
         case CR_UNLOAD:
             // if needed, save stuff to pass over to next instance
             // 필요한 경우 다음 인스턴스로 전달할 항목을 저장합니다.
             *g_data->root = widget_serialize(g_data->widget_editor->root);
             finalize_history(g_data->history);
             return 0;
+
         case CR_CLOSE:
             imui_shutdown();
             return 0;
+            
         case CR_STEP:
             imui_frame_begin();
             imgui_editor::draw(g_data->widget_editor, g_data->history);

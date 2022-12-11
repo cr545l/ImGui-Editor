@@ -119,19 +119,6 @@ void ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c) {
     }
 }
 
-void glfw_funcs() {
-    // Setup time stepØ   
-    data.glfwSetCursorPos = glfwSetCursorPos;
-    data.glfwGetCursorPos = glfwGetCursorPos;
-    data.glfwGetWindowAttrib = glfwGetWindowAttrib;
-    data.glfwGetMouseButton = glfwGetMouseButton;
-    data.glfwSetInputMode = glfwSetInputMode;
-    data.glfwCreateStandardCursor = glfwCreateStandardCursor;
-    data.glfwGetInputMode = glfwGetInputMode;
-    data.glfwSetInputMode = glfwSetInputMode;
-    data.glfwSetCursor = glfwSetCursor;
-}
-
 imgui_editor::widget_editor we;
 imgui_editor::history history;
 imgui_editor::selection_context selection;
@@ -206,7 +193,16 @@ int main(int argc, char **argv) {
     glfwSetScrollCallback(window, ImGui_ImplGlfwGL3_ScrollCallback);
     glfwSetKeyCallback(window, ImGui_ImplGlfwGL3_KeyCallback);
     glfwSetCharCallback(window, ImGui_ImplGlfwGL3_CharCallback);
-    glfw_funcs();
+    
+    data.glfwSetCursorPos = glfwSetCursorPos;
+    data.glfwGetCursorPos = glfwGetCursorPos;
+    data.glfwGetWindowAttrib = glfwGetWindowAttrib;
+    data.glfwGetMouseButton = glfwGetMouseButton;
+    data.glfwSetInputMode = glfwSetInputMode;
+    data.glfwCreateStandardCursor = glfwCreateStandardCursor;
+    data.glfwGetInputMode = glfwGetInputMode;
+    data.glfwSetInputMode = glfwSetInputMode;
+    data.glfwSetCursor = glfwSetCursor;
 
     cr_plugin ctx;
     ctx.userdata = &data;

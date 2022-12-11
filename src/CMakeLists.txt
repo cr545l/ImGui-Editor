@@ -1,8 +1,9 @@
 fips_begin_sharedlib(editor cmdline)
     fips_files(editor/main.cpp)
     
-    fips_files(editor/imgui_ex.h)
-    fips_files(editor/imgui_ex.cpp)
+    
+    fips_files(editor/extension.h)
+    fips_files(editor/extension.cpp)
     
     fips_files(editor/widget.h)
     fips_files(editor/widget.cpp)

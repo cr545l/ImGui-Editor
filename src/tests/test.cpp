@@ -5,7 +5,7 @@
 #include <magic_enum/magic_enum.hpp>
 
 #include "editor/widget.h"
-#include "editor/imgui_ex.h"
+#include "editor/extension.h"
 
 using namespace imgui_editor;
 
