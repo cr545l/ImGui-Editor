@@ -644,10 +644,17 @@ namespace imgui_editor
 
         ImGui::Separator();
 
-        ImGui::PushID("style_colors");
+        if(ImGui::TreeNodeEx("style_colors", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            if(ImGui::Button("Add Default"))
+            {
+                for(size_t i =0, max = (size_t)ImGuiCol_COUNT; i < max; ++i)
+                {
+                    ctx->style_colors.push_back({(ImGuiCol_)i, ImGui::GetStyle().Colors[i]});
+                }
+            }
             int size =ctx->style_colors.size();
-            if(ImGui::InputInt("style_colors", (int*)&size))
+            if(ImGui::InputInt("size", (int*)&size))
             {
                 if (size < 0)
                 {
@@ -670,14 +677,24 @@ namespace imgui_editor
                 ImGui::ColorEdit4(string_format("%s[%u]", "col", i).c_str(), &ctx->style_colors[i].col.Value.x);
                 ImGui::PopID();
             }
-        }        
-        ImGui::PopID(); 
+            ImGui::TreePop();
+        }
 
-
-        ImGui::PushID("style_var_floats");
+        if(ImGui::TreeNodeEx("style_var_floats", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            if(ImGui::Button("Add Default"))
+            {
+                for(size_t i =0, max = (size_t)ImGuiStyleVar_COUNT; i < max; ++i)
+                {
+                    if(GStyleVarInfo[i].Count == 1)
+                    {
+                        float* value = (float*)GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle());
+                        ctx->style_var_floats.push_back({(ImGuiStyleVar_)i, *value});
+                    }
+                }
+            }
             int size =ctx->style_var_floats.size();
-            if(ImGui::InputInt("style_var_floats", (int*)&size))
+            if(ImGui::InputInt("size", (int*)&size))
             {
                 if (size < 0)
                 {
@@ -716,13 +733,24 @@ namespace imgui_editor
                 ImGui::DragFloat(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_floats[i].val);
                 ImGui::PopID();
             }
-        }      
-        ImGui::PopID();
-        
-        ImGui::PushID("style_var_vec2s");
+            ImGui::TreePop();
+        }   
+
+        if(ImGui::TreeNodeEx("style_var_vec2s", ImGuiTreeNodeFlags_DefaultOpen))
         {
+            if(ImGui::Button("Add Default"))
+            {
+                for(size_t i =0, max = (size_t)ImGuiStyleVar_COUNT; i < max; ++i)
+                {
+                    if(GStyleVarInfo[i].Count == 2)
+                    {
+                        ImVec2* value = (ImVec2*)GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle());
+                        ctx->style_var_vec2s.push_back({(ImGuiStyleVar_)i, *value});
+                    }
+                }
+            }
             int size =ctx->style_var_vec2s.size();
-            if(ImGui::InputInt("style_var_vec2s", (int*)&size))
+            if(ImGui::InputInt("size", (int*)&size))
             {
                 if (size < 0)
                 {
@@ -759,7 +787,7 @@ namespace imgui_editor
                 ImGui::DragFloat2(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_vec2s[i].val.x);
                 ImGui::PopID();
             }
+            ImGui::TreePop();
         }
-        ImGui::PopID();
     }
 }
