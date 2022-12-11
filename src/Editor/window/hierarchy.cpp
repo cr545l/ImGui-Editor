@@ -9,30 +9,51 @@
 
 namespace imgui_editor
 {
-	static void draw_node(std::vector<widget*>& selected, widget* current_widget)
+	static void draw_node(std::vector<widget*>& selected, widget* ctx)
 	{
 		ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (std::any_of(selected.begin(), selected.end(), [&](widget* w)
-			{ return w == current_widget; }))
+			{ return w == ctx; }))
 		{
 			flag |= ImGuiTreeNodeFlags_Selected;
 		}
 
-		if (current_widget)
+		if (ctx)
 		{
 			bool remove = false;
 			
-			ImGui::PushID(current_widget->id);
-			bool showChildren = ImGui::TreeNodeEx(current_widget->label.c_str(), flag, "%s (%s)", current_widget->label.c_str(), get_pretty_name(current_widget->type));
+			ImGui::PushID(ctx->id);
+			bool showChildren = ImGui::TreeNodeEx(ctx->label.c_str(), flag, "%s (%s)", ctx->label.c_str(), get_pretty_name(ctx->type));
+
+			if(ImGui::BeginDragDropSource( ImGuiDragDropFlags_SourceAllowNullID))
+			{
+				ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
+				ImGui::Text(ctx->label.c_str());
+				ImGui::EndDragDropSource();
+			}
+
+			if(ImGui::BeginDragDropTarget())
+			{
+				if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
+				{
+					widget* source = *(widget**)payload->Data;
+					if(source != ctx)
+					{
+						command::attach_child(ctx, source);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
 			ImGui::PopID();
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			{
-				command::select(current_widget);
+				command::select(ctx);
 			}
 			if (ImGui::BeginPopupContextItem())
 			{
-				ImGui::Text(current_widget->label.c_str());
+				ImGui::Text(ctx->label.c_str());
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete"))
 				{
@@ -43,7 +64,7 @@ namespace imgui_editor
 
 			if (remove)
 			{
-				command::remove_widget(current_widget);
+				command::remove_widget(ctx);
 				
 				if (showChildren)
 				{
@@ -54,7 +75,7 @@ namespace imgui_editor
 			{
 				if (showChildren)
 				{
-					const auto& children = current_widget->children;
+					const auto& children = ctx->children;
 					for (size_t i = 0, max = children.size(); i < max; ++i)
 					{
 						draw_node(selected, children[i]);

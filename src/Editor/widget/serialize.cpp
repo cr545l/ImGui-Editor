@@ -23,7 +23,7 @@ namespace imgui_editor
         {
             version = "0";
             widget_begin_end_child* wd = (widget_begin_end_child*)data;
-            return string_format("%d,%d", wd->border, wd->flags);
+            return string_format("%f,%f,%d,%d", wd->size.x, wd->size.y, wd->border, wd->flags);
         }
 #pragma endregion // Windows
 
@@ -51,7 +51,12 @@ namespace imgui_editor
             return string_format("%f,%f", wd->offset_from_start_x, wd->spacing);
         }
         case widget_type::widget_type_spacing: return "";
-        case widget_type::widget_type_dummy: return "";
+        case widget_type::widget_type_dummy: 
+        {
+            version = "0";
+            widget_dummy* wd = (widget_dummy*)data;
+            return string_format("%f,%f", wd->size.x, wd->size.y);
+        }
         case widget_type::widget_type_indent: 
         {
             version = "0";
@@ -91,7 +96,12 @@ namespace imgui_editor
 #pragma endregion // Widgets: Text
 
 #pragma region // Widgets: Main
-        case widget_type::widget_type_button: return "";
+        case widget_type::widget_type_button: 
+        {
+            version = "0";
+            widget_button* wd = (widget_button*)data;
+            return string_format("%f,%f,", wd->size.x, wd->size.y);
+        }
         case widget_type::widget_type_small_button: return "";
         case widget_type::widget_type_checkbox:
         {
@@ -260,8 +270,8 @@ namespace imgui_editor
         {
             version = "0";
             widget_input_text_multiline* wd = (widget_input_text_multiline*)data;
-            return string_format("\"%s\",%d,", 
-                to_safe_string(wd->text).c_str(), wd->flags);
+            return string_format("\"%s\",%f,%f,%d,", 
+                to_safe_string(wd->text).c_str(), wd->size.x, wd->size.y, wd->flags);
         }
         case widget_type::widget_type_input_text_with_hint:
         {
@@ -380,7 +390,7 @@ namespace imgui_editor
         {
             version = "0";
             widget_selectable* wd = (widget_selectable*)data;
-            return string_format("%d,%d,", wd->selected, wd->flags);
+            return string_format("%d,%d,%f,%f,", wd->selected, wd->flags, wd->size.x, wd->size.y);
         }
 #pragma endregion // Widgets: Selectables
 
@@ -389,7 +399,7 @@ namespace imgui_editor
         {
             version = "0";
             widget_begin_end_list_box* wd = (widget_begin_end_list_box*)data;
-            return string_format("%d,%d", wd->items_count, wd->items_height);
+            return string_format("%d,%d,%f,%f,", wd->items_count, wd->items_height, wd->size.x, wd->size.y);
         }
 #pragma endregion // Widgets: List Boxes
 		

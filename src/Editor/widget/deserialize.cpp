@@ -30,6 +30,10 @@ namespace imgui_editor
             stream >> wd->border;
             stream >> comma;
             stream >> wd->flags;
+            stream >> comma;
+            stream >> wd->size.x;
+            stream >> comma;
+            stream >> wd->size.y;
         }
         break;
 #pragma endregion // Windows
@@ -60,7 +64,14 @@ namespace imgui_editor
         }
         break;
         case widget_type::widget_type_spacing: return;
-        case widget_type::widget_type_dummy: return;
+        case widget_type::widget_type_dummy: 
+        {
+            widget_dummy* wd = (widget_dummy*)data;
+            stream >> wd->size.x;
+            stream >> comma;
+            stream >> wd->size.y;
+        }
+        break;
         case widget_type::widget_type_indent:
         {
             widget_indent* wd = (widget_indent*)data;
@@ -108,7 +119,14 @@ namespace imgui_editor
 #pragma endregion // Widgets: Text
 
 #pragma region // Widgets: Main
-		case widget_type::widget_type_button: return;
+		case widget_type::widget_type_button:
+        {
+            widget_button* wd = (widget_button*)data;
+            stream >> wd->size.x;
+            stream >> comma;
+            stream >> wd->size.y;
+        }
+        break;
 		case widget_type::widget_type_small_button: return;
 		case widget_type::widget_type_checkbox:
         {            
@@ -448,6 +466,10 @@ namespace imgui_editor
             widget_input_text_multiline* wd = (widget_input_text_multiline*)data;
             wd->text = read_string(stream);
             stream >> comma;
+            stream >> wd->size.x;
+            stream >> comma;
+            stream >> wd->size.y;
+            stream >> comma;
             stream >> wd->flags;
         }
         break;
@@ -675,6 +697,10 @@ namespace imgui_editor
 			stream >> wd->selected;
 			stream >> comma;
 			stream >> wd->flags;
+            stream >> comma;
+            stream >> wd->size.x;
+            stream >> comma;
+            stream >> wd->size.y;
 		}
 		break;
 #pragma endregion // Widgets: Selectables
@@ -686,6 +712,10 @@ namespace imgui_editor
             stream >> wd->items_count;
             stream >> comma;
             stream >> wd->items_height;
+            stream >> comma;
+            stream >> wd->size.x;
+            stream >> comma;
+            stream >> wd->size.y;
         }
         break;
 #pragma endregion // Widgets: List Boxes

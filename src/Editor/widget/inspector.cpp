@@ -51,7 +51,6 @@ namespace imgui_editor
     {
         ImGui::Text("ID : %zu / %s", ctx->id, get_pretty_name(ctx->type));
         ImGui::InputText("label", &ctx->label);
-        ImGui::DragFloat2("size", &ctx->size.x);
 
         switch (ctx->type)
         {
@@ -70,6 +69,7 @@ namespace imgui_editor
         {
             widget_begin_end_child* args = (widget_begin_end_child*)ctx->args;
 
+            ImGui::DragFloat2("size", &args->size.x);
             ImGui::Checkbox("border", &args->border);
             ImGui::Combo("flags", &args->flags);
         }
@@ -103,7 +103,13 @@ namespace imgui_editor
             ImGui::DragFloat("spacing", &args->spacing);
         }
         case widget_type::widget_type_spacing: break;
-        case widget_type::widget_type_dummy: break;
+        case widget_type::widget_type_dummy: 
+        {
+            widget_dummy* args = (widget_dummy*)ctx->args;
+
+            ImGui::DragFloat2("size", &args->size.x);
+        }
+        break;
         case widget_type::widget_type_indent:
         {
             widget_indent* args = (widget_indent*)ctx->args;
@@ -141,11 +147,18 @@ namespace imgui_editor
 #pragma endregion // Widgets: Text
 
 #pragma region // Widgets: Main
-        case widget_type::widget_type_button: break;
+        case widget_type::widget_type_button: 
+        {
+            widget_button* args = (widget_button*)ctx->args;
+
+            ImGui::DragFloat2("size", &args->size.x);
+        }
+        break;
         case widget_type::widget_type_small_button: break;
         case widget_type::widget_type_checkbox:
         {
             widget_checkbox* args = (widget_checkbox*)ctx->args;
+
             ImGui::Checkbox("check", &args->check);
         }
         break;
@@ -383,6 +396,7 @@ namespace imgui_editor
             widget_input_text_multiline* args = (widget_input_text_multiline*)ctx->args;
 
             ImGui::InputTextMultiline("text", &args->text);
+            ImGui::DragFloat2("size", &args->size.x);
             ImGui::Combo("flags", &args->flags);
         }
         break;
@@ -544,6 +558,7 @@ namespace imgui_editor
 
             ImGui::Checkbox("selected", &args->selected);
             ImGui::Combo("flags", &args->flags);
+            ImGui::DragFloat2("size", &args->size.x);
         }
         break;
 #pragma endregion // Widgets: Selectables
@@ -555,6 +570,7 @@ namespace imgui_editor
 
             ImGui::DragInt("items_count", &args->items_count);
 			ImGui::DragInt("items_height", &args->items_height);
+            ImGui::DragFloat2("size", &args->size.x);
 		}
 		break;
 #pragma endregion // Widgets: List Boxes

@@ -29,7 +29,6 @@ namespace imgui_editor
 		void* args = nullptr;
 
 		std::string label = "empty";
-		ImVec2 size;
 		
 		std::vector<widget*> children;
 

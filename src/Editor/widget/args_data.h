@@ -14,6 +14,7 @@ namespace imgui_editor
 
 	struct widget_begin_end_child
 	{
+		ImVec2 size;
 		bool border = 1;
 		ImGuiWindowFlags_ flags;
 	};
@@ -44,6 +45,7 @@ namespace imgui_editor
 
 	struct widget_dummy
 	{
+		ImVec2 size;
 	};
 
 	struct widget_indent
@@ -81,7 +83,10 @@ namespace imgui_editor
 #pragma endregion // Widgets: Text
 
 #pragma region // Widgets: Main
-	struct widget_button { };
+	struct widget_button 
+	{ 
+		ImVec2 size;
+	};
 
 	struct widget_small_button { };
 
@@ -287,6 +292,7 @@ namespace imgui_editor
 	struct widget_input_text_multiline
 	{
 		std::string text;
+		ImVec2 size;
 		ImGuiInputTextFlags_ flags;
 	};
 
@@ -413,6 +419,7 @@ namespace imgui_editor
 	{
 		bool selected = false;
 		ImGuiSelectableFlags_ flags;
+		ImVec2 size;
 	};
 #pragma endregion // Widgets: Selectables
 
@@ -421,6 +428,7 @@ namespace imgui_editor
 	{
 		int items_count = 0;
 		int items_height = 0;
+		ImVec2 size;
 	};
 #pragma endregion // Widgets: List Boxes
 		

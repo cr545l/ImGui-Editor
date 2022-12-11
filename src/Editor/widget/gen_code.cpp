@@ -79,8 +79,8 @@ namespace imgui_editor
                 result += indent + string_format("bool open_%zu =ImGui::BeginChild(\"%s\", ImVec2(%f, %f), %s, (ImGuiWindowFlags_)%d);\n",
                     ctx->id,
                     ctx->label.c_str(),
-                    ctx->size.x,
-                    ctx->size.y,
+                    args->size.x,
+                    args->size.y,
                     args->border?"true":"false",
                     (int)args->flags);
 
@@ -149,7 +149,7 @@ namespace imgui_editor
 		    case widget_type::widget_type_dummy:
             {
                 widget_dummy* args = (widget_dummy*)ctx->args;
-                result += indent + string_format("ImGui::Dummy(ImVec2(%f, %f));\n", ctx->size.x, ctx->size.y);
+                result += indent + string_format("ImGui::Dummy(ImVec2(%f, %f));\n", args->size.x, args->size.y);
             }
             break;
             case widget_type::widget_type_indent:
@@ -211,13 +211,16 @@ namespace imgui_editor
 #pragma region // Widgets: Main
             case widget_type::widget_type_button:
             {
-                result += indent + string_format("ImGui::Button(\"%s\", ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->size.x, ctx->size.y);
+                widget_button* args = (widget_button*)ctx->args;
+                result += indent + string_format("ImGui::Button(\"%s\", ImVec2(%f, %f));\n", ctx->label.c_str(), 
+                    args->size.x, args->size.y);
             }
             break;
             case widget_type::widget_type_small_button:
             {
                 result += indent + string_format("ImGui::SmallButton(\"%s\");\n", ctx->label.c_str());
             }
+            break;
             case widget_type::widget_type_checkbox:
             {
 		    	widget_checkbox* args = (widget_checkbox*)ctx->args;
@@ -410,7 +413,7 @@ namespace imgui_editor
             {
                 widget_input_text_multiline* args = (widget_input_text_multiline*)ctx->args;
                 result += indent + string_format("std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
-                result += indent + string_format("ImGui::InputTextMultiline(\"%s\", &text_%zu, ImVec2(%f, %f), (ImGuiInputTextFlags_)%d);\n", ctx->label.c_str(), ctx->id, ctx->size.x, ctx->size.y, (int)args->flags);
+                result += indent + string_format("ImGui::InputTextMultiline(\"%s\", &text_%zu, ImVec2(%f, %f), (ImGuiInputTextFlags_)%d);\n", ctx->label.c_str(), ctx->id, args->size.x, args->size.y, (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_text_with_hint: 
@@ -570,8 +573,10 @@ namespace imgui_editor
 		    case widget_type::widget_type_selectable:
             {
                 widget_selectable* args = (widget_selectable*)ctx->args;
-                result += indent + string_format("bool selected_%zu = %s;\n", ctx->id, args->selected?"true":"false");
-                result += indent + string_format("ImGui::Selectable(\"%s\", &selected_%zu, %s, ImVec2(%f, %f));\n", ctx->label.c_str(), ctx->id, args->flags?"ImGuiSelectableFlags_AllowDoubleClick":"0", ctx->size.x, ctx->size.y);
+                result += indent + string_format("bool selected_%zu = %s;\n", 
+                    ctx->id, args->selected?"true":"false");
+                result += indent + string_format("ImGui::Selectable(\"%s\", &selected_%zu, %s, ImVec2(%f, %f));\n", 
+                    ctx->label.c_str(), ctx->id, args->flags?"ImGuiSelectableFlags_AllowDoubleClick":"0", args->size.x, args->size.y);
             }
             break;
 #pragma endregion // Widgets: Selectables
@@ -586,8 +591,8 @@ namespace imgui_editor
                 result += indent + string_format("bool open_%zu = ImGui::BeginListBox(\"%s\", ImVec2(%f, %f));\n",
                     ctx->id,
                     ctx->label.c_str(),
-                    ctx->size.x,
-                    ctx->size.y);
+                    args->size.x,
+                    args->size.y);
 
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
@@ -646,8 +651,10 @@ namespace imgui_editor
             case widget_type::widget_type_menu_item:
             {
                 widget_menu_item* args = (widget_menu_item*)ctx->args;
-                result += indent + string_format("bool selected_%zu = %s;\n", ctx->id, args->selected?"true":"false");
-                result += indent + string_format("ImGui::MenuItem(\"%s\", \"%s\", &selected_%zu, %s);\n", ctx->label.c_str(), args->shortcut.c_str(), ctx->id, args->enabled?"true":"false");
+                result += indent + string_format("bool selected_%zu = %s;\n", 
+                    ctx->id, args->selected?"true":"false");
+                result += indent + string_format("ImGui::MenuItem(\"%s\", \"%s\", &selected_%zu, %s);\n", 
+                    ctx->label.c_str(), args->shortcut.c_str(), ctx->id, args->enabled?"true":"false");
             }
             break;
 #pragma endregion // Widgets: Menus
@@ -690,8 +697,8 @@ namespace imgui_editor
                     ctx->label.c_str(),
                     args->columns,
                     (int)args->flags,
-                    ctx->size.x,
-                    ctx->size.y,
+                    args->outer_size.x,
+                    args->outer_size.y,
                     args->inner_width);
 
                 result += indent + string_format("if(open_%zu)\n", ctx->id);

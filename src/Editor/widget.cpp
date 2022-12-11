@@ -85,13 +85,11 @@ namespace imgui_editor
 		std::string safe_label = to_safe_string(target->label.c_str());
 		
         std::string args = widget_data_serialize(target->type, target->args, version);
-        return string_format("{%lu,\"%s\",{%s},\"%s\",%f,%f,[%s],[%s],[%s],[%s]}", 
+        return string_format("{%lu,\"%s\",{%s},\"%s\",[%s],[%s],[%s],[%s]}", 
         to_fixed_type(target->type),
         safe_version.c_str(),
         args.c_str(),
         safe_label.c_str(), 
-        target->size.x, 
-        target->size.y, 
         children.c_str(),
         style_colors.c_str(),
         style_var_floats.c_str(),
@@ -187,11 +185,6 @@ namespace imgui_editor
 		target_widget->label = read_string(widget_stream);
         std::getline(widget_stream, read, ',');
 		
-        std::getline(widget_stream, read, ',');
-        target_widget->size.x = strtof(read.c_str(), &pos);
-        std::getline(widget_stream, read, ',');
-        target_widget->size.y = strtof(read.c_str(), &pos);
-
         std::getline(widget_stream, read);
 
 		for(size_t i= 0, max = target_widget->children.size(); i < max; ++i)

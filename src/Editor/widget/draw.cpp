@@ -54,7 +54,7 @@ namespace imgui_editor
 		{
 			begin_type = true;
 			widget_begin_end_child* args = (widget_begin_end_child*)ctx->args;
-			if (ImGui::BeginChild(ctx->label.c_str(), ctx->size, args->border, args->flags))
+			if (ImGui::BeginChild(ctx->label.c_str(), args->size, args->border, args->flags))
 			{
 				draw_children(ctx);
 			}
@@ -104,7 +104,7 @@ namespace imgui_editor
 		case widget_type::widget_type_dummy:
 		{
 			widget_dummy* args = (widget_dummy*)ctx->args;
-			ImGui::Dummy(ctx->size);
+			ImGui::Dummy(args->size);
 		}
 		break;
 		case widget_type::widget_type_indent:
@@ -164,7 +164,8 @@ namespace imgui_editor
 #pragma region // Widgets: Main
 		case widget_type::widget_type_button:
 		{
-			ImGui::Button(ctx->label.c_str(), ctx->size);
+			widget_button* args = (widget_button*)ctx->args;
+			ImGui::Button(ctx->label.c_str(), args->size);
 		}
 		break;
 		case widget_type::widget_type_small_button:
@@ -332,7 +333,7 @@ namespace imgui_editor
 		case widget_type::widget_type_input_text_multiline:
 		{
 			widget_input_text_multiline* args = (widget_input_text_multiline*)ctx->args;
-			ImGui::InputTextMultiline(ctx->label.c_str(), &args->text, ctx->size, args->flags);
+			ImGui::InputTextMultiline(ctx->label.c_str(), &args->text, args->size, args->flags);
 		}
 		break;
 		case widget_type::widget_type_input_text_with_hint:
@@ -425,7 +426,7 @@ namespace imgui_editor
 		case widget_type::widget_type_color_button:
 		{
 			widget_color_button* args = (widget_color_button*)ctx->args;
-			ImGui::ColorButton(ctx->label.c_str(), args->col, args->flags, ctx->size);
+			ImGui::ColorButton(ctx->label.c_str(), args->col, args->flags, args->size);
 		}
 		break;
 #pragma endregion // Widgets: Color Editor/Picker 
@@ -453,7 +454,7 @@ namespace imgui_editor
 		case widget_type::widget_type_selectable:
 		{
 			widget_selectable* args = (widget_selectable*)ctx->args;
-			ImGui::Selectable(ctx->label.c_str(), args->selected, args->flags, ctx->size);
+			ImGui::Selectable(ctx->label.c_str(), args->selected, args->flags, args->size);
 		}
 		break;
 #pragma endregion // Widgets: Selectables
@@ -463,7 +464,7 @@ namespace imgui_editor
 		{
 			begin_type = true;
 			widget_begin_end_list_box* args = (widget_begin_end_list_box*)ctx->args;
-			if (ImGui::BeginListBox(ctx->label.c_str(), ctx->size))
+			if (ImGui::BeginListBox(ctx->label.c_str(), args->size))
 			{
 				draw_children(ctx);
 				ImGui::EndListBox();
