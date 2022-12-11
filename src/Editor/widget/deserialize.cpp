@@ -5,781 +5,379 @@
 #include "editor/widget.h"
 #include "editor/widget/args_data.h"
 
+#define _default_parse(type, format, ...)                        \
+type* wd = (type*)data;                                         \
+if (in)                                                         \
+{                                                               \
+    sscanf2(format, inout.c_str(), wd);                         \
+}                                                               \
+else                                                            \
+{                                                               \
+    version = "0";                                              \
+    inout = safe_string_format(format, ##__VA_ARGS__);          \
+}                                                               \
+return
+
 namespace imgui_editor
 {
-	void widget_data_deserialize(widget_type type, void* data, const char* str, const std::string& version)
-	{
-		std::istringstream stream(str);
-		char comma;
-		switch (type)
-		{
-		case widget_type::widget_type_none: return;
+    void parse_args_data(const widget_type type, void* data, std::string& inout, std::string& version, const bool in)
+    {        
+        switch (type)
+        {
+        case widget_type::widget_type_none: return;
 
 #pragma region // Windows
         case widget_type::widget_type_begin_end_window:
         {
-            widget_begin_end_window* wd = (widget_begin_end_window*)data;
-            stream >> wd->open;
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_begin_end_window, "%d,%d", wd->open,  wd->flags);
         }
-        break;
         case widget_type::widget_type_begin_end_child:
         {
-            widget_begin_end_child* wd = (widget_begin_end_child*)data;
-            stream >> wd->border;
-            stream >> comma;
-            stream >> wd->flags;
-            stream >> comma;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
+            _default_parse(widget_begin_end_child, "%f,%f,%d,%d", wd->size.x, wd->size.y, wd->border, wd->flags);
         }
-        break;
 #pragma endregion // Windows
 
 #pragma region // Parameters stacks (current window)
-		case widget_type::widget_type_push_pop_item_width:
-		{
-			widget_push_pop_item_width* wd = (widget_push_pop_item_width*)data;
-			stream >> wd->item_width;
-		}
-		break;
-		case widget_type::widget_type_push_pop_text_wrap_pos:
-		{
-			widget_push_pop_text_wrap_pos* wd = (widget_push_pop_text_wrap_pos*)data;
-			stream >> wd->item_width;
-		}
-		break;
+        case widget_type::widget_type_push_pop_item_width:
+        {
+            _default_parse(widget_push_pop_item_width, "%f", wd->item_width);
+        }
+        case widget_type::widget_type_push_pop_text_wrap_pos:
+        {
+            _default_parse(widget_push_pop_text_wrap_pos, "%f", wd->item_width);
+        }
 #pragma endregion // Parameters stacks (current window)
 
 #pragma region // Cursor / Layout
         case widget_type::widget_type_separator: return;
         case widget_type::widget_type_same_line:
         {
-            widget_same_line* wd = (widget_same_line*)data;
-            stream >> wd->offset_from_start_x;
-            stream >> comma;
-            stream >> wd->spacing;
+            _default_parse(widget_same_line, "%f,%f", wd->offset_from_start_x, wd->spacing);
         }
-        break;
         case widget_type::widget_type_spacing: return;
         case widget_type::widget_type_dummy: 
         {
-            widget_dummy* wd = (widget_dummy*)data;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
+            _default_parse(widget_dummy, "%f,%f", wd->size.x, wd->size.y);
         }
-        break;
-        case widget_type::widget_type_indent:
+        case widget_type::widget_type_indent: 
         {
-            widget_indent* wd = (widget_indent*)data;
-            stream >> wd->indent_w;
+            _default_parse(widget_indent, "%f", wd->indent_w);
         }
-        break;
-        case widget_type::widget_type_unindent:
+        case widget_type::widget_type_unindent: 
         {
-            widget_unindent* wd = (widget_unindent*)data;
-            stream >> wd->indent_w;
+            _default_parse(widget_unindent,"%f", wd->indent_w);
         }
-        break;
         case widget_type::widget_type_begin_end_group: return;
         case widget_type::widget_type_set_cursor_pos:
         {
-            widget_set_cursor_pos* wd = (widget_set_cursor_pos*)data;
-            stream >> wd->local_pos.x;
-            stream >> comma;
-            stream >> wd->local_pos.y;
+            _default_parse(widget_set_cursor_pos, "%f,%f", wd->local_pos.x, wd->local_pos.y);
         }
-        break;
 #pragma endregion // Cursor / Layout
 
 #pragma region // Widgets: Text
-		case widget_type::widget_type_text: return;
-		case widget_type::widget_type_text_colored:
-		{
-			widget_text_colored* wd = (widget_text_colored*)data;
-			stream >> wd->color.Value.x;
-			stream >> comma;
-			stream >> wd->color.Value.y;
-			stream >> comma;
-			stream >> wd->color.Value.z;
-			stream >> comma;
-			stream >> wd->color.Value.w;
-		}
-		break;
-		case widget_type::widget_type_label_text:
-		{
-			widget_label_text* wd = (widget_label_text*)data;
-            wd->text = read_string(stream);
-		}
-        break;
-		case widget_type::widget_type_bullet_text: return;
+        case widget_type::widget_type_text: return;
+        case widget_type::widget_type_text_colored:
+        {
+            _default_parse(widget_text_colored, "%f,%f,%f,%f,", wd->color.Value.x, wd->color.Value.y, wd->color.Value.z, wd->color.Value.w);
+        }
+        case widget_type::widget_type_label_text:
+        {
+            _default_parse(widget_label_text, "%s,", to_safe_string(wd->text).c_str());
+        }
+        case widget_type::widget_type_bullet_text: return;
 #pragma endregion // Widgets: Text
 
 #pragma region // Widgets: Main
-		case widget_type::widget_type_button:
+        case widget_type::widget_type_button: 
         {
-            widget_button* wd = (widget_button*)data;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
+            _default_parse(widget_button, "%f,%f,", wd->size.x, wd->size.y);
         }
-        break;
-		case widget_type::widget_type_small_button: return;
-		case widget_type::widget_type_checkbox:
-        {            
-            widget_checkbox* wd = (widget_checkbox*)data;
-            stream >> wd->check;
+        case widget_type::widget_type_small_button: return;
+        case widget_type::widget_type_checkbox:
+        {    
+            _default_parse(widget_checkbox, "%d,", wd->check);
         }
-        break;
         case widget_type::widget_type_checkbox_flags:
         {
-            widget_checkbox_flags* wd = (widget_checkbox_flags*)data;
-            stream >> wd->flags;
-            stream >> comma;
-            stream >> wd->flags_value;
+            _default_parse(widget_checkbox_flags, "%d,%d,", wd->flags, wd->flags_value);
         }
-        break;
-		case widget_type::widget_type_radio_button:
-		{
-			widget_radio_button* wd = (widget_radio_button*)data;
-			stream >> wd->active;
-		}
-		break;
-		case widget_type::widget_type_bullet: return;
+        case widget_type::widget_type_radio_button:
+        {
+            _default_parse(widget_radio_button, "%d,", wd->active);
+        }
+        case widget_type::widget_type_bullet: return;
 #pragma endregion // Widgets: Main
-       
+
 #pragma region // Widgets: Combo Box
         case widget_type::widget_type_begin_end_combo:
         {
-            widget_begin_end_combo* wd = (widget_begin_end_combo*)data;
-            wd->preview_value = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
-        } 
-        break;
+            _default_parse(widget_begin_end_combo, "%s,%d", to_safe_string(wd->preview_value).c_str(), wd->flags);
+        }
 #pragma endregion // Widgets: Combo Box
 
 #pragma region // Widgets: Drag Sliders
         case widget_type::widget_type_drag_float:
         {
-            widget_drag_float* wd = (widget_drag_float*)data;
-            stream >> wd->value;
-            stream >> comma;
-            stream >> wd->speed;
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_drag_float, "%f,%f,%f,%f,%s,%d", 
+                wd->value, 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_drag_float2:
         {
-            widget_drag_float2* wd = (widget_drag_float2*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_drag_float2, "%f,%f,%f,%f,%f,%s,%d", 
+                wd->value[0], wd->value[1], 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_drag_float3:
         {
-            widget_drag_float3* wd = (widget_drag_float3*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_drag_float3, "%f,%f,%f,%f,%f,%f,%s,%d", 
+                wd->value[0], wd->value[1], wd->value[2],
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_drag_float4:
         {
-            widget_drag_float4* wd = (widget_drag_float4*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->value[3];
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_drag_float4, "%f,%f,%f,%f,%f,%f,%f,%s,%d",
+                wd->value[0], wd->value[1], wd->value[2], wd->value[3],
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_drag_int:
         {
-            widget_drag_int* wd = (widget_drag_int*)data;
-            stream >> wd->value;
-            stream >> comma;
-            stream >> wd->speed;
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_drag_int, "%d,%f,%d,%d,%s,%d", 
+                wd->value, 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_drag_int2:
         {
-            widget_drag_int2* wd = (widget_drag_int2*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->speed;
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;            
+            _default_parse(widget_drag_int2, "%d,%d,%f,%d,%d,%s,%d", 
+                wd->value[0], wd->value[1], 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_drag_int3:
         {
-            widget_drag_int3* wd = (widget_drag_int3*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->speed;
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;            
+            _default_parse(widget_drag_int3, "%d,%d,%d,%f,%d,%d,%s,%d", 
+                wd->value[0], wd->value[1], wd->value[2], 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_drag_int4:
         {
-            widget_drag_int4* wd = (widget_drag_int4*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->value[3];
-            stream >> comma;
-            stream >> wd->speed;
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;            
+            _default_parse(widget_drag_int4, "%d,%d,%d,%d,%f,%d,%d,%s,%d", 
+                wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
+                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
 #pragma endregion // Widgets: Drag Sliders
 
 #pragma region // Widgets: Regular Sliders
         case widget_type::widget_type_slider_float:
         {
-            widget_slider_float* wd = (widget_slider_float*)data;
-            stream >> wd->value;
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
-        }  
-        break;
+            _default_parse(widget_slider_float, "%f,%f,%f,%s,%d", 
+                wd->value, 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+        }
         case widget_type::widget_type_slider_float2:
         {
-            widget_slider_float2* wd = (widget_slider_float2*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_slider_float2, "%f,%f,%f,%f,%s,%d", 
+                wd->value[0], wd->value[1], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_slider_float3:
         {
-            widget_slider_float3* wd = (widget_slider_float3*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_slider_float3, "%f,%f,%f,%f,%f,%s,%d", 
+                wd->value[0], wd->value[1], wd->value[2], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_slider_float4:
         {
-            widget_slider_float4* wd = (widget_slider_float4*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->value[3];
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_slider_float4, "%f,%f,%f,%f,%f,%f,%s,%d", 
+                wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_slider_angle:
         {
-            widget_slider_angle* wd = (widget_slider_angle*)data;
-            stream >> wd->value;
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_slider_angle, "%f,%f,%f,%s,%d", 
+                wd->value, 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_slider_int:
         {
-            widget_slider_int* wd = (widget_slider_int*)data;
-            stream >> wd->value;
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_slider_int, "%d,%d,%d,%s,%d", 
+                wd->value, 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_slider_int2:
         {
-            widget_slider_int2* wd = (widget_slider_int2*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_slider_int2, "%d,%d,%d,%d,%s,%d", 
+                wd->value[0], wd->value[1], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_slider_int3:
         {
-            widget_slider_int3* wd = (widget_slider_int3*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_slider_int3, "%d,%d,%d,%d,%d,%s,%d", 
+                wd->value[0], wd->value[1], wd->value[2], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_slider_int4:
         {
-            widget_slider_int4* wd = (widget_slider_int4*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->value[3];
-            stream >> comma;
-            stream >> wd->min;
-            stream >> comma;
-            stream >> wd->max;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_slider_int4, "%d,%d,%d,%d,%d,%d,%s,%d", 
+                wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
+                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
         }
-        break;
 #pragma endregion // Widgets: Regular Sliders
 
 #pragma region // Widgets: Input with Keyboard
         case widget_type::widget_type_input_text:
         {
-            widget_input_text* wd = (widget_input_text*)data;
-            wd->text = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_text, "%s,%d,",
+                to_safe_string(wd->text).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_input_text_multiline:
         {
-            widget_input_text_multiline* wd = (widget_input_text_multiline*)data;
-            wd->text = read_string(stream);
-            stream >> comma;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_text_multiline, "%s,%f,%f,%d,", 
+                to_safe_string(wd->text).c_str(), wd->size.x, wd->size.y, wd->flags);
         }
-        break;
         case widget_type::widget_type_input_text_with_hint:
         {
-            widget_input_text_with_hint* wd = (widget_input_text_with_hint*)data;
-            wd->text = read_string(stream);
-            stream >> comma;
-            wd->hint = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_text_with_hint, "%s,%s,%d,", 
+                to_safe_string(wd->text).c_str(), to_safe_string(wd->hint).c_str(), wd->flags);
         }
-        break;
         case widget_type::widget_type_input_float:
         {
-            widget_input_float* wd = (widget_input_float*)data;
-            stream >> wd->value;
-            stream >> comma;
-            stream >> wd->step;
-            stream >> comma;
-            stream >> wd->step_fast;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_float, "%f,%f,%f,%d",
+                wd->value, wd->step, wd->step_fast, wd->flags);
         }
-        break;
         case widget_type::widget_type_input_float2:
         {
-            widget_input_float2* wd = (widget_input_float2*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_float2, "%f,%f,%d", 
+                wd->value[0], wd->value[1], wd->flags);
         }
-        break;
         case widget_type::widget_type_input_float3:
         {
-            widget_input_float3* wd = (widget_input_float3*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_float3, "%f,%f,%f,%d", 
+                wd->value[0], wd->value[1], wd->value[2], wd->flags);
         }
-        break;
         case widget_type::widget_type_input_float4:
         {
-            widget_input_float4* wd = (widget_input_float4*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->value[3];
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_float4, "%f,%f,%f,%f,%d", 
+                wd->value[0], wd->value[1], wd->value[2], wd->value[3], wd->flags);
         }
         case widget_type::widget_type_input_int:
         {
-            widget_input_int* wd = (widget_input_int*)data;
-            stream >> wd->value;
-            stream >> comma;
-            stream >> wd->step;
-            stream >> comma;
-            stream >> wd->step_fast;
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_int, "%d,%d,%d,%d", 
+                wd->value, wd->step, wd->step_fast, wd->flags);
         }
-        break;
         case widget_type::widget_type_input_int2:
         {
-            widget_input_int2* wd = (widget_input_int2*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_int2, "%d,%d,%d",
+                wd->value[0], wd->value[1], wd->flags);
         }
-        break;
         case widget_type::widget_type_input_int3:
         {
-            widget_input_int3* wd = (widget_input_int3*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_int3, "%d,%d,%d,%d", 
+                wd->value[0], wd->value[1], wd->value[2], wd->flags);
         }
-        break;
         case widget_type::widget_type_input_int4:
         {
-            widget_input_int4* wd = (widget_input_int4*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->value[3];
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_int4, "%d,%d,%d,%d,%d", 
+                wd->value[0], wd->value[1], wd->value[2], wd->value[3], wd->flags);
         }
-        break;
         case widget_type::widget_type_input_double:
         {
-            widget_input_double* wd = (widget_input_double*)data;
-            stream >> wd->value;
-            stream >> comma;
-            stream >> wd->step;
-            stream >> comma;
-            stream >> wd->step_fast;
-            stream >> comma;
-            wd->format = read_string(stream);
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_input_double, "%f,%f,%f,%d", 
+                wd->value, wd->step, wd->step_fast, wd->flags);
         }
-        break;
 #pragma endregion // Widgets: Input with Keyboard
-        
+
 #pragma region // Widgets: Color Editor/Picker 
         case widget_type::widget_type_color_edit3:
         {
-            widget_color_edit3* wd = (widget_color_edit3*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_color_edit3, "%f,%f,%f,%d", wd->value[0], wd->value[1], wd->value[2], wd->flags);
         }
-        break;
         case widget_type::widget_type_color_edit4:
         {
-            widget_color_edit4* wd = (widget_color_edit4*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->value[3];
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_color_edit4, "%f,%f,%f,%f,%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], wd->flags);
         }
-        break;
         case widget_type::widget_type_color_picker3:
         {
-            widget_color_picker3* wd = (widget_color_picker3*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_color_picker3, "%f,%f,%f,%d", wd->value[0], wd->value[1], wd->value[2], wd->flags);
         }
-        break;
         case widget_type::widget_type_color_picker4:
         {
-            widget_color_picker4* wd = (widget_color_picker4*)data;
-            stream >> wd->value[0];
-            stream >> comma;
-            stream >> wd->value[1];
-            stream >> comma;
-            stream >> wd->value[2];
-            stream >> comma;
-            stream >> wd->value[3];
-            stream >> comma;
-            stream >> wd->flags;
+            _default_parse(widget_color_picker4, "%f,%f,%f,%f,%d", wd->value[0], wd->value[1], wd->value[2], wd->value[3], wd->flags);
         }
-        break;
         case widget_type::widget_type_color_button:
         {
-            widget_color_button* wd = (widget_color_button*)data;
-            stream >> wd->col.x;
-            stream >> comma;
-            stream >> wd->col.y;
-            stream >> comma;
-            stream >> wd->col.z;
-            stream >> comma;
-            stream >> wd->col.w;
-            stream >> comma;
-            stream >> wd->flags;
-            stream >> comma;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
+            _default_parse(widget_color_button, "%f,%f,%f,%f,%d,%f,%f", wd->col.x, wd->col.y, wd->col.z, wd->col.w, wd->flags, wd->size.x, wd->size.y);
         }
-        break;
 #pragma endregion // Widgets: Color Editor/Picker 
 
 #pragma region // Widgets: Trees
         case widget_type::widget_type_push_pop_tree_node:
         {
-            widget_push_pop_tree_node* wd = (widget_push_pop_tree_node*)data;
-			stream >> wd->flags;
-		}
-		break;
+            _default_parse(widget_push_pop_tree_node, "%d", wd->flags);
+        }
         case widget_type::widget_type_collapsing_header:
         {
-            widget_collapsing_header* wd = (widget_collapsing_header*)data;
-            stream >> wd->flags;
-        }
-        break;
+            _default_parse(widget_collapsing_header, "%d",wd->flags);
+        }        
 #pragma endregion // Widgets: Trees
 
 #pragma region // Widgets: Selectables
-		case widget_type::widget_type_selectable:
-		{
-			widget_selectable* wd = (widget_selectable*)data;
-			stream >> wd->selected;
-			stream >> comma;
-			stream >> wd->flags;
-            stream >> comma;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
-		}
-		break;
+        case widget_type::widget_type_selectable:
+        {
+            _default_parse(widget_selectable, "%d,%d,%f,%f,", wd->selected, wd->flags, wd->size.x, wd->size.y);
+        }
 #pragma endregion // Widgets: Selectables
 
 #pragma region // Widgets: List Boxes
         case widget_type::widget_type_begin_end_list_box:
         {
-            widget_begin_end_list_box* wd = (widget_begin_end_list_box*)data;
-            stream >> wd->items_count;
-            stream >> comma;
-            stream >> wd->items_height;
-            stream >> comma;
-            stream >> wd->size.x;
-            stream >> comma;
-            stream >> wd->size.y;
+            _default_parse(widget_begin_end_list_box, "%d,%d,%f,%f,", wd->items_count, wd->items_height, wd->size.x, wd->size.y);
         }
-        break;
 #pragma endregion // Widgets: List Boxes
 		
-#pragma region // Widgets: Menus
+#pragma region // Widgets: Menus2
         case widget_type::widget_type_begin_end_menu_bar: return;
         case widget_type::widget_type_begin_end_menu:
         {
-            widget_begin_end_menu* wd = (widget_begin_end_menu*)data;
-            stream >> wd->enabled;
+            _default_parse(widget_begin_end_menu, "%d", wd->enabled);
         }
-        break;
         case widget_type::widget_type_menu_item:
         {
-            widget_menu_item* wd = (widget_menu_item*)data;
-            wd->shortcut = read_string(stream);
-            stream >> comma;
-            stream >> wd->selected;
-            stream >> comma;
-            stream >> wd->enabled;
+            _default_parse(widget_menu_item, "%s,%d,%d",
+                to_safe_string(wd->shortcut).c_str(),
+                wd->selected, 
+                wd->enabled);
         }
-        break;
 #pragma endregion // Widgets: Menus
 
 #pragma region // Popups, Modals
         case widget_type::widget_type_begin_end_popup:
         {
-            widget_begin_end_popup* wd = (widget_begin_end_popup*)data;
-            stream >> wd->flags;
+            _default_parse(widget_begin_end_popup, "%f", wd->flags);
         }
-        break;
 #pragma endregion // Popups, Modals
 		
 #pragma region // Tables
         case widget_type::widget_type_begin_end_table:
         {
-            widget_begin_end_table* wd = (widget_begin_end_table*)data;
-            stream >> wd->columns;
-            stream >> comma;
-            stream >> wd->flags;
-            stream >> comma;
-            stream >> wd->outer_size.x;
-            stream >> comma;
-            stream >> wd->outer_size.y;
-            stream >> comma;
-            stream >> wd->inner_width;
+            _default_parse(widget_begin_end_table, "%d,%d,%f,%f,%f",
+                wd->columns,wd->flags,wd->outer_size.x,wd->outer_size.y,wd->inner_width);
         }
-        break;
         case widget_type::widget_type_table_next_row:
         {
-            widget_table_next_row* wd = (widget_table_next_row*)data;
-            stream >> wd->flags;
-            stream >> comma;
-            stream >> wd->min_row_height;
+            _default_parse(widget_table_next_row, "%d,%f", wd->flags, wd->min_row_height);
         }
-        break;
-        case widget_type::widget_type_table_next_column: return;        
+        case widget_type::widget_type_table_next_column: return;
         case widget_type::widget_type_table_set_column_index:
         {
-            widget_table_set_column_index* wd = (widget_table_set_column_index*)data;
-            stream >> wd->column_n;
+            _default_parse(widget_table_set_column_index, "%d", wd->column_n);
         }
-        break;
 #pragma endregion // Tables
-		}
-	}
+
+        default:
+            debug_break();
+            return;
+        }
+    }
+
+    #undef _default_parse
 }

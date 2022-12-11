@@ -18,7 +18,6 @@ fips_begin_sharedlib(editor cmdline)
     fips_files(editor/widget/inspector.cpp)
     fips_files(editor/widget/new.cpp)
     fips_files(editor/widget/pretty_name.cpp)
-    fips_files(editor/widget/serialize.cpp)
     fips_files(editor/widget/to_enum_type.cpp)
     
     fips_files(editor/imgui_editor.h)

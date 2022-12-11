@@ -10,7 +10,6 @@
 - Inspector.cpp
 - New.cpp
 - Pretty name.cpp
-- Serialize.cpp
 - To enum type.cpp
 
 # Files affected when the `args_data.h` struct field is changed

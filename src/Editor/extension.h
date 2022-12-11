@@ -95,6 +95,30 @@ namespace imgui_editor
 		return stream;
 	}    
 
+	template<typename ... Args>
+	std::string safe_string_format(const std::string& format, Args ... args)
+	{
+		std::string safe_format = format;
+
+		static const std::string search = "%s";
+		static const std::string replace = "\"%s\"";
+
+		size_t pos = 0;
+		while ((pos = safe_format.find(search, pos)) != std::string::npos)
+		{
+			safe_format.replace(pos, search.length(), replace);
+			pos += replace.length();
+		}
+		
+		int size = snprintf(nullptr, 0, safe_format.c_str(), args ...) + 1; // Extra space for '\0'
+		assert( 0< size );
+		std::unique_ptr<char[]> buf(new char[size]);
+		snprintf(buf.get(), size, safe_format.c_str(), args ...);
+		return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+	}
+
+	void sscanf2(const char* format, const char* data, void* value);
+
 	inline std::string to_safe_string(const std::string& v) 
 	{
 		std::string s = v;

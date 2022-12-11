@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 #include "editor/widget.h"
-#include "editor/imgui_ex.h"
+#include "editor/extension.h"
 
 namespace imgui_editor
 {
@@ -79,7 +79,7 @@ namespace imgui_editor
             style_var_vec2s += string_format("{%d,%f,%f},", (int)target->style_var_vec2s[i].idx, target->style_var_vec2s[i].val.x, target->style_var_vec2s[i].val.y);
 		}
 
-        const char* version = "";
+        std::string version = "";
 		std::string safe_version = to_safe_string(version);
 
 		std::string safe_label = to_safe_string(target->label.c_str());
@@ -169,7 +169,7 @@ namespace imgui_editor
         size_t fixed_type = strtoul(read.c_str(), &pos, 0);
         target_widget->type = to_widget_type(fixed_type);
 
-        const std::string version = read_string(widget_stream);
+        std::string version = read_string(widget_stream);
 		std::getline(widget_stream, read, ',');
 
         std::getline(widget_stream, read, '{');

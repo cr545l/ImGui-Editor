@@ -1,6 +1,8 @@
 #ifndef __ARGS_DATA_H__
 #define __ARGS_DATA_H__
 
+#pragma pack(push, 1)
+
 namespace imgui_editor
 {	
 	struct widget_none {};
@@ -483,3 +485,5 @@ namespace imgui_editor
 }
 
 #endif
+
+#pragma pack(pop) 

@@ -2,6 +2,57 @@
 
 #include "editor/extension.h"
 
+namespace imgui_editor
+{
+	void sscanf2(const char* format, const char* data, void* value)
+	{
+		std::istringstream stream(data);
+
+		for(size_t i = 0, max = strlen(format); i < max; ++i)
+		{
+			if(format[i] == '%')
+			{
+				switch(format[i+1])
+				{
+					case 'd':
+					{
+						int read = 0;
+						stream >> read;
+						*(int*)value = read;
+						value = (char*)value + sizeof(int);
+						++i;
+					}
+					break;
+					case 's':
+					{
+						std::string read = read_string(stream);
+						*(std::string*)value = read;
+						value = (char*)value + sizeof(std::string);
+						++i;
+					}
+					break;
+					case 'f':
+					{
+						float read = 0;
+						stream >> read;
+						*(float*)value = read;
+						value = (char*)value + sizeof(float);
+						++i;
+					}
+					break;
+					default:
+						debug_break();
+				}
+			}
+			else
+			{
+				char c;
+				stream >> c;
+			}
+		}
+	}    
+}
+
 namespace ImGui
 {
     bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags , ImGuiInputTextCallback callback , void* user_data )

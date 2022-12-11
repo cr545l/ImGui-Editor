@@ -142,7 +142,12 @@ namespace imgui_editor
             ImGui::ColorEdit4("color", &args->color.Value.x);
         }
         break;
-        case widget_type::widget_type_label_text: break;
+        case widget_type::widget_type_label_text: 
+        {
+            widget_label_text* args = (widget_label_text*)ctx->args;
+            ImGui::InputText("text", &args->text);
+        }
+        break;
         case widget_type::widget_type_bullet_text: break;
 #pragma endregion // Widgets: Text
 
