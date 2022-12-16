@@ -43,6 +43,48 @@ namespace imgui_editor
         break;
 #pragma endregion // Windows
 
+#pragma region // Window manipulation
+        case widget_type::widget_type_set_next_window_pos:
+        {
+            widget_set_next_window_pos* args = (widget_set_next_window_pos*)ctx->args;
+
+            ImGui::DragFloat2("pos", &args->pos.x);
+            ImGui::Combo("cond", &args->cond);
+            ImGui::DragFloat2("pivot", &args->pivot.x);
+        }
+        break;
+        case widget_type::widget_type_set_next_window_size:
+        {
+            widget_set_next_window_size* args = (widget_set_next_window_size*)ctx->args;
+
+            ImGui::DragFloat2("size", &args->size.x);
+            ImGui::Combo("cond", &args->cond);
+        }
+        break;
+        case widget_type::widget_type_set_next_window_content_size:
+        {
+            widget_set_next_window_content_size* args = (widget_set_next_window_content_size*)ctx->args;
+
+            ImGui::DragFloat2("size", &args->size.x);
+        }
+        break;
+        case widget_type::widget_type_set_next_window_collapsed:
+        {
+            widget_set_next_window_collapsed* args = (widget_set_next_window_collapsed*)ctx->args;
+
+            ImGui::Checkbox("collapsed", &args->collapsed);
+            ImGui::Combo("cond", &args->cond);
+        }
+        break;
+        case widget_type::widget_type_set_next_window_focus: break;
+        case widget_type::widget_type_set_next_window_bg_alpha:
+        {
+            widget_set_next_window_bg_alpha* args = (widget_set_next_window_bg_alpha*)ctx->args;
+
+            ImGui::DragFloat("alpha", &args->alpha);
+        }
+        break;
+
 #pragma region // Parameters stacks (current window)
         case widget_type::widget_type_push_pop_item_width:
         {

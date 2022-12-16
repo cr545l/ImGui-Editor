@@ -46,6 +46,49 @@ namespace imgui_editor
         }
 #pragma endregion // Windows
 
+#pragma region // Window manipulation
+        case widget_type::widget_type_set_next_window_pos:
+        {
+            widget_set_next_window_pos* wd = (widget_set_next_window_pos*)data;
+            default_parse(inout, version, in, wd,
+                "%f,%f,%d,%f,%f", 
+                wd->pos.x, wd->pos.y, wd->cond, wd->pivot.x, wd->pivot.y);
+            return;
+        }
+        case widget_type::widget_type_set_next_window_size:
+        {
+            widget_set_next_window_size* wd = (widget_set_next_window_size*)data;
+            default_parse(inout, version, in, wd,
+                "%f,%f,%d", 
+                wd->size.x, wd->size.y, wd->cond);
+            return;
+        }
+        case widget_type::widget_type_set_next_window_content_size:
+        {
+            widget_set_next_window_content_size* wd = (widget_set_next_window_content_size*)data;
+            default_parse(inout, version, in, wd,
+                "%f,%f", 
+                wd->size.x, wd->size.y);
+            return;
+        }
+        case widget_type::widget_type_set_next_window_collapsed:
+        {
+            widget_set_next_window_collapsed* wd = (widget_set_next_window_collapsed*)data;
+            default_parse(inout, version, in, wd,
+                "%d,%d", 
+                wd->collapsed, wd->cond);
+            return;
+        }
+        case widget_type::widget_type_set_next_window_focus: return;
+        case widget_type::widget_type_set_next_window_bg_alpha:
+        {
+            widget_set_next_window_bg_alpha* wd = (widget_set_next_window_bg_alpha*)data;
+            default_parse(inout, version, in, wd,
+                "%f", 
+                wd->alpha);
+            return;
+        }
+
 #pragma region // Parameters stacks (current window)
         case widget_type::widget_type_push_pop_item_width:
         {

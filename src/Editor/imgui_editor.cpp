@@ -123,6 +123,9 @@ namespace imgui_editor
 		}
 		ImGui::End();
 
+		// next window is always front focus
+		// ImGui::SetNextWindowFocus();
+
 		draw_widget(ctx->root);
 
 		static ImVec2 inspectorSize{ g_unitSize.x * 50, g_windowSize.y };

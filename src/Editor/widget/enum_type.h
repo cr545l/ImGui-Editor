@@ -12,6 +12,15 @@ namespace imgui_editor
 		widget_type_begin_end_child				,
 #pragma endregion // Windows
 
+#pragma region // Window manipulation
+		widget_type_set_next_window_pos			,
+		widget_type_set_next_window_size		,
+		widget_type_set_next_window_content_size,
+		widget_type_set_next_window_collapsed	,
+		widget_type_set_next_window_focus		,
+		widget_type_set_next_window_bg_alpha	,
+#pragma endregion // Window manipulation
+
 #pragma region // Parameters stacks (current window)
 		widget_type_push_pop_item_width			,
 		widget_type_push_pop_text_wrap_pos		,

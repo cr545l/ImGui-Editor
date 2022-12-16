@@ -14,6 +14,14 @@ namespace imgui_editor
 		case widget_type::widget_type_begin_end_window:			delete (widget_begin_end_window*)target;		break;
 		case widget_type::widget_type_begin_end_child:			delete (widget_begin_end_child*)target;			break;
 
+		// Window manipulation
+		case widget_type::widget_type_set_next_window_pos:			delete (widget_set_next_window_pos*)target;		break;
+		case widget_type::widget_type_set_next_window_size:			delete (widget_set_next_window_size*)target;	break;
+		case widget_type::widget_type_set_next_window_content_size: delete (widget_set_next_window_content_size*)target; break;
+		case widget_type::widget_type_set_next_window_collapsed: 	delete (widget_set_next_window_collapsed*)target; break;
+		case widget_type::widget_type_set_next_window_focus:		delete (widget_set_next_window_focus*)target;	break;
+		case widget_type::widget_type_set_next_window_bg_alpha:		delete (widget_set_next_window_bg_alpha*)target; break;
+
 		// Parameters stacks (current window)
 		case widget_type::widget_type_push_pop_item_width:		delete (widget_push_pop_item_width*)target;		break;
 		case widget_type::widget_type_push_pop_text_wrap_pos:	delete (widget_push_pop_text_wrap_pos*)target;	break;

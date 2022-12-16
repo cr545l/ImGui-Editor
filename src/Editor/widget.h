@@ -63,6 +63,7 @@ namespace imgui_editor
 	inline std::string widget_data_serialize(widget_type type, void* data, std::string& version)
 	{
         std::string result;
+		assert(nullptr != data);
         parse_args_data(type, data, result, version, false);
         return result;
 	}

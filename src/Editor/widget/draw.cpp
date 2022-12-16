@@ -50,6 +50,44 @@ bool begin_type = false;
 		break;
 #pragma endregion // Windows
 
+#pragma region // Window manipulation
+		case widget_type::widget_type_set_next_window_pos:
+		{
+			widget_set_next_window_pos* args = (widget_set_next_window_pos*)ctx->args;
+			ImGui::SetNextWindowPos(args->pos, args->cond, args->pivot);
+		}
+		break;
+		case widget_type::widget_type_set_next_window_size:
+		{
+			widget_set_next_window_size* args = (widget_set_next_window_size*)ctx->args;
+			ImGui::SetNextWindowSize(args->size, args->cond);
+		}
+		break;
+		case widget_type::widget_type_set_next_window_content_size:
+		{
+			widget_set_next_window_content_size* args = (widget_set_next_window_content_size*)ctx->args;
+			ImGui::SetNextWindowContentSize(args->size);
+		}
+		break;
+		case widget_type::widget_type_set_next_window_collapsed:
+		{
+			widget_set_next_window_collapsed* args = (widget_set_next_window_collapsed*)ctx->args;
+			ImGui::SetNextWindowCollapsed(args->collapsed, args->cond);
+		}
+		break;
+		case widget_type::widget_type_set_next_window_focus:
+		{
+			ImGui::SetNextWindowFocus();
+		}
+		break;
+		case widget_type::widget_type_set_next_window_bg_alpha:
+		{
+			widget_set_next_window_bg_alpha* args = (widget_set_next_window_bg_alpha*)ctx->args;
+			ImGui::SetNextWindowBgAlpha(args->alpha);
+		}
+		break;
+#pragma endregion // Window manipulation
+
 #pragma region // Parameters stacks (current window)
 		case widget_type::widget_type_push_pop_item_width:
 		{

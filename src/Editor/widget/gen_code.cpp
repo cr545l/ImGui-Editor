@@ -98,6 +98,56 @@ namespace imgui_editor
             break;
 #pragma endregion // Windows
 
+#pragma region // Window manipulation
+            case widget_type::widget_type_set_next_window_pos:
+            {
+                widget_set_next_window_pos* args = (widget_set_next_window_pos*)ctx->args;
+                result += indent + string_format("ImGui::SetNextWindowPos(ImVec2(%f, %f), (ImGuiCond_)%d);\n",
+                    args->pos.x,
+                    args->pos.y,
+                    (int)args->cond);
+            }
+            break;
+            case widget_type::widget_type_set_next_window_size:
+            {
+                widget_set_next_window_size* args = (widget_set_next_window_size*)ctx->args;
+                result += indent + string_format("ImGui::SetNextWindowSize(ImVec2(%f, %f), (ImGuiCond_)%d);\n",
+                    args->size.x,
+                    args->size.y,
+                    (int)args->cond);
+            }
+            break;
+            case widget_type::widget_type_set_next_window_content_size:
+            {
+                widget_set_next_window_content_size* args = (widget_set_next_window_content_size*)ctx->args;
+                result += indent + string_format("ImGui::SetNextWindowContentSize(ImVec2(%f, %f));\n",
+                    args->size.x,
+                    args->size.y);
+            }
+            break;
+            case widget_type::widget_type_set_next_window_collapsed:
+            {
+                widget_set_next_window_collapsed* args = (widget_set_next_window_collapsed*)ctx->args;
+                result += indent + string_format("ImGui::SetNextWindowCollapsed(%s, (ImGuiCond_)%d);\n",
+                    args->collapsed?"true":"false",
+                    (int)args->cond);
+            }
+            break;
+            case widget_type::widget_type_set_next_window_focus:
+            {
+                widget_set_next_window_focus* args = (widget_set_next_window_focus*)ctx->args;
+                result += indent + string_format("ImGui::SetNextWindowFocus();\n");
+            }
+            break;
+            case widget_type::widget_type_set_next_window_bg_alpha:
+            {
+                widget_set_next_window_bg_alpha* args = (widget_set_next_window_bg_alpha*)ctx->args;
+                result += indent + string_format("ImGui::SetNextWindowBgAlpha(%f);\n",
+                    args->alpha);
+            }
+            break;
+#pragma endregion // Window manipulation
+
 #pragma region // Parameters stacks (current window)
             case widget_type::widget_type_push_pop_item_width:
             {

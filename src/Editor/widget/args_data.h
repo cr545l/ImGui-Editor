@@ -22,6 +22,41 @@ namespace imgui_editor
 	};
 #pragma endregion // Windows
 
+#pragma region // Window manipulation
+	struct widget_set_next_window_pos
+	{
+		ImVec2 pos;
+		ImGuiCond_ cond;
+		ImVec2 pivot;
+	};
+
+	struct widget_set_next_window_size
+	{
+		ImVec2 size;
+		ImGuiCond_ cond;
+	};
+
+	struct widget_set_next_window_content_size
+	{
+		ImVec2 size;
+	};
+
+	struct widget_set_next_window_collapsed
+	{
+		bool collapsed;
+		ImGuiCond_ cond;
+	};
+
+	struct widget_set_next_window_focus
+	{
+	};
+
+	struct widget_set_next_window_bg_alpha
+	{
+		float alpha;
+	};
+#pragma endregion // Window manipulation
+
 #pragma region // Parameters stacks (current window)	
 	struct widget_push_pop_item_width
 	{
