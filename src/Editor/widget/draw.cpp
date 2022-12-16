@@ -16,23 +16,10 @@ namespace imgui_editor
 			ImGui::PopID();
 		}
 	}
-	
-	void draw_widget(widget* ctx)
-	{
-		for(size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
-		{
-			ImGui::PushStyleColor(ctx->style_colors[i].idx, (ImVec4)ctx->style_colors[i].col);
-		}
-		for(size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
-		{
-			ImGui::PushStyleVar(ctx->style_var_floats[i].idx, ctx->style_var_floats[i].val);
-		}
-		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
-		{
-			ImGui::PushStyleVar(ctx->style_var_vec2s[i].idx, ctx->style_var_vec2s[i].val);
-		}
 
-		bool begin_type = false;
+	static bool draw_widget_args(widget* ctx)
+	{
+bool begin_type = false;
 		switch (ctx->type)
 		{
 		case widget_type::widget_type_none:	
@@ -555,6 +542,25 @@ namespace imgui_editor
 			debug_break();
 			break;
 		}
+		return begin_type;
+	}
+	
+	void draw_widget(widget* ctx)
+	{
+		for(size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+		{
+			ImGui::PushStyleColor(ctx->style_colors[i].idx, (ImVec4)ctx->style_colors[i].col);
+		}
+		for(size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+		{
+			ImGui::PushStyleVar(ctx->style_var_floats[i].idx, ctx->style_var_floats[i].val);
+		}
+		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+		{
+			ImGui::PushStyleVar(ctx->style_var_vec2s[i].idx, ctx->style_var_vec2s[i].val);
+		}
+
+		bool begin_type = draw_widget_args(ctx);
 
 		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
 		{
@@ -578,7 +584,7 @@ namespace imgui_editor
 		{
 			const auto& max = ImGui::GetItemRectMax();
 			ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), max, IM_COL32(255, 0, 0, 255));
-			const std::string info = string_format("%s[%zx]",ctx->label.c_str(), ctx->id);
+			const std::string info = string_format("%s[%zu]",ctx->label.c_str(), ctx->id);
 			ImGui::GetWindowDrawList()->AddText(max, IM_COL32(255, 0, 0, 255), info.c_str());
 		}
 
