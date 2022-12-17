@@ -164,6 +164,8 @@ namespace imgui_editor
 		std::istringstream widget_stream(data);
 		char* pos = NULL;
 
+		const auto original_type = target_widget->type;
+
         std::getline(widget_stream, read, '{');
         std::getline(widget_stream, read, ',');
         size_t fixed_type = strtoul(read.c_str(), &pos, 0);
@@ -175,7 +177,7 @@ namespace imgui_editor
         std::getline(widget_stream, read, '{');
         std::getline(widget_stream, read, '}');
 
-        if (nullptr != target_widget->args) delete_widget_args(target_widget->type, target_widget->args);
+        if (nullptr != target_widget->args) delete_widget_args(original_type, target_widget->args);
         target_widget->args = new_widget_arg(target_widget->type);
 
         widget_data_deserialize(target_widget->type, target_widget->args, read.c_str(), version);

@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "editor/extension.h"
 
@@ -19,6 +19,14 @@ namespace imgui_editor
             version = "0";                                    
             inout = safe_string_format(format, args ...);
         }                                                     
+    }
+ 
+    static std::string to_safe_string2(const bool in, const std::string& value)
+    {
+        // value는 widget의 어떤 필드값이며
+        // in이 true인 경우 외부 문자열을 deserialize 하는 동작을 하는 것이므로
+        // 할당할 대상인 value를 참조하면 안된다.
+        return in ? "" : value;
     }
 
     void parse_args_data(const widget_type type, void* data, std::string& inout, std::string& version, const bool in)
@@ -157,7 +165,7 @@ namespace imgui_editor
             widget_label_text* wd = (widget_label_text*)data;
             default_parse(inout, version, in, wd, 
                 "%s,", 
-                to_safe_string(wd->text).c_str());
+                to_safe_string2(in, wd->text).c_str());
             return;
         }
         case widget_type::widget_type_bullet_text: return;
@@ -198,7 +206,7 @@ namespace imgui_editor
             widget_begin_end_combo* wd = (widget_begin_end_combo*)data;
             default_parse(inout, version, in, wd, 
                 "%s,%d", 
-                to_safe_string(wd->preview_value).c_str(), wd->flags);
+                to_safe_string2(in, wd->preview_value).c_str(), wd->flags);
             return;
         }
 #pragma endregion // Widgets: Combo Box
@@ -210,7 +218,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%f,%s,%d", 
                 wd->value, 
-                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->speed, wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_drag_float2:
@@ -219,7 +227,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%f,%f,%s,%d", 
                 wd->value[0], wd->value[1], 
-                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->speed, wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
         }
         case widget_type::widget_type_drag_float3:
         {
@@ -227,7 +235,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%f,%f,%f,%s,%d", 
                 wd->value[0], wd->value[1], wd->value[2],
-                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->speed, wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_drag_float4:
@@ -236,7 +244,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%f,%f,%f,%f,%s,%d",
                 wd->value[0], wd->value[1], wd->value[2], wd->value[3],
-                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->speed, wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_drag_int:
@@ -245,7 +253,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%d,%f,%d,%d,%s,%d", 
                 wd->value, 
-                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->speed, wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_drag_int2:
@@ -254,7 +262,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%d,%d,%f,%d,%d,%s,%d", 
                 wd->value[0], wd->value[1], 
-                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->speed, wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_drag_int3:
@@ -263,7 +271,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%d,%d,%d,%f,%d,%d,%s,%d", 
                 wd->value[0], wd->value[1], wd->value[2], 
-                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->speed, wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_drag_int4:
@@ -272,7 +280,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%d,%d,%d,%d,%f,%d,%d,%s,%d", 
                 wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
-                wd->speed, wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->speed, wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
 #pragma endregion // Widgets: Drag Sliders
@@ -284,7 +292,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%s,%d", 
                 wd->value, 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_slider_float2:
@@ -293,7 +301,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%f,%s,%d", 
                 wd->value[0], wd->value[1], 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_slider_float3:
@@ -302,7 +310,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%f,%f,%s,%d", 
                 wd->value[0], wd->value[1], wd->value[2], 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_slider_float4:
@@ -311,7 +319,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%f,%f,%f,%s,%d", 
                 wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_slider_angle:
@@ -320,7 +328,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%f,%f,%f,%s,%d", 
                 wd->value, 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_slider_int:
@@ -329,7 +337,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%d,%d,%d,%s,%d", 
                 wd->value, 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_slider_int2:
@@ -338,7 +346,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%d,%d,%d,%d,%s,%d", 
                 wd->value[0], wd->value[1], 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_slider_int3:
@@ -347,7 +355,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%d,%d,%d,%d,%d,%s,%d", 
                 wd->value[0], wd->value[1], wd->value[2], 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_slider_int4:
@@ -356,7 +364,7 @@ namespace imgui_editor
             default_parse(inout, version, in, wd, 
                 "%d,%d,%d,%d,%d,%d,%s,%d", 
                 wd->value[0], wd->value[1], wd->value[2], wd->value[3], 
-                wd->min, wd->max, to_safe_string(wd->format).c_str(), wd->flags);
+                wd->min, wd->max, to_safe_string2(in, wd->format).c_str(), wd->flags);
             return;
         }
 #pragma endregion // Widgets: Regular Sliders
@@ -367,7 +375,7 @@ namespace imgui_editor
             widget_input_text* wd = (widget_input_text*)data;
             default_parse(inout, version, in, wd, 
                 "%s,%d,",
-                to_safe_string(wd->text).c_str(), wd->flags);
+                to_safe_string2(in, wd->text).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_input_text_multiline:
@@ -375,7 +383,7 @@ namespace imgui_editor
             widget_input_text_multiline* wd = (widget_input_text_multiline*)data;
             default_parse(inout, version, in, wd, 
                 "%s,%f,%f,%d,", 
-                to_safe_string(wd->text).c_str(), wd->size.x, wd->size.y, wd->flags);
+                to_safe_string2(in, wd->text).c_str(), wd->size.x, wd->size.y, wd->flags);
             return;
         }
         case widget_type::widget_type_input_text_with_hint:
@@ -383,7 +391,7 @@ namespace imgui_editor
             widget_input_text_with_hint* wd = (widget_input_text_with_hint*)data;
             default_parse(inout, version, in, wd, 
                 "%s,%s,%d,", 
-                to_safe_string(wd->text).c_str(), to_safe_string(wd->hint).c_str(), wd->flags);
+                to_safe_string2(in, wd->text).c_str(), to_safe_string2(in, wd->hint).c_str(), wd->flags);
             return;
         }
         case widget_type::widget_type_input_float:
@@ -552,7 +560,7 @@ namespace imgui_editor
         {
             widget_menu_item* wd = (widget_menu_item*)data;
             default_parse(inout, version, in, wd, "%s,%d,%d",
-                to_safe_string(wd->shortcut).c_str(),
+                to_safe_string2(in, wd->shortcut).c_str(),
                 wd->selected, 
                 wd->enabled);
             return;
