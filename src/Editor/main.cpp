@@ -386,6 +386,8 @@ bool imui_init()
     io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
     io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
     io.SetClipboardTextFn = g_data->ImGui_ImplGlfwGL3_SetClipboardText;
     io.GetClipboardTextFn = g_data->ImGui_ImplGlfwGL3_GetClipboardText;
     io.ClipboardUserData = g_data->window;

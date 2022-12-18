@@ -127,7 +127,7 @@ namespace imgui_editor
 		// ImGui::SetNextWindowFocus();
 
 		draw_widget(ctx->root);
-
+		
 		static ImVec2 inspectorSize{ g_unitSize.x * 50, g_windowSize.y };
 		ImGui::SetNextWindowSize(inspectorSize);
 		ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, mainMenuSizeY });
