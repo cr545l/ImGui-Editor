@@ -59,7 +59,8 @@ namespace imgui_editor
 			
 			if(ImGui::TreeNode("Gen c++"))
 			{
-				std::string s =  widget_generate(generate_code::cpp, ctx);
+				std::string s;
+				widget_generate(generate_code::cpp, ctx, true, s);
 				ImGui::InputTextMultiline("##data", &s, ImVec2(0, g_unitSize.y*50), ImGuiInputTextFlags_ReadOnly);
 				ImGui::TreePop();
 

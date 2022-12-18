@@ -82,7 +82,7 @@ namespace imgui_editor
 		cpp,
 	};
 
-	std::string widget_generate(generate_code code, widget* target);
+	void widget_generate(generate_code code, widget* target, bool root, std::string& result);
 
 	// TODO
 	// struct widget_args_required

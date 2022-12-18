@@ -7,63 +7,69 @@
 
 namespace imgui_editor
 {
-	std::string widget_generate(generate_code code, widget* ctx)
+    void widget_generate(generate_code code, widget* ctx, bool root, std::string& result)
     {
+        static size_t index = 0;
+        if (root) index = 0;
+
         static std::string indent = "";
-        std::string result;
-        switch (code)        
+		
+        switch (code)
         {
         case generate_code::cpp:
         {
-		    bool begin_type = false;
+            bool begin_type = false;
 
-            for(size_t i = 0, max = ctx->style_colors.size(); i < max;++i)
+            for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
             {
-                result += indent + "ImGui::PushStyleColor(" + std::string(magic_enum::enum_name( ctx->style_colors[i].idx)) +
-                 ", ImVec4(" + 
-                 std::to_string(ctx->style_colors[i].col.Value.x) + "f, " +
-                 std::to_string(ctx->style_colors[i].col.Value.y) + "f, " + 
-                 std::to_string(ctx->style_colors[i].col.Value.z) + "f, " +
-                  std::to_string(ctx->style_colors[i].col.Value.w) + "f));\n";
+                result += indent + "ImGui::PushStyleColor(" + std::string(magic_enum::enum_name(ctx->style_colors[i].idx)) +
+                    ", ImVec4(" +
+                    std::to_string(ctx->style_colors[i].col.Value.x) + "f, " +
+                    std::to_string(ctx->style_colors[i].col.Value.y) + "f, " +
+                    std::to_string(ctx->style_colors[i].col.Value.z) + "f, " +
+                    std::to_string(ctx->style_colors[i].col.Value.w) + "f));\n";
             }
 
-            for(size_t i = 0, max = ctx->style_var_floats.size(); i < max;++i)
+            for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
             {
-                result += indent + "ImGui::PushStyleVar(" + std::string(magic_enum::enum_name( ctx->style_var_floats[i].idx)) +
-                 ", " + std::to_string(ctx->style_var_floats[i].val) + "f);\n";
+                result += indent + "ImGui::PushStyleVar(" + std::string(magic_enum::enum_name(ctx->style_var_floats[i].idx)) +
+                    ", " + std::to_string(ctx->style_var_floats[i].val) + "f);\n";
             }
 
-            for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max;++i)
+            for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
             {
-                result += indent + "ImGui::PushStyleVar(" + std::string(magic_enum::enum_name( ctx->style_var_vec2s[i].idx)) +
-                 ", ImVec2(" + 
-                 std::to_string(ctx->style_var_vec2s[i].val.x) + "f, " +
-                 std::to_string(ctx->style_var_vec2s[i].val.y) + "f));\n";
+                result += indent + "ImGui::PushStyleVar(" + std::string(magic_enum::enum_name(ctx->style_var_vec2s[i].idx)) +
+                    ", ImVec2(" +
+                    std::to_string(ctx->style_var_vec2s[i].val.x) + "f, " +
+                    std::to_string(ctx->style_var_vec2s[i].val.y) + "f));\n";
             }
 
             switch (ctx->type)
             {
-            case widget_type::widget_type_none:              break; 
+            case widget_type::widget_type_none:              break;
 
 #pragma region // Windows
-		    case widget_type::widget_type_begin_end_window:
+            case widget_type::widget_type_begin_end_window:
             {
                 begin_type = true;
-
                 widget_begin_end_window* args = (widget_begin_end_window*)ctx->args;
-                result += indent + string_format("bool open_%zu = %s;\n", ctx->id, args->open?"true":"false");
+
+                const std::string open = string_format("bool open_%zu = %s;\n", ctx->id, args->open ? "true" : "false");
+                result = result.insert(index, open);
+                index += open.size();
+
                 result += indent + string_format("open_%zu = ImGui::Begin(\"%s\", &open_%zu, (ImGuiWindowFlags_)%d);\n",
                     ctx->id,
                     ctx->label.c_str(),
                     ctx->id,
                     (int)args->flags);
-                
+
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 indent.pop_back();
                 result += indent + "}\n";
@@ -75,21 +81,25 @@ namespace imgui_editor
                 begin_type = true;
 
                 widget_begin_end_child* args = (widget_begin_end_child*)ctx->args;
+				
+                const std::string visible = string_format("bool visible_%zu = false;\n", ctx->id);
+                result = result.insert(index, visible);
+                index += visible.size();
 
-                result += indent + string_format("bool open_%zu =ImGui::BeginChild(\"%s\", ImVec2(%f, %f), %s, (ImGuiWindowFlags_)%d);\n",
+                result += indent + string_format("visible_%zu =ImGui::BeginChild(\"%s\", ImVec2(%f, %f), %s, (ImGuiWindowFlags_)%d);\n",
                     ctx->id,
                     ctx->label.c_str(),
                     args->size.x,
                     args->size.y,
-                    args->border?"true":"false",
+                    args->border ? "true" : "false",
                     (int)args->flags);
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(visible_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 indent.pop_back();
                 result += indent + "}\n";
@@ -129,7 +139,7 @@ namespace imgui_editor
             {
                 widget_set_next_window_collapsed* args = (widget_set_next_window_collapsed*)ctx->args;
                 result += indent + string_format("ImGui::SetNextWindowCollapsed(%s, (ImGuiCond_)%d);\n",
-                    args->collapsed?"true":"false",
+                    args->collapsed ? "true" : "false",
                     (int)args->cond);
             }
             break;
@@ -156,9 +166,9 @@ namespace imgui_editor
                 widget_push_pop_item_width* args = (widget_push_pop_item_width*)ctx->args;
                 result += indent + string_format("ImGui::PushItemWidth(%f);\n", args->item_width);
 
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::PopItemWidth();\n");
             }
@@ -170,9 +180,9 @@ namespace imgui_editor
                 widget_push_pop_text_wrap_pos* args = (widget_push_pop_text_wrap_pos*)ctx->args;
                 result += indent + string_format("ImGui::PushTextWrapPos(%f);\n", args->item_width);
 
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::PopTextWrapPos();\n");
             }
@@ -180,23 +190,23 @@ namespace imgui_editor
 #pragma endregion // Parameters stacks (current window)
 
 #pragma region // Cursor / Layout
-		    case widget_type::widget_type_separator:    
+            case widget_type::widget_type_separator:
             {
                 result += indent + string_format("ImGui::Separator();\n");
-            }            
+            }
             break;
-		    case widget_type::widget_type_same_line:
+            case widget_type::widget_type_same_line:
             {
                 widget_same_line* args = (widget_same_line*)ctx->args;
                 result += indent + string_format("ImGui::SameLine(%f, %f);\n", args->offset_from_start_x, args->spacing);
             }
             break;
-		    case widget_type::widget_type_spacing:
+            case widget_type::widget_type_spacing:
             {
                 result += indent + string_format("ImGui::Spacing();\n");
             }
             break;
-		    case widget_type::widget_type_dummy:
+            case widget_type::widget_type_dummy:
             {
                 widget_dummy* args = (widget_dummy*)ctx->args;
                 result += indent + string_format("ImGui::Dummy(ImVec2(%f, %f));\n", args->size.x, args->size.y);
@@ -218,10 +228,10 @@ namespace imgui_editor
 
                 result += indent + string_format("ImGui::BeginGroup();\n");
 
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
-                }                
+                    widget_generate(code, ctx->children[i], false, result);
+                }
                 result += indent + "ImGui::EndGroup();\n";
             }
             break;
@@ -236,22 +246,22 @@ namespace imgui_editor
 #pragma region // Widgets: Text
             case widget_type::widget_type_text:
             {
-                result += indent +string_format("ImGui::Text(\"%s\");\n", ctx->label.c_str());
+                result += indent + string_format("ImGui::Text(\"%s\");\n", ctx->label.c_str());
             }
             break;
             case widget_type::widget_type_text_colored:
             {
                 widget_text_colored* args = (widget_text_colored*)ctx->args;
-                result += indent +string_format("ImGui::TextColored(ImVec4(%f, %f, %f, %f), \"%s\");\n", args->color.Value.x, args->color.Value.y, args->color.Value.z, args->color.Value.w, ctx->label.c_str());
+                result += indent + string_format("ImGui::TextColored(ImVec4(%f, %f, %f, %f), \"%s\");\n", args->color.Value.x, args->color.Value.y, args->color.Value.z, args->color.Value.w, ctx->label.c_str());
             }
             break;
-		    case widget_type::widget_type_label_text:
+            case widget_type::widget_type_label_text:
             {
                 widget_label_text* args = (widget_label_text*)ctx->args;
                 result += indent + string_format("ImGui::LabelText(\"%s\", \"%s\");\n", ctx->label.c_str(), args->text.c_str());
             }
             break;
-		    case widget_type::widget_type_bullet_text:
+            case widget_type::widget_type_bullet_text:
             {
                 result += indent + string_format("ImGui::BulletText(\"%s\");\n", ctx->label.c_str());
             }
@@ -262,7 +272,7 @@ namespace imgui_editor
             case widget_type::widget_type_button:
             {
                 widget_button* args = (widget_button*)ctx->args;
-                result += indent + string_format("ImGui::Button(\"%s\", ImVec2(%f, %f));\n", ctx->label.c_str(), 
+                result += indent + string_format("ImGui::Button(\"%s\", ImVec2(%f, %f));\n", ctx->label.c_str(),
                     args->size.x, args->size.y);
             }
             break;
@@ -273,26 +283,34 @@ namespace imgui_editor
             break;
             case widget_type::widget_type_checkbox:
             {
-		    	widget_checkbox* args = (widget_checkbox*)ctx->args;
-                result += indent + string_format("bool check_%zu = %s;\n", ctx->id, args->check?"true":"false");
+                widget_checkbox* args = (widget_checkbox*)ctx->args;
+
+                const std::string check = string_format("bool check_%zu = %s;\n", ctx->id, args->check ? "true" : "false");
+                result.insert(index, check);
+                index += check.size();
+				
                 result += indent + string_format("ImGui::Checkbox(\"%s\", &check_%zu);\n", ctx->label.c_str(), ctx->id);
             }
             break;
-		    case widget_type::widget_type_checkbox_flags:
+            case widget_type::widget_type_checkbox_flags:
             {
                 widget_checkbox_flags* args = (widget_checkbox_flags*)ctx->args;
-                result += indent +string_format("int flags_%zu = %d;\n", ctx->id, args->flags);
-                result += indent +string_format("ImGui::CheckboxFlags(\"%s\", &flags_%zu, %d);\n", ctx->label.c_str(), ctx->id, args->flags_value);
+
+                const std::string flag = string_format("int flags_%zu = %d;\n", ctx->id, args->flags);
+                result.insert(index, flag);
+                index += flag.size();
+
+                result += indent + string_format("ImGui::CheckboxFlags(\"%s\", &flags_%zu, %d);\n", ctx->label.c_str(), ctx->id, args->flags_value);
             }
             break;
             case widget_type::widget_type_radio_button:
             {
                 widget_radio_button* args = (widget_radio_button*)ctx->args;
-                result += indent +string_format("int active_%zu = %d;\n", ctx->id, args->active);
-                result += indent +string_format("ImGui::RadioButton(\"%s\", &active_%zu);\n", ctx->label.c_str(), ctx->id);
+                result += indent + string_format("int active_%zu = %d;\n", ctx->id, args->active);
+                result += indent + string_format("ImGui::RadioButton(\"%s\", &active_%zu);\n", ctx->label.c_str(), ctx->id);
             }
             break;
-	    	case widget_type::widget_type_bullet:
+            case widget_type::widget_type_bullet:
             {
                 result += indent + string_format("ImGui::Bullet();\n");
             }
@@ -306,7 +324,11 @@ namespace imgui_editor
 
                 widget_begin_end_combo* args = (widget_begin_end_combo*)ctx->args;
 
-                result += indent + string_format("bool open_%zu =ImGui::BeginCombo(\"%s\", \"%s\", (ImGuiComboFlags_)%d);\n",
+                const std::string open = string_format("bool open_%zu = false;\n", ctx->id);
+                result.insert(index, open);
+                index += open.size();
+
+                result += indent + string_format("open_%zu =ImGui::BeginCombo(\"%s\", \"%s\", (ImGuiComboFlags_)%d);\n",
                     ctx->id,
                     ctx->label.c_str(),
                     args->preview_value.c_str(),
@@ -315,9 +337,9 @@ namespace imgui_editor
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::EndCombo();\n");
                 indent.pop_back();
@@ -453,20 +475,20 @@ namespace imgui_editor
 
 #pragma region // Widgets: Input with Keyboard
             case widget_type::widget_type_input_text:
-            {                
+            {
                 widget_input_text* args = (widget_input_text*)ctx->args;
                 result += indent + string_format("std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
                 result += indent + string_format("ImGui::InputText(\"%s\", &text_%zu, (ImGuiInputTextFlags_)%d);\n", ctx->label.c_str(), ctx->id, (int)args->flags);
             }
             break;
-		    case widget_type::widget_type_input_text_multiline:
+            case widget_type::widget_type_input_text_multiline:
             {
                 widget_input_text_multiline* args = (widget_input_text_multiline*)ctx->args;
                 result += indent + string_format("std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
                 result += indent + string_format("ImGui::InputTextMultiline(\"%s\", &text_%zu, ImVec2(%f, %f), (ImGuiInputTextFlags_)%d);\n", ctx->label.c_str(), ctx->id, args->size.x, args->size.y, (int)args->flags);
             }
             break;
-            case widget_type::widget_type_input_text_with_hint: 
+            case widget_type::widget_type_input_text_with_hint:
             {
                 widget_input_text_with_hint* args = (widget_input_text_with_hint*)ctx->args;
                 result += indent + string_format("std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
@@ -540,7 +562,7 @@ namespace imgui_editor
 
 #pragma region // Widgets: Color Editor/Picker 
             case widget_type::widget_type_color_edit3:
-            {                
+            {
                 widget_color_edit3* args = (widget_color_edit3*)ctx->args;
                 result += indent + string_format("float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
                 result += indent + string_format("ImGui::ColorEdit3(\"%s\", value_%zu, (ImGuiColorEditFlags_)%d);\n", ctx->label.c_str(), ctx->id, args->flags);
@@ -590,28 +612,28 @@ namespace imgui_editor
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::TreePop();\n");
                 indent.pop_back();
                 result += indent + "}\n";
             }
             break;
-		    case widget_type::widget_type_collapsing_header:
+            case widget_type::widget_type_collapsing_header:
             {
                 begin_type = true;
 
                 widget_collapsing_header* args = (widget_collapsing_header*)ctx->args;
-                result += indent + string_format("bool open_%zu =ImGui::CollapsingHeader(\"%s\", %s, %s);\n", ctx->label.c_str(), args->flags?"ImGuiTreeNodeFlags_DefaultOpen":"0", args->flags?"ImGuiTreeNodeFlags_DefaultOpen":"0");
+                result += indent + string_format("bool open_%zu = ImGui::CollapsingHeader(\"%s\", %s, %s);\n", ctx->label.c_str(), args->flags ? "ImGuiTreeNodeFlags_DefaultOpen" : "0", args->flags ? "ImGuiTreeNodeFlags_DefaultOpen" : "0");
 
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 indent.pop_back();
                 result += indent + "}\n";
@@ -620,13 +642,13 @@ namespace imgui_editor
 #pragma endregion // Widgets: Trees
 
 #pragma region // Widgets: Selectables
-		    case widget_type::widget_type_selectable:
+            case widget_type::widget_type_selectable:
             {
                 widget_selectable* args = (widget_selectable*)ctx->args;
-                result += indent + string_format("bool selected_%zu = %s;\n", 
-                    ctx->id, args->selected?"true":"false");
-                result += indent + string_format("ImGui::Selectable(\"%s\", &selected_%zu, %s, ImVec2(%f, %f));\n", 
-                    ctx->label.c_str(), ctx->id, args->flags?"ImGuiSelectableFlags_AllowDoubleClick":"0", args->size.x, args->size.y);
+                result += indent + string_format("bool selected_%zu = %s;\n",
+                    ctx->id, args->selected ? "true" : "false");
+                result += indent + string_format("ImGui::Selectable(\"%s\", &selected_%zu, %s, ImVec2(%f, %f));\n",
+                    ctx->label.c_str(), ctx->id, args->flags ? "ImGuiSelectableFlags_AllowDoubleClick" : "0", args->size.x, args->size.y);
             }
             break;
 #pragma endregion // Widgets: Selectables
@@ -647,9 +669,9 @@ namespace imgui_editor
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::EndListBox();\n");
                 indent.pop_back();
@@ -657,7 +679,7 @@ namespace imgui_editor
             }
             break;
 #pragma endregion // Widgets: List Boxes
-		
+
 #pragma region // Widgets: Menus
             case widget_type::widget_type_begin_end_menu_bar:
             {
@@ -669,9 +691,9 @@ namespace imgui_editor
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::EndMenuBar();\n");
                 indent.pop_back();
@@ -689,9 +711,9 @@ namespace imgui_editor
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::EndMenu();\n");
                 indent.pop_back();
@@ -701,16 +723,16 @@ namespace imgui_editor
             case widget_type::widget_type_menu_item:
             {
                 widget_menu_item* args = (widget_menu_item*)ctx->args;
-                result += indent + string_format("bool selected_%zu = %s;\n", 
-                    ctx->id, args->selected?"true":"false");
-                result += indent + string_format("ImGui::MenuItem(\"%s\", \"%s\", &selected_%zu, %s);\n", 
-                    ctx->label.c_str(), args->shortcut.c_str(), ctx->id, args->enabled?"true":"false");
+                result += indent + string_format("bool selected_%zu = %s;\n",
+                    ctx->id, args->selected ? "true" : "false");
+                result += indent + string_format("ImGui::MenuItem(\"%s\", \"%s\", &selected_%zu, %s);\n",
+                    ctx->label.c_str(), args->shortcut.c_str(), ctx->id, args->enabled ? "true" : "false");
             }
             break;
 #pragma endregion // Widgets: Menus
 
 #pragma region // Popups, Modals
-		    case widget_type::widget_type_begin_end_popup:
+            case widget_type::widget_type_begin_end_popup:
             {
                 begin_type = true;
 
@@ -724,9 +746,9 @@ namespace imgui_editor
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::EndPopup();\n");
                 indent.pop_back();
@@ -734,7 +756,7 @@ namespace imgui_editor
             }
             break;
 #pragma endregion // Popups, Modals
-		
+
 #pragma region // Tables
             case widget_type::widget_type_begin_end_table:
             {
@@ -754,9 +776,9 @@ namespace imgui_editor
                 result += indent + string_format("if(open_%zu)\n", ctx->id);
                 result += indent + "{\n";
                 indent += '\t';
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
                 result += indent + string_format("ImGui::EndTable();\n");
                 indent.pop_back();
@@ -792,34 +814,32 @@ namespace imgui_editor
                 break;
             }
 
-            for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max;++i)
+            for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
             {
                 result += indent + "ImGui::PopStyleVar();\n";
             }
 
-            for(size_t i = 0, max = ctx->style_var_floats.size(); i < max;++i)
+            for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
             {
                 result += indent + "ImGui::PopStyleVar();\n";
             }
-            
-            for(size_t i = 0, max = ctx->style_colors.size(); i < max;++i)
+
+            for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
             {
                 result += indent + "ImGui::PopStyleColor();\n";
             }
 
-            if(!begin_type)
+            if (!begin_type)
             {
-                for(size_t i =0, max = ctx->children.size(); i < max; ++i)
+                for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
                 {
-                    result += widget_generate(code, ctx->children[i]);
+                    widget_generate(code, ctx->children[i], false, result);
                 }
             }
         }
-        
+
         default:
             break;
         }
-
-        return result;
     }
 }
