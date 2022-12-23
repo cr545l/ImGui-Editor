@@ -92,30 +92,6 @@ TEST(parse, string_parse)
 	}
 }
 
-void widget_parse(widget_type type, void* data, std::string& inout, std::string& version, bool in)
-{
-	switch (type)
-	{
-	case widget_type::widget_type_none: return;
-	case widget_type::widget_type_begin_end_window:
-	{
-        widget_begin_end_window* wd = (widget_begin_end_window*)data;
-
-		const char* format = "%d,%d";
-		if (in)
-		{
-			sscanf2(format, inout.c_str(), wd);
-		}
-		else
-		{
-			version = "0";
-			inout = safe_string_format(format, wd->open, wd->flags); 
-		}
-	}
-	break;
-	}
-}
-
 TEST(parse, string_parse2)
 {
 

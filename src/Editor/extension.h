@@ -117,7 +117,7 @@ namespace imgui_editor
 		return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 	}
 
-	void sscanf2(const char* format, const char* data, void* value);
+	CR_EXPORT void sscanf2(const char* format, const char* data, void* value);
 
 	inline std::string to_safe_string(const std::string& v) 
 	{
