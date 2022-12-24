@@ -181,20 +181,76 @@ namespace imgui_editor
 		}
 		return result;
 	}
+
+	template <typename E, magic_enum::detail::enable_if_t<E, int> = 0>
+	void enum_for_each(std::function<void(E)>&& lambda)
+	{
+		magic_enum::enum_for_each<E>(lambda);
+	}
+
+	template <>
+	inline void enum_for_each(std::function<void(ImGuiWindowFlags_)>&& lambda)
+	{
+		static const ImGuiWindowFlags_ enums[]=
+		{
+			ImGuiWindowFlags_None,
+			ImGuiWindowFlags_NoTitleBar,
+			ImGuiWindowFlags_NoResize,
+			ImGuiWindowFlags_NoMove,
+			ImGuiWindowFlags_NoScrollbar,
+			ImGuiWindowFlags_NoScrollWithMouse,
+			ImGuiWindowFlags_NoCollapse,
+			ImGuiWindowFlags_AlwaysAutoResize,
+			ImGuiWindowFlags_NoBackground,
+			ImGuiWindowFlags_NoSavedSettings,
+			ImGuiWindowFlags_NoMouseInputs,
+			ImGuiWindowFlags_MenuBar,
+			ImGuiWindowFlags_HorizontalScrollbar,
+			ImGuiWindowFlags_NoFocusOnAppearing,
+			ImGuiWindowFlags_NoBringToFrontOnFocus,
+			ImGuiWindowFlags_AlwaysVerticalScrollbar,
+			ImGuiWindowFlags_AlwaysHorizontalScrollbar,
+			ImGuiWindowFlags_AlwaysUseWindowPadding,
+			ImGuiWindowFlags_NoNavInputs,
+			ImGuiWindowFlags_NoNavFocus,
+			ImGuiWindowFlags_UnsavedDocument,
+			ImGuiWindowFlags_NoDocking,
+
+			ImGuiWindowFlags_NoNav,
+			ImGuiWindowFlags_NoDecoration,
+			ImGuiWindowFlags_NoInputs,
+
+			// [Internal]
+			ImGuiWindowFlags_NavFlattened,
+			ImGuiWindowFlags_ChildWindow,
+			ImGuiWindowFlags_Tooltip,
+			ImGuiWindowFlags_Popup,
+			ImGuiWindowFlags_Modal,
+			ImGuiWindowFlags_ChildMenu,
+			ImGuiWindowFlags_DockNodeHost,
+		};
+
+		static const size_t size = std::size(enums);
+
+		for (size_t i = 0; i < size; ++i)
+		{
+			lambda(enums[i]);
+		}
+	}
 }
 
 namespace ImGui
 {
-    bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-    
-    template <typename T>
-	inline std::string ToString(T t)
+	bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+
+	template <typename T>
+	std::string ToString(T t)
 	{
-        std::string name = std::string(magic_enum::enum_name(t));
+		std::string name = std::string(magic_enum::enum_name(t));
 		return name;
 	}
 
-    template <>
+	template <>
 	inline std::string ToString(ImGuiWindowFlags_ t)
 	{
 		switch(t)
@@ -231,7 +287,7 @@ namespace ImGui
 			case ImGuiWindowFlags_ChildMenu: return "ImGuiWindowFlags_ChildMenu";
 		}
 	}
-
+	
     template <typename T>
     std::string GetEnumName(const T& value, bool bit_flag = true)
     {
@@ -240,8 +296,8 @@ namespace ImGui
         std::string name = "";
         if(bit_flag)
         {
-            magic_enum::enum_for_each<T>([&](T t) {
-                if (static_cast<int>(t) & static_cast<int>(value))
+            imgui_editor::enum_for_each<T>([&](T t) {
+                if ((0 == value && 0 == t) || static_cast<int>(t) & static_cast<int>(value))
                 {
                     if (name.length())
                     {
