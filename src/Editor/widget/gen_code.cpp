@@ -1003,19 +1003,32 @@ namespace imgui_editor
                 break;
             }
 
-            for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+            if (0 < ctx->style_var_vec2s.size()) 
             {
-                result += indent + "ImGui::PopStyleVar();\n";
+                for (size_t i = ctx->style_var_vec2s.size() - 1;; --i)
+                {
+                    result += indent + "ImGui::PopStyleVar(); // " + ImGui::ToString(ctx->style_var_vec2s[i].idx) + "\n";
+                    if (0 == i) break;
+                }
             }
 
-            for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+            if (0 < ctx->style_var_floats.size())
             {
-                result += indent + "ImGui::PopStyleVar();\n";
+                for (size_t i = ctx->style_var_floats.size() - 1;; --i)
+                {
+                    result += indent + "ImGui::PopStyleVar(); // " + ImGui::ToString(ctx->style_var_floats[i].idx) + "\n";
+                    if (0 == i) break;
+                }
             }
 
-            for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+
+            if (0 < ctx->style_colors.size())
             {
-                result += indent + "ImGui::PopStyleColor();\n";
+                for (size_t i = ctx->style_colors.size() - 1;; --i)
+                {
+                    result += indent + "ImGui::PopStyleColor(); // " + ImGui::ToString(ctx->style_colors[i].idx) + "\n";
+                    if (0 == i) break;
+                }
             }
 
             if (!begin_type)
