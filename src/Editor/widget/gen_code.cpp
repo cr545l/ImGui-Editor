@@ -67,15 +67,15 @@ namespace imgui_editor
                 begin_type = true;
                 widget_begin_end_window* args = (widget_begin_end_window*)ctx->args;
 
-                insert_variant(result, index, "bool open_%zu = %s;\n", ctx->id, args->open ? "true" : "false");
+                insert_variant(result, index, "bool open_%s = %s;\n", ctx->string_id.c_str(), args->open ? "true" : "false");
 
-                result += indent + string_format("open_%zu = ImGui::Begin(\"%s\", &open_%zu, (ImGuiWindowFlags_)%d);\n",
-                    ctx->id,
+                result += indent + string_format("open_%s = ImGui::Begin(\"%s\", &open_%s, (ImGuiWindowFlags_)%d);\n",
+                    ctx->string_id.c_str(),
                     ctx->label.c_str(),
-                    ctx->id,
+                    ctx->string_id.c_str(),
                     (int)args->flags);
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -93,17 +93,17 @@ namespace imgui_editor
 
                 widget_begin_end_child* args = (widget_begin_end_child*)ctx->args;
 				
-                insert_variant(result, index, "bool visible_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool visible_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("visible_%zu = ImGui::BeginChild(\"%s\", ImVec2(%f, %f), %s, (ImGuiWindowFlags_)%d);\n",
-                    ctx->id,
+                result += indent + string_format("visible_%s = ImGui::BeginChild(\"%s\", ImVec2(%f, %f), %s, (ImGuiWindowFlags_)%d);\n",
+                    ctx->string_id.c_str(),
                     ctx->label.c_str(),
                     args->size.x,
                     args->size.y,
                     args->border ? "true" : "false",
                     (int)args->flags);
 
-                result += indent + string_format("if(visible_%zu)\n", ctx->id);
+                result += indent + string_format("if(visible_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -293,47 +293,47 @@ namespace imgui_editor
 			{
 				widget_button* args = (widget_button*)ctx->args;
 
-				insert_variant(result, index, "bool pressed_%zu = false;\n", ctx->id);                
+				insert_variant(result, index, "bool pressed_%s = false;\n", ctx->string_id.c_str());                
 
-				result += indent + string_format("pressed_%zu = ImGui::Button(\"%s\", ImVec2(%f, %f));\n", ctx->id, ctx->label.c_str(),
+				result += indent + string_format("pressed_%s = ImGui::Button(\"%s\", ImVec2(%f, %f));\n", ctx->string_id.c_str(), ctx->label.c_str(),
 					args->size.x, args->size.y);
 			}
 			break;
 			case widget_type::widget_type_small_button:
 			{
-                insert_variant(result, index, "bool pressed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool pressed_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("pressed_%zu = ImGui::SmallButton(\"%s\");\n", ctx->id, ctx->label.c_str());
+				result += indent + string_format("pressed_%s = ImGui::SmallButton(\"%s\");\n", ctx->string_id.c_str(), ctx->label.c_str());
 			}
 			break;
 			case widget_type::widget_type_checkbox:
 			{
 				widget_checkbox* args = (widget_checkbox*)ctx->args;
 
-				insert_variant(result, index, "bool check_%zu = %s;\n", ctx->id, args->check ? "true" : "false");
-				insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+				insert_variant(result, index, "bool check_%s = %s;\n", ctx->string_id.c_str(), args->check ? "true" : "false");
+				insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("changed_%zu = ImGui::Checkbox(\"%s\", &check_%zu);\n", ctx->id, ctx->label.c_str(), ctx->id);
+				result += indent + string_format("changed_%s = ImGui::Checkbox(\"%s\", &check_%s);\n", ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str());
 			}
 			break;
 			case widget_type::widget_type_checkbox_flags:
 			{
 				widget_checkbox_flags* args = (widget_checkbox_flags*)ctx->args;
 
-				insert_variant(result, index, "int flags_%zu = %d;\n", ctx->id, args->flags);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+				insert_variant(result, index, "int flags_%s = %d;\n", ctx->string_id.c_str(), args->flags);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("changed_%zu = ImGui::CheckboxFlags(\"%s\", &flags_%zu, %d);\n", ctx->id, ctx->label.c_str(), ctx->id, args->flags_value);
+				result += indent + string_format("changed_%s = ImGui::CheckboxFlags(\"%s\", &flags_%s, %d);\n", ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->flags_value);
 			}
 			break;
 			case widget_type::widget_type_radio_button:
 			{
 				widget_radio_button* args = (widget_radio_button*)ctx->args;
 
-                insert_variant(result, index, "int active_%zu = %d;\n", ctx->id, args->active);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int active_%s = %d;\n", ctx->string_id.c_str(), args->active);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("pressed_%zu = ImGui::RadioButton(\"%s\", &active_%zu);\n", ctx->id, ctx->label.c_str(), ctx->id);
+				result += indent + string_format("pressed_%s = ImGui::RadioButton(\"%s\", &active_%s);\n", ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str());
 			}
 			break;
 			case widget_type::widget_type_bullet:
@@ -350,15 +350,15 @@ namespace imgui_editor
 
                 widget_begin_end_combo* args = (widget_begin_end_combo*)ctx->args;
 
-                insert_variant(result, index, "bool open_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool open_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("open_%zu = ImGui::BeginCombo(\"%s\", \"%s\", (ImGuiComboFlags_)%d);\n",
-                    ctx->id,
+                result += indent + string_format("open_%s = ImGui::BeginCombo(\"%s\", \"%s\", (ImGuiComboFlags_)%d);\n",
+                    ctx->string_id.c_str(),
                     ctx->label.c_str(),
                     args->preview_value.c_str(),
                     (int)args->flags);
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -377,88 +377,88 @@ namespace imgui_editor
 			{
 				widget_drag_float* args = (widget_drag_float*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu = %f;\n", ctx->id, args->value);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s = %f;\n", ctx->string_id.c_str(), args->value);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
                 
-				result += indent + string_format("changed_%zu = ImGui::DragFloat(\"%s\", &value_%zu, %f, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::DragFloat(\"%s\", &value_%s, %f, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 			case widget_type::widget_type_drag_float2:
 			{
 				widget_drag_float2* args = (widget_drag_float2*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[2] = {%f, %f};\n", ctx->id, args->value[0], args->value[1]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[2] = {%f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 				
-				result += indent + string_format("changed_%zu = ImGui::DragFloat2(\"%s\", value_%zu, %f, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::DragFloat2(\"%s\", value_%s, %f, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 			case widget_type::widget_type_drag_float3:
 			{
 				widget_drag_float3* args = (widget_drag_float3*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[3] = {%f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("changed_%zu = ImGui::DragFloat3(\"%s\", value_%zu, %f, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::DragFloat3(\"%s\", value_%s, %f, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 			case widget_type::widget_type_drag_float4:
 			{
 				widget_drag_float4* args = (widget_drag_float4*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[4] = {%f, %f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2], args->value[3]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 				
-				result += indent + string_format("changed_%zu = ImGui::DragFloat4(\"%s\", value_%zu, %f, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::DragFloat4(\"%s\", value_%s, %f, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 			case widget_type::widget_type_drag_int:
 			{
 				widget_drag_int* args = (widget_drag_int*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu = %d;\n", ctx->id, args->value);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s = %d;\n", ctx->string_id.c_str(), args->value);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 				
-				result += indent + string_format("changed_%zu = ImGui::DragInt(\"%s\", &value_%zu, %f, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::DragInt(\"%s\", &value_%s, %f, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 			case widget_type::widget_type_drag_int2:
 			{
 				widget_drag_int2* args = (widget_drag_int2*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[2] = {%d, %d};\n", ctx->id, args->value[0], args->value[1]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[2] = {%d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("changed_%zu = ImGui::DragInt2(\"%s\", value_%zu, %f, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::DragInt2(\"%s\", value_%s, %f, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 			case widget_type::widget_type_drag_int3:
 			{
 				widget_drag_int3* args = (widget_drag_int3*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[3] = {%d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[3] = {%d, %d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 				
-				result += indent + string_format("changed_%zu = ImGui::DragInt3(\"%s\", value_%zu, %f, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::DragInt3(\"%s\", value_%s, %f, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 			case widget_type::widget_type_drag_int4:
 			{
 				widget_drag_int4* args = (widget_drag_int4*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[4] = {%d, %d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[4] = {%d, %d, %d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2], args->value[3]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("changed_%zu = ImGui::DragInt4(\"%s\", value_%zu, %f, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::DragInt4(\"%s\", value_%s, %f, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->speed, args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 #pragma endregion // Widgets: Drag Sliders
@@ -468,99 +468,99 @@ namespace imgui_editor
 			{
 				widget_slider_float* args = (widget_slider_float*)ctx->args;
 
-				insert_variant(result, index, "float value_%zu = %f;\n", ctx->id, args->value);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+				insert_variant(result, index, "float value_%s = %f;\n", ctx->string_id.c_str(), args->value);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("changed_%zu = ImGui::SliderFloat(\"%s\", &value_%zu, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+				result += indent + string_format("changed_%s = ImGui::SliderFloat(\"%s\", &value_%s, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
 			}
 			break;
 			case widget_type::widget_type_slider_float2:
             {
                 widget_slider_float2* args = (widget_slider_float2*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[2] = {%f, %f};\n", ctx->id, args->value[0], args->value[1]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[2] = {%f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::SliderFloat2(\"%s\", value_%zu, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::SliderFloat2(\"%s\", value_%s, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_slider_float3:
             {
                 widget_slider_float3* args = (widget_slider_float3*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[3] = {%f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::SliderFloat3(\"%s\", value_%zu, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::SliderFloat3(\"%s\", value_%s, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_slider_float4:
             {
                 widget_slider_float4* args = (widget_slider_float4*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[4] = {%f, %f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2], args->value[3]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 				
-                result += indent + string_format("changed_%zu = ImGui::SliderFloat4(\"%s\", value_%zu, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::SliderFloat4(\"%s\", value_%s, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_slider_angle:
             {
                 widget_slider_angle* args = (widget_slider_angle*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu = %f;\n", ctx->id, args->value);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s = %f;\n", ctx->string_id.c_str(), args->value);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 				
-                result += indent + string_format("changed_%zu = ImGui::SliderAngle(\"%s\", &value_%zu, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::SliderAngle(\"%s\", &value_%s, %f, %f, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_slider_int:
             {
                 widget_slider_int* args = (widget_slider_int*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu = %d;\n", ctx->id, args->value);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s = %d;\n", ctx->string_id.c_str(), args->value);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 				
-                result += indent + string_format("changed_%zu = ImGui::SliderInt(\"%s\", &value_%zu, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::SliderInt(\"%s\", &value_%s, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_slider_int2:
             {
                 widget_slider_int2* args = (widget_slider_int2*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[2] = {%d, %d};\n", ctx->id, args->value[0], args->value[1]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[2] = {%d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 				
-                result += indent + string_format("changed_%zu = ImGui::SliderInt2(\"%s\", value_%zu, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::SliderInt2(\"%s\", value_%s, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_slider_int3:
             {
                 widget_slider_int3* args = (widget_slider_int3*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[3] = {%d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[3] = {%d, %d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::SliderInt3(\"%s\", value_%zu, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::SliderInt3(\"%s\", value_%s, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_slider_int4:
             {
                 widget_slider_int4* args = (widget_slider_int4*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[4] = {%d, %d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[4] = {%d, %d, %d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2], args->value[3]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::SliderInt4(\"%s\", value_%zu, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->min, args->max, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::SliderInt4(\"%s\", value_%s, %d, %d, \"%s\", (ImGuiSliderFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->min, args->max, args->format.c_str(), (int)args->flags);
             }
             break;
 #pragma endregion // Widgets: Regular Sliders
@@ -570,132 +570,132 @@ namespace imgui_editor
             {
                 widget_input_text* args = (widget_input_text*)ctx->args;
 
-                insert_variant(result, index, "std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "std::string text_%s = \"%s\";\n", ctx->string_id.c_str(), args->text.c_str());
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputText(\"%s\", &text_%zu, (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputText(\"%s\", &text_%s, (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_text_multiline:
             {
                 widget_input_text_multiline* args = (widget_input_text_multiline*)ctx->args;
 
-                insert_variant(result, index, "std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "std::string text_%s = \"%s\";\n", ctx->string_id.c_str(), args->text.c_str());
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputTextMultiline(\"%s\", &text_%zu, ImVec2(%f, %f), (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->size.x, args->size.y, (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputTextMultiline(\"%s\", &text_%s, ImVec2(%f, %f), (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->size.x, args->size.y, (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_text_with_hint:
             {
                 widget_input_text_with_hint* args = (widget_input_text_with_hint*)ctx->args;
 
-                insert_variant(result, index, "std::string text_%zu = \"%s\";\n", ctx->id, args->text.c_str());
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "std::string text_%s = \"%s\";\n", ctx->string_id.c_str(), args->text.c_str());
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputTextWithHint(\"%s\", \"%s\", &text_%zu, (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), args->hint.c_str(), ctx->id, (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputTextWithHint(\"%s\", \"%s\", &text_%s, (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), args->hint.c_str(), ctx->string_id.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_float:
             {
                 widget_input_float* args = (widget_input_float*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu = %f;\n", ctx->id, args->value);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s = %f;\n", ctx->string_id.c_str(), args->value);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputFloat(\"%s\", &value_%zu, %f, %f, \"%s\", (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->step, args->step_fast, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputFloat(\"%s\", &value_%s, %f, %f, \"%s\", (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->step, args->step_fast, args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_float2:
             {
                 widget_input_float2* args = (widget_input_float2*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[2] = {%f, %f};\n", ctx->id, args->value[0], args->value[1]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[2] = {%f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputFloat2(\"%s\", value_%zu, \"%s\", (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputFloat2(\"%s\", value_%s, \"%s\", (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_float3:
             {
                 widget_input_float3* args = (widget_input_float3*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[3] = {%f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputFloat3(\"%s\", value_%zu, \"%s\", (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputFloat3(\"%s\", value_%s, \"%s\", (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_float4:
             {
                 widget_input_float4* args = (widget_input_float4*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[4] = {%f, %f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2], args->value[3]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputFloat4(\"%s\", value_%zu, \"%s\", (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputFloat4(\"%s\", value_%s, \"%s\", (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->format.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_int:
             {
                 widget_input_int* args = (widget_input_int*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu = %d;\n", ctx->id, args->value);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s = %d;\n", ctx->string_id.c_str(), args->value);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputInt(\"%s\", &value_%zu, %d, %d, (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->step, args->step_fast, (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputInt(\"%s\", &value_%s, %d, %d, (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->step, args->step_fast, (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_int2:
             {
                 widget_input_int2* args = (widget_input_int2*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[2] = {%d, %d};\n", ctx->id, args->value[0], args->value[1]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[2] = {%d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputInt2(\"%s\", value_%zu, (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputInt2(\"%s\", value_%s, (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_int3:
             {
                 widget_input_int3* args = (widget_input_int3*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[3] = {%d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[3] = {%d, %d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputInt3(\"%s\", value_%zu, (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputInt3(\"%s\", value_%s, (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_int4:
             {
                 widget_input_int4* args = (widget_input_int4*)ctx->args;
 
-                insert_variant(result, index, "int value_%zu[4] = {%d, %d, %d, %d};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "int value_%s[4] = {%d, %d, %d, %d};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2], args->value[3]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputInt4(\"%s\", value_%zu, (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputInt4(\"%s\", value_%s, (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), (int)args->flags);
             }
             break;
             case widget_type::widget_type_input_double:
             {
                 widget_input_double* args = (widget_input_double*)ctx->args;
 
-                result += indent + string_format("double value_%zu = %f;\n", ctx->id, args->value);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                result += indent + string_format("double value_%s = %f;\n", ctx->string_id.c_str(), args->value);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::InputDouble(\"%s\", &value_%zu, %f, %f, \"%s\", (ImGuiInputTextFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->step, args->step_fast, args->format.c_str(), (int)args->flags);
+                result += indent + string_format("changed_%s = ImGui::InputDouble(\"%s\", &value_%s, %f, %f, \"%s\", (ImGuiInputTextFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->step, args->step_fast, args->format.c_str(), (int)args->flags);
             }
             break;
 #pragma endregion // Widgets: Input with Keyboard
@@ -705,54 +705,54 @@ namespace imgui_editor
             {
                 widget_color_edit3* args = (widget_color_edit3*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[3] = {%f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::ColorEdit3(\"%s\", value_%zu, (ImGuiColorEditFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->flags);
+                result += indent + string_format("changed_%s = ImGui::ColorEdit3(\"%s\", value_%s, (ImGuiColorEditFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->flags);
             }
             break;
             case widget_type::widget_type_color_edit4:
             {
                 widget_color_edit4* args = (widget_color_edit4*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[4] = {%f, %f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2], args->value[3]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::ColorEdit4(\"%s\", value_%zu, (ImGuiColorEditFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->flags);
+                result += indent + string_format("changed_%s = ImGui::ColorEdit4(\"%s\", value_%s, (ImGuiColorEditFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->flags);
             }
             break;
             case widget_type::widget_type_color_picker3:
             {
                 widget_color_picker3* args = (widget_color_picker3*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[3] = {%f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[3] = {%f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::ColorPicker3(\"%s\", value_%zu, (ImGuiColorEditFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->flags);
+                result += indent + string_format("changed_%s = ImGui::ColorPicker3(\"%s\", value_%s, (ImGuiColorEditFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->flags);
             }
             break;
             case widget_type::widget_type_color_picker4:
             {
                 widget_color_picker4* args = (widget_color_picker4*)ctx->args;
-                insert_variant(result, index, "float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->value[0], args->value[1], args->value[2], args->value[3]);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[4] = {%f, %f, %f, %f};\n", ctx->string_id.c_str(), args->value[0], args->value[1], args->value[2], args->value[3]);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::ColorPicker4(\"%s\", value_%zu, (ImGuiColorEditFlags_)%d);\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->flags);
+                result += indent + string_format("changed_%s = ImGui::ColorPicker4(\"%s\", value_%s, (ImGuiColorEditFlags_)%d);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->flags);
             }
             break;
             case widget_type::widget_type_color_button:
             {
                 widget_color_button* args = (widget_color_button*)ctx->args;
 
-                insert_variant(result, index, "float value_%zu[4] = {%f, %f, %f, %f};\n", ctx->id, args->col.x, args->col.y, args->col.z, args->col.w);
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "float value_%s[4] = {%f, %f, %f, %f};\n", ctx->string_id.c_str(), args->col.x, args->col.y, args->col.z, args->col.w);
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::ColorButton(\"%s\", ImVec4(value_%zu[0], value_%zu[1], value_%zu[2], value_%zu[3]), (ImGuiColorEditFlags_)%d, ImVec2(%f, %f));\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, ctx->id, ctx->id, ctx->id, args->flags, args->size.x, args->size.y);
+                result += indent + string_format("changed_%s = ImGui::ColorButton(\"%s\", ImVec4(value_%s[0], value_%s[1], value_%s[2], value_%s[3]), (ImGuiColorEditFlags_)%d, ImVec2(%f, %f));\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), ctx->string_id.c_str(), ctx->string_id.c_str(), ctx->string_id.c_str(), args->flags, args->size.x, args->size.y);
             }
             break;
 #pragma endregion // Widgets: Color Editor/Picker 
@@ -764,13 +764,13 @@ namespace imgui_editor
 
                 widget_push_pop_tree_node* args = (widget_push_pop_tree_node*)ctx->args;
 
-                insert_variant(result, index, "bool open_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool open_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("open_%zu = ImGui::TreeNode(\"%s\");\n",
-                    ctx->id,
+                result += indent + string_format("open_%s = ImGui::TreeNode(\"%s\");\n",
+                    ctx->string_id.c_str(),
                     ctx->label.c_str());
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -788,11 +788,11 @@ namespace imgui_editor
 
                 widget_collapsing_header* args = (widget_collapsing_header*)ctx->args;
 
-                insert_variant(result, index, "bool open_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool open_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("open_%zu = ImGui::CollapsingHeader(\"%s\", %s, %s);\n", ctx->label.c_str(), args->flags ? "ImGuiTreeNodeFlags_DefaultOpen" : "0", args->flags ? "ImGuiTreeNodeFlags_DefaultOpen" : "0");
+                result += indent + string_format("open_%s = ImGui::CollapsingHeader(\"%s\", %s, %s);\n", ctx->label.c_str(), args->flags ? "ImGuiTreeNodeFlags_DefaultOpen" : "0", args->flags ? "ImGuiTreeNodeFlags_DefaultOpen" : "0");
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -810,11 +810,11 @@ namespace imgui_editor
             {
                 widget_selectable* args = (widget_selectable*)ctx->args;
 
-                insert_variant(result, index, "bool selected_%zu = %s;\n", ctx->id, args->selected ? "true" : "false");
-                insert_variant(result, index, "bool changed_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool selected_%s = %s;\n", ctx->string_id.c_str(), args->selected ? "true" : "false");
+                insert_variant(result, index, "bool changed_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("changed_%zu = ImGui::Selectable(\"%s\", &selected_%zu, %s, ImVec2(%f, %f));\n",
-                    ctx->id, ctx->label.c_str(), ctx->id, args->flags ? "ImGuiSelectableFlags_AllowDoubleClick" : "0", args->size.x, args->size.y);
+                result += indent + string_format("changed_%s = ImGui::Selectable(\"%s\", &selected_%s, %s, ImVec2(%f, %f));\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), ctx->string_id.c_str(), args->flags ? "ImGuiSelectableFlags_AllowDoubleClick" : "0", args->size.x, args->size.y);
             }
             break;
 #pragma endregion // Widgets: Selectables
@@ -826,15 +826,15 @@ namespace imgui_editor
 
                 widget_begin_end_list_box* args = (widget_begin_end_list_box*)ctx->args;
 
-                insert_variant(result, index, "bool open_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool open_%s = false;\n", ctx->string_id.c_str());
 
-				result += indent + string_format("open_%zu = ImGui::BeginListBox(\"%s\", ImVec2(%f, %f));\n",
-					ctx->id,
+				result += indent + string_format("open_%s = ImGui::BeginListBox(\"%s\", ImVec2(%f, %f));\n",
+					ctx->string_id.c_str(),
 					ctx->label.c_str(),
 					args->size.x,
 					args->size.y);
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -852,12 +852,12 @@ namespace imgui_editor
             case widget_type::widget_type_begin_end_menu_bar:
             {
                 begin_type = true;
-                insert_variant(result, index, "bool open_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool open_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("open_%zu = ImGui::BeginMenuBar();\n",
-                    ctx->id);
+                result += indent + string_format("open_%s = ImGui::BeginMenuBar();\n",
+                    ctx->string_id.c_str());
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -872,13 +872,13 @@ namespace imgui_editor
             case widget_type::widget_type_begin_end_menu:
             {
                 begin_type = true;
-                insert_variant(result, index, "bool open_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool open_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("bool open_%zu = ImGui::BeginMenu(\"%s\");\n",
-                    ctx->id,
+                result += indent + string_format("open_%s = ImGui::BeginMenu(\"%s\");\n",
+                    ctx->string_id.c_str(),
                     ctx->label.c_str());
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -894,11 +894,11 @@ namespace imgui_editor
             {
                 widget_menu_item* args = (widget_menu_item*)ctx->args;
 
-                insert_variant(result, index, "bool selected_%zu = %s;\n", ctx->id, args->selected ? "true" : "false");
-                insert_variant(result, index, "bool activated_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool selected_%s = %s;\n", ctx->string_id.c_str(), args->selected ? "true" : "false");
+                insert_variant(result, index, "bool activated_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("activated_%zu = ImGui::MenuItem(\"%s\", \"%s\", &selected_%zu, %s);\n",
-                    ctx->id, ctx->label.c_str(), args->shortcut.c_str(), ctx->id, args->enabled ? "true" : "false");
+                result += indent + string_format("activated_%s = ImGui::MenuItem(\"%s\", \"%s\", &selected_%s, %s);\n",
+                    ctx->string_id.c_str(), ctx->label.c_str(), args->shortcut.c_str(), ctx->string_id.c_str(), args->enabled ? "true" : "false");
             }
             break;
 #pragma endregion // Widgets: Menus
@@ -910,14 +910,14 @@ namespace imgui_editor
 
                 widget_begin_end_popup* args = (widget_begin_end_popup*)ctx->args;
 
-                insert_variant(result, index, "bool open_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool open_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("open_%zu = ImGui::BeginPopup(\"%s\", (ImGuiWindowFlags_)%d);\n",
-                    ctx->id,
+                result += indent + string_format("open_%s = ImGui::BeginPopup(\"%s\", (ImGuiWindowFlags_)%d);\n",
+                    ctx->string_id.c_str(),
                     ctx->label.c_str(),
                     (int)args->flags);
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -938,10 +938,10 @@ namespace imgui_editor
 
                 widget_begin_end_table* args = (widget_begin_end_table*)ctx->args;
 
-                insert_variant(result, index, "bool open_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool open_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("open_%zu = ImGui::BeginTable(\"%s\", %d, (ImGuiTableFlags_)%d, ImVec2(%f, %f), %f);\n",
-                    ctx->id,
+                result += indent + string_format("open_%s = ImGui::BeginTable(\"%s\", %d, (ImGuiTableFlags_)%d, ImVec2(%f, %f), %f);\n",
+                    ctx->string_id.c_str(),
                     ctx->label.c_str(),
                     args->columns,
                     (int)args->flags,
@@ -949,7 +949,7 @@ namespace imgui_editor
                     args->outer_size.y,
                     args->inner_width);
 
-                result += indent + string_format("if(open_%zu)\n", ctx->id);
+                result += indent + string_format("if(open_%s)\n", ctx->string_id.c_str());
                 result += indent + "{\n";
                 indent += '\t';
                 for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
@@ -974,27 +974,27 @@ namespace imgui_editor
             {
                 widget_table_next_column* args = (widget_table_next_column*)ctx->args;
 
-                insert_variant(result, index, "bool visible_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool visible_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("visible_%zu = ImGui::TableNextColumn();\n", ctx->id);
+                result += indent + string_format("visible_%s = ImGui::TableNextColumn();\n", ctx->string_id.c_str());
             }
             break;
             case widget_type::widget_type_table_set_column_index:
             {
                 widget_table_set_column_index* args = (widget_table_set_column_index*)ctx->args;
 
-                insert_variant(result, index, "bool visible_%zu = false;\n", ctx->id);
+                insert_variant(result, index, "bool visible_%s = false;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("visible_%zu = ImGui::TableSetColumnIndex(%d);\n", ctx->id, args->column_n);
+                result += indent + string_format("visible_%s = ImGui::TableSetColumnIndex(%d);\n", ctx->string_id.c_str(), args->column_n);
             }
             break;
 #pragma endregion // Tables
 #pragma region // ImGui-Editor
             case widget_type::widget_type_caller:
             {
-                insert_variant(result, index, "std::function<void()> caller_%zu = nullptr;\n", ctx->id);
+                insert_variant(result, index, "std::function<void()> caller_%s = nullptr;\n", ctx->string_id.c_str());
 
-                result += indent + string_format("if(caller_%zu) caller_%zu();\n", ctx->id);
+                result += indent + string_format("if(caller_%s) caller_%s();\n", ctx->string_id.c_str());
             }
             break;
 #pragma endregion // ImGui-Editor

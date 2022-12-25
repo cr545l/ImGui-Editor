@@ -95,7 +95,18 @@ namespace imgui_editor
 				static size_t last_id = 0;
 				const bool refresh = last_id != ctx->id;
 				last_id = ctx->id;
-				ImGui::Text("ID : %zu / %s", ctx->id, get_pretty_name(ctx->type));
+				ImGui::Text("%s", get_pretty_name(ctx->type));
+
+				ImGui::InputText("ID", &ctx->string_id);
+				ImGui::SameLine();
+
+				const std::string default_id = std::to_string(ctx->id);
+				ImGui::BeginDisabled(default_id == ctx->string_id);
+				if (ImGui::Button("Reset"))
+				{
+					ctx->string_id = default_id;
+				}
+				ImGui::EndDisabled();
 
 				static std::string label = ctx->label;
 				if(refresh)

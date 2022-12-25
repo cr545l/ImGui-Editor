@@ -36,6 +36,7 @@ namespace imgui_editor
 		std::vector<style_var_float> style_var_floats;
 		std::vector<style_var_vec2> style_var_vec2s;
 
+		std::string string_id;
 		size_t id = 0;
 		widget* parent = nullptr;
 
@@ -59,21 +60,7 @@ namespace imgui_editor
 	IMGUI_EDITOR_EXPORT void delete_widget_args(widget_type type, void* target);
 
 	void parse_args_data(widget_type type, void* data, std::string& inout, std::string& version, bool is_read);
-
-	inline std::string widget_data_serialize(widget_type type, void* data, std::string& version)
-	{
-        std::string result;
-		assert(nullptr != data);
-        parse_args_data(type, data, result, version, false);
-        return result;
-	}
 	
-	inline void widget_data_deserialize(widget_type type, void* target, const char* data, std::string& version)
-	{
-        std::string str2 = data;
-        parse_args_data(type, target, str2, version, true);
-	}
-
 	std::string widget_serialize(widget* target);
 	IMGUI_EDITOR_EXPORT void widget_deserialize(widget* target, const char* data);
 

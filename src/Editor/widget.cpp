@@ -23,10 +23,13 @@ namespace imgui_editor
     widget* new_widget(widget_type type)
     {
         auto w = new widget();
+
         w->type = type;
         w->args = new_widget_arg(type);
         assert(nullptr!= w->args); // Failed to create widget argument
         w->id = g_widget_id++;
+		w->string_id = std::to_string(w->id);
+
         (*g_widget_table)[w->id] = w;
         return w;
     }
@@ -34,10 +37,13 @@ namespace imgui_editor
     widget* new_widget_by_id(widget_type type, size_t id)
     {
         auto w = new widget();
+
         w->type = type;
         w->args = new_widget_arg(type);
         assert(nullptr!= w->args); // Failed to create widget argument
         w->id = id;
+		w->string_id = std::to_string(w->id);
+
         (*g_widget_table)[w->id] = w;
         return w;
     }
@@ -81,17 +87,16 @@ namespace imgui_editor
             style_var_vec2s += string_format("{%d,%f,%f},", (int)target->style_var_vec2s[i].idx, target->style_var_vec2s[i].val.x, target->style_var_vec2s[i].val.y);
 		}
 
-        std::string version = "";
-		std::string safe_version = to_safe_string(version);
+        std::string version;
+		std::string args;
+		parse_args_data(target->type, target->args, args, version, false);
 
-		std::string safe_label = to_safe_string(target->label.c_str());
-		
-        std::string args = widget_data_serialize(target->type, target->args, version);
-        return string_format("{%lu,\"%s\",{%s},\"%s\",[%s],[%s],[%s],[%s]}", 
+        return string_format("{%lu,\"%s\",\"%s\",{%s},\"%s\",[%s],[%s],[%s],[%s]}", 
         to_fixed_type(target->type),
-        safe_version.c_str(),
+		to_safe_string(version).c_str(),
+		to_safe_string(target->string_id).c_str(),
         args.c_str(),
-        safe_label.c_str(), 
+		to_safe_string(target->label).c_str(),
         children.c_str(),
         style_colors.c_str(),
         style_var_floats.c_str(),
@@ -182,7 +187,10 @@ namespace imgui_editor
         size_t fixed_type = strtoul(read.c_str(), &pos, 0);
         target_widget->type = to_widget_type(fixed_type);
 
-        std::string version = read_string(widget_stream);
+		std::string version = read_string(widget_stream);
+		std::getline(widget_stream, read, ',');
+
+		target_widget->string_id = read_string(widget_stream);
 		std::getline(widget_stream, read, ',');
 
         std::getline(widget_stream, read, '{');
@@ -191,7 +199,7 @@ namespace imgui_editor
         if (nullptr != target_widget->args) delete_widget_args(original_type, target_widget->args);
         target_widget->args = new_widget_arg(target_widget->type);
 
-        widget_data_deserialize(target_widget->type, target_widget->args, read.c_str(), version);
+		parse_args_data(target_widget->type, target_widget->args, read, version, true);
 
         std::getline(widget_stream, read, ',');
 
