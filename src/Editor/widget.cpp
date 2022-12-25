@@ -3,6 +3,8 @@
 #include <unordered_map>
 
 #include "editor/widget.h"
+
+#include "command.h"
 #include "editor/extension.h"
 
 namespace imgui_editor
@@ -160,13 +162,22 @@ namespace imgui_editor
 
 	void widget_deserialize(widget* target_widget, const char* data)
 	{
+		if (target_widget->children.size())
+		{
+			for (size_t i = target_widget->children.size() - 1;; --i)
+			{
+				command::remove_widget(target_widget->children[i]);
+				if (0 == i) break;
+			}
+		}
+
 		std::string read;
 		std::istringstream widget_stream(data);
 		char* pos = NULL;
 
 		const auto original_type = target_widget->type;
 
-        std::getline(widget_stream, read, '{');
+		std::getline(widget_stream, read, '{');
         std::getline(widget_stream, read, ',');
         size_t fixed_type = strtoul(read.c_str(), &pos, 0);
         target_widget->type = to_widget_type(fixed_type);

@@ -2,34 +2,26 @@ fips_begin_sharedlib(editor cmdline)
 
     fips_dir(editor)
     fips_files(
-        main.cpp   
-    
+        main.cpp
         extension.h
         extension.cpp
-        
         widget.h
         widget.cpp
-		
         history.h
         history.cpp
-        
-        
         command.h
         command.cpp
-        
         selection.h
         selection.cpp
-	    
-        
         imgui_editor.h
-        imgui_editor.cpp   
+        imgui_editor.cpp
     )
 	
     fips_dir(editor/widget)
     fips_files(
         args_data.h
         delete.cpp
-        deserialize.cpp
+        serialize.cpp
         draw.cpp
         enum_type.h
         fixed_type.cpp

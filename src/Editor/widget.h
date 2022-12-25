@@ -58,7 +58,7 @@ namespace imgui_editor
 	IMGUI_EDITOR_EXPORT void delete_widget(widget* target);
 	IMGUI_EDITOR_EXPORT void delete_widget_args(widget_type type, void* target);
 
-	void parse_args_data(widget_type type, void* data, std::string& inout, std::string& version, bool in);
+	void parse_args_data(widget_type type, void* data, std::string& inout, std::string& version, bool is_read);
 
 	inline std::string widget_data_serialize(widget_type type, void* data, std::string& version)
 	{
