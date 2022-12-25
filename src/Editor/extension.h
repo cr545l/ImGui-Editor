@@ -95,20 +95,26 @@ namespace imgui_editor
 		return stream;
 	}    
 
+	inline void replace(std::string& str, const std::string& from, const std::string& to)
+	{
+		size_t pos = 0;
+		while ((pos = str.find(from, pos)) != std::string::npos)
+		{
+			str.replace(pos, from.length(), to);
+			pos += to.length();
+		}
+	}
+
+	/**
+	 * \brief %s to "%s", %b to %d
+	 */
 	template<typename ... Args>
 	std::string safe_string_format(const std::string& format, Args ... args)
 	{
 		std::string safe_format = format;
-
-		static const std::string search = "%s";
-		static const std::string replace = "\"%s\"";
-
-		size_t pos = 0;
-		while ((pos = safe_format.find(search, pos)) != std::string::npos)
-		{
-			safe_format.replace(pos, search.length(), replace);
-			pos += replace.length();
-		}
+		
+		replace(safe_format, "%s", "\"%s\"");
+		replace(safe_format, "%b", "%d");
 		
 		int size = snprintf(nullptr, 0, safe_format.c_str(), args ...) + 1; // Extra space for '\0'
 		assert( 0< size );
@@ -117,7 +123,10 @@ namespace imgui_editor
 		return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 	}
 
-	CR_EXPORT void sscanf2(const char* format, const char* data, void* value);
+	/**
+	 * \brief "%s" style support sscanf, %b is bool
+	 */
+	IMGUI_EDITOR_EXPORT void sscanf2(const char* format, const char* data, void* value);
 
 	inline std::string to_safe_string(const std::string& v) 
 	{
@@ -135,52 +144,7 @@ namespace imgui_editor
 		return s;
 	}
 
-	inline std::string read_string(std::istringstream& stream)
-	{
-		std::string result;
-		char c;
-		bool isStart = false;
-		bool isEscape = false;
-		while(stream.get(c))
-		{
-			if(c == '"')
-			{
-				if(isStart)
-				{
-					if(isEscape)
-					{
-						result += c;
-						isEscape = false;
-					}
-					else
-					{
-						break;
-					}
-				}
-				else
-				{
-					isStart = true;
-				}
-			}
-			else
-			{
-				if(isEscape)
-				{
-					result += '\\';
-					isEscape = false;
-				}
-				if(c == '\\')
-				{
-					isEscape = true;
-				}
-				else
-				{
-					result += c;
-				}
-			}
-		}
-		return result;
-	}
+	IMGUI_EDITOR_EXPORT std::string read_string(std::istringstream& stream);
 
 	template <typename E, magic_enum::detail::enable_if_t<E, int> = 0>
 	void enum_for_each(std::function<void(E)>&& lambda)

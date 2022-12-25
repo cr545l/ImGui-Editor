@@ -11,7 +11,8 @@ namespace imgui_editor
     void default_parse(std::string& inout, std::string& version, const bool in, T* data, const char* format, Args ... args)
     {                        
         if (in)                                               
-        {                                                     
+        {                                          
+                       
             sscanf2(format, inout.c_str(), data);               
         }                                                     
         else                                                  
@@ -40,7 +41,7 @@ namespace imgui_editor
         {
             widget_begin_end_window* wd = (widget_begin_end_window*)data;
             default_parse(inout, version, in, wd, 
-                "%d,%d", 
+                "%b,%d", 
                 wd->open, wd->flags);
             return;
         }
@@ -48,7 +49,7 @@ namespace imgui_editor
         {
             widget_begin_end_child* wd = (widget_begin_end_child*)data;
             default_parse(inout, version, in, wd,
-                "%f,%f,%d,%d", 
+                "%f,%f,%b,%d", 
                 wd->size.x, wd->size.y, wd->border, wd->flags);
             return;
         }
@@ -83,7 +84,7 @@ namespace imgui_editor
         {
             widget_set_next_window_collapsed* wd = (widget_set_next_window_collapsed*)data;
             default_parse(inout, version, in, wd,
-                "%d,%d", 
+                "%b,%d", 
                 wd->collapsed, wd->cond);
             return;
         }
@@ -182,7 +183,7 @@ namespace imgui_editor
         case widget_type::widget_type_checkbox:
         {    
             widget_checkbox* wd = (widget_checkbox*)data;
-            default_parse(inout, version, in, wd, "%d,", wd->check);
+            default_parse(inout, version, in, wd, "%b,", wd->check);
             return;
         }
         case widget_type::widget_type_checkbox_flags:
@@ -194,7 +195,7 @@ namespace imgui_editor
         case widget_type::widget_type_radio_button:
         {
             widget_radio_button* wd = (widget_radio_button*)data;
-            default_parse(inout, version, in, wd, "%d,", wd->active);
+            default_parse(inout, version, in, wd, "%b,", wd->active);
             return;
         }
         case widget_type::widget_type_bullet: return;
@@ -531,7 +532,7 @@ namespace imgui_editor
         {
             widget_selectable* wd = (widget_selectable*)data;
             default_parse(inout, version, in, wd, 
-                "%d,%d,%f,%f,", 
+                "%b,%d,%f,%f,", 
                 wd->selected, wd->flags, wd->size.x, wd->size.y);
             return;
         }
@@ -559,7 +560,7 @@ namespace imgui_editor
         case widget_type::widget_type_menu_item:
         {
             widget_menu_item* wd = (widget_menu_item*)data;
-            default_parse(inout, version, in, wd, "%s,%d,%d",
+            default_parse(inout, version, in, wd, "%s,%b,%b",
                 to_safe_string2(in, wd->shortcut).c_str(),
                 wd->selected, 
                 wd->enabled);

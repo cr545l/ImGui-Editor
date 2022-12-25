@@ -3,6 +3,7 @@
 
 #include "editor/widget.h"
 
+//
 // # TODO
 // 
 // - font size의 상대값을 가지고 사이즈 처리
@@ -10,6 +11,8 @@
 // - C++에서 C로 완전히 전환
 // - foramt 서식을 공통으로 두고 serialize / deserialize 와 버전관리가 한꺼번에 될 수 있도록 처리
 // - 앵커 기반의 이동처리
+// - imgui-editor의 멀티 뷰 처리
+//
 namespace imgui_editor
 {
 	struct widget;

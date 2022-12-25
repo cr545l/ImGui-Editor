@@ -12,12 +12,39 @@
 #include <imgui_internal.h>
 #include <misc/cpp/imgui_stdlib.h>
 
+#if defined(_MSC_VER)
+#if defined(__cplusplus)
+#define IMGUI_EDITOR_EXPORT extern "C" __declspec(dllexport)
+#define IMGUI_EDITOR_IMPORT extern "C" __declspec(dllimport)
+#else
+#define IMGUI_EDITOR_EXPORT __declspec(dllexport)
+#define IMGUI_EDITOR_IMPORT __declspec(dllimport)
+#endif
+#endif // defined(_MSC_VER)
+
+#if defined(__GNUC__) // clang & gcc
+#if defined(__cplusplus)
+#define IMGUI_EDITOR_EXPORT extern "C" __attribute__((visibility("default")))
+#else
+#define IMGUI_EDITOR_EXPORT __attribute__((visibility("default")))
+#endif
+#define IMGUI_EDITOR_IMPORT
+#endif // defined(__GNUC__)
+
+#if defined(__MINGW32__)
+#undef IMGUI_EDITOR_EXPORT
+#if defined(__cplusplus)
+#define IMGUI_EDITOR_EXPORT  extern "C" __declspec(dllexport)
+#else
+#define IMGUI_EDITOR_EXPORT  __declspec(dllexport)
+#endif
+#endif
 
 template<typename ... Args>
 std::string string_format(const std::string& format, Args ... args)
 {
 	int size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
-	assert( 0< size );
+	assert(0 < size);
 	std::unique_ptr<char[]> buf(new char[size]);
 	snprintf(buf.get(), size, format.c_str(), args ...);
 	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside

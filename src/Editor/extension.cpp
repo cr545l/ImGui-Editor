@@ -8,40 +8,49 @@ namespace imgui_editor
 	{
 		std::istringstream stream(data);
 
-		for(size_t i = 0, max = strlen(format); i < max; ++i)
+		for (size_t i = 0, max = strlen(format); i < max; ++i)
 		{
-			if(format[i] == '%')
+			if (format[i] == '%')
 			{
-				switch(format[i+1])
+				switch (format[i + 1])
 				{
-					case 'd':
-					{
-						int read = 0;
-						stream >> read;
-						*(int*)value = read;
-						value = (char*)value + sizeof(int);
-						++i;
-					}
-					break;
-					case 's':
-					{
-						std::string read = read_string(stream);
-						*(std::string*)value = read;
-						value = (char*)value + sizeof(std::string);
-						++i;
-					}
-					break;
-					case 'f':
-					{
-						float read = 0;
-						stream >> read;
-						*(float*)value = read;
-						value = (char*)value + sizeof(float);
-						++i;
-					}
-					break;
-					default:
-						debug_break();
+				case 'b':
+				{
+					bool read = false;
+					stream >> read;
+					*(bool*)value = read;
+					value = (char*)value + sizeof(bool);
+					++i;
+				}
+				break;
+				case 'd':
+				{
+					int read = 0;
+					stream >> read;
+					*(int*)value = read;
+					value = (char*)value + sizeof(int);
+					++i;
+				}
+				break;
+				case 's':
+				{
+					std::string read = read_string(stream);
+					*(std::string*)value = read;
+					value = (char*)value + sizeof(std::string);
+					++i;
+				}
+				break;
+				case 'f':
+				{
+					float read = 0;
+					stream >> read;
+					*(float*)value = read;
+					value = (char*)value + sizeof(float);
+					++i;
+				}
+				break;
+				default:
+					debug_break();
 				}
 			}
 			else
@@ -50,7 +59,54 @@ namespace imgui_editor
 				stream >> c;
 			}
 		}
-	}    
+	}
+
+	std::string read_string(std::istringstream& stream)
+	{
+		std::string result;
+		char c;
+		bool isStart = false;
+		bool isEscape = false;
+		while (stream.get(c))
+		{
+			if (c == '"')
+			{
+				if (isStart)
+				{
+					if (isEscape)
+					{
+						result += c;
+						isEscape = false;
+					}
+					else
+					{
+						break;
+					}
+				}
+				else
+				{
+					isStart = true;
+				}
+			}
+			else
+			{
+				if (isEscape)
+				{
+					result += '\\';
+					isEscape = false;
+				}
+				if (c == '\\')
+				{
+					isEscape = true;
+				}
+				else
+				{
+					result += c;
+				}
+			}
+		}
+		return result;
+	}
 }
 
 namespace ImGui

@@ -52,11 +52,11 @@ namespace imgui_editor
 	void draw_widget(widget* context);
 	void draw_inspector_widget(widget* context);
 
-    CR_EXPORT widget* new_widget(widget_type type);
-    CR_EXPORT widget* new_widget_by_id(widget_type type, size_t id);
-	CR_EXPORT void* new_widget_arg(widget_type type);
-	CR_EXPORT void delete_widget(widget* target);
-	CR_EXPORT void delete_widget_args(widget_type type, void* target);
+    IMGUI_EDITOR_EXPORT widget* new_widget(widget_type type);
+    IMGUI_EDITOR_EXPORT widget* new_widget_by_id(widget_type type, size_t id);
+	IMGUI_EDITOR_EXPORT void* new_widget_arg(widget_type type);
+	IMGUI_EDITOR_EXPORT void delete_widget(widget* target);
+	IMGUI_EDITOR_EXPORT void delete_widget_args(widget_type type, void* target);
 
 	void parse_args_data(widget_type type, void* data, std::string& inout, std::string& version, bool in);
 
@@ -75,7 +75,7 @@ namespace imgui_editor
 	}
 
 	std::string widget_serialize(widget* target);
-	CR_EXPORT void widget_deserialize(widget* target, const char* data);
+	IMGUI_EDITOR_EXPORT void widget_deserialize(widget* target, const char* data);
 
 	enum class generate_code
 	{
