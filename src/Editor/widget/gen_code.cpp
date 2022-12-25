@@ -989,6 +989,15 @@ namespace imgui_editor
             }
             break;
 #pragma endregion // Tables
+#pragma region // ImGui-Editor
+            case widget_type::widget_type_caller:
+            {
+                insert_variant(result, index, "std::function<void()> caller_%zu = nullptr;\n", ctx->id);
+
+                result += indent + string_format("if(caller_%zu) caller_%zu();\n", ctx->id);
+            }
+            break;
+#pragma endregion // ImGui-Editor
 
             default:
                 break;

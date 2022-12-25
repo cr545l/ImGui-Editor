@@ -599,6 +599,9 @@ namespace imgui_editor
         }
 #pragma endregion // Tables
 
+#pragma region // ImGui-Editor
+        case widget_type::widget_type_caller: return;
+#pragma endregion // ImGui-Editor
         default:
             debug_break();
             return;

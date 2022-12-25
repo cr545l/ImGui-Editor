@@ -6,24 +6,24 @@
 //
 // # Logic required by the widget
 // 
-// - Args data.h
-// - Delete.cpp
-// - Deserialize.cpp
-// - Draw.cpp
-// - Enum type.h
-// - Fixed type.cpp
-// - Gen code.cpp
-// - Inspector.cpp
-// - New.cpp
-// - Pretty name.cpp
-// - To enum type.cpp
+// - args_data.h
+// - delete.cpp
+// - deserialize.cpp
+// - draw.cpp
+// - enum_type.h
+// - fixed_type.cpp
+// - gen_code.cpp
+// - inspector.cpp
+// - new.cpp
+// - pretty_name.cpp
+// - to_enum_type.cpp
 //
 // # Files affected when the `args_data.h` struct field is changed
 // 
-// - Deserialize.cpp
-// - Draw.cpp
-// - Gen code.cpp
-// - Inspector.cpp
+// - deserialize.cpp
+// - draw.cpp
+// - gen code.cpp
+// - inspector.cpp
 //
 namespace imgui_editor
 {	
@@ -539,6 +539,12 @@ namespace imgui_editor
 		int column_n;
 	};
 #pragma endregion // Tables
+
+#pragma region // ImGui-Editor
+	struct widget_caller
+	{
+	};
+#pragma endregion // ImGui-Editor
 }
 
 #endif

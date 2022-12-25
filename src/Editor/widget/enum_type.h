@@ -3,6 +3,7 @@
 
 namespace imgui_editor
 {
+	// 주석으로 삽입하면 enum에 주석이 달리므로 region으로 묶어서 표시
 	enum class widget_type : uint32_t
 	{
 		widget_type_none 						= 0,
@@ -132,6 +133,10 @@ namespace imgui_editor
 		widget_type_table_next_column			,
 		widget_type_table_set_column_index		,
 #pragma endregion // Tables
+		
+#pragma region // ImGui-Editor
+		widget_type_caller				,
+#pragma endregion // ImGui-Editor
 	};
 }
 

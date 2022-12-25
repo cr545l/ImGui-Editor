@@ -117,6 +117,9 @@ namespace imgui_editor
 		case widget_type::widget_type_table_next_row: 			return "Table Next Row";
 		case widget_type::widget_type_table_next_column: 		return "Table Next Column";
 		case widget_type::widget_type_table_set_column_index: 	return "Table Set Column Index";
+
+		// ImGui-Editor
+		case widget_type::widget_type_caller:					return "Caller";
 		}
 		return "";
 	}

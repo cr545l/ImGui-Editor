@@ -15,6 +15,85 @@ namespace imgui_editor
 		}
 	}
 
+	void draw_widget_args(widget* ctx, bool& begin_type, bool& invisible);
+
+	void draw_widget(widget* ctx)
+	{
+		ImGui::PushID(ctx->id);
+		for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+		{
+			ImGui::PushStyleColor(ctx->style_colors[i].idx, (ImVec4)ctx->style_colors[i].col);
+		}
+		for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+		{
+			ImGui::PushStyleVar(ctx->style_var_floats[i].idx, ctx->style_var_floats[i].val);
+		}
+		for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+		{
+			ImGui::PushStyleVar(ctx->style_var_vec2s[i].idx, ctx->style_var_vec2s[i].val);
+		}
+
+		bool begin_type = false;
+		bool invisible = false;
+
+		draw_widget_args(ctx, begin_type, invisible);
+
+		for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+		{
+			ImGui::PopStyleVar();
+		}
+		for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+		{
+			ImGui::PopStyleVar();
+		}
+		for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+		{
+			ImGui::PopStyleColor();
+		}
+
+		if (!invisible)
+		{
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+			{
+				command::select(ctx);
+			}
+
+			if (ImGui::IsItemHovered(ImGuiMouseButton_Left))
+			{
+				const auto& max = ImGui::GetItemRectMax();
+				ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), max, IM_COL32(255, 0, 0, 255));
+				const std::string info = string_format("%s[%zu]", ctx->label.c_str(), ctx->id);
+				ImGui::GetWindowDrawList()->AddText(max, IM_COL32(255, 0, 0, 255), info.c_str());
+			}
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+			{
+				ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
+				ImGui::Text(ctx->label.c_str());
+				ImGui::EndDragDropSource();
+			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
+				{
+					widget* source = *(widget**)payload->Data;
+					if (source != ctx)
+					{
+						command::attach_child(ctx, source);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+		}
+
+		if (!begin_type)
+		{
+			draw_children(ctx);
+		}
+		ImGui::PopID();
+	}
+
 	static void draw_widget_args(widget* ctx, bool& begin_type, bool& invisible)
 	{
 		switch (ctx->type)
@@ -563,7 +642,7 @@ namespace imgui_editor
 		{
 			begin_type = true;
 			widget_begin_end_table* args = (widget_begin_end_table*)ctx->args;
-			if(ImGui::BeginTable(ctx->label.c_str(), args->columns, args->flags, args->outer_size, args->inner_width))
+			if (ImGui::BeginTable(ctx->label.c_str(), args->columns, args->flags, args->outer_size, args->inner_width))
 			{
 				draw_children(ctx);
 				ImGui::EndTable();
@@ -593,87 +672,14 @@ namespace imgui_editor
 		}
 		break;
 #pragma endregion // Tables
+		
+#pragma region // ImGui-Editor
+		case widget_type::widget_type_caller:		break;
+#pragma endregion // Tables
 
 		default:
 			debug_break();
 			break;
 		}
-	}
-	
-	void draw_widget(widget* ctx)
-	{
-		ImGui::PushID(ctx->id);
-		for(size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
-		{
-			ImGui::PushStyleColor(ctx->style_colors[i].idx, (ImVec4)ctx->style_colors[i].col);
-		}
-		for(size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
-		{
-			ImGui::PushStyleVar(ctx->style_var_floats[i].idx, ctx->style_var_floats[i].val);
-		}
-		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
-		{
-			ImGui::PushStyleVar(ctx->style_var_vec2s[i].idx, ctx->style_var_vec2s[i].val);
-		}
-
-		bool begin_type = false;
-		bool invisible = false;
-
-		draw_widget_args(ctx, begin_type, invisible);
-
-		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
-		{
-			ImGui::PopStyleVar();
-		}
-		for(size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
-		{
-			ImGui::PopStyleVar();
-		}
-		for(size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
-		{
-			ImGui::PopStyleColor();
-		}
-
-		if (!invisible) 
-		{
-			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-			{
-				command::select(ctx);
-			}
-
-			if (ImGui::IsItemHovered(ImGuiMouseButton_Left))
-			{
-				const auto& max = ImGui::GetItemRectMax();
-				ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), max, IM_COL32(255, 0, 0, 255));
-				const std::string info = string_format("%s[%zu]", ctx->label.c_str(), ctx->id);
-				ImGui::GetWindowDrawList()->AddText(max, IM_COL32(255, 0, 0, 255), info.c_str());
-			}
-
-			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
-			{
-				ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
-				ImGui::Text(ctx->label.c_str());
-				ImGui::EndDragDropSource();
-			}
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
-				{
-					widget* source = *(widget**)payload->Data;
-					if (source != ctx)
-					{
-						command::attach_child(ctx, source);
-					}
-				}
-				ImGui::EndDragDropTarget();
-			}
-		}
-
-		if (!begin_type)
-		{
-			draw_children(ctx);
-		}
-		ImGui::PopID();
 	}
 }

@@ -116,7 +116,10 @@ namespace imgui_editor
 			case widget_type::widget_type_begin_end_table				: return 16001;
             case widget_type::widget_type_table_next_row			    : return 16002;
             case widget_type::widget_type_table_next_column			    : return 16003;
-            case widget_type::widget_type_table_set_column_index		: return 16004;			
+            case widget_type::widget_type_table_set_column_index		: return 16004;
+
+			// ImGui-Editor
+			case widget_type::widget_type_caller						: return 18001;
 		}
 	}
 }
