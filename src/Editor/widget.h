@@ -1,6 +1,7 @@
 #ifndef __WIDGET_H__
 #define __WIDGET_H__
 
+#include "Precompiled.h"
 #include "editor/widget/enum_type.h"
 
 namespace imgui_editor
@@ -69,24 +70,7 @@ namespace imgui_editor
 		cpp,
 	};
 
-	void widget_generate(generate_code code, widget* target, bool root, std::string& result);
-
-	// TODO
-	// struct widget_args_required
-	// {
-	// 	size_t unique_id = 0;
-	// 	widget_type type = widget_type::widget_type_none;
-	// 	const char* pretty_name = nullptr;
-	// 	void*(* new_args)() = nullptr;
-	// 	void(* delete_args)(void*) = nullptr;
-	// 	void(* on_gui)(void*) = nullptr;
-	// 	void(* on_inspector)(void*) = nullptr;
-	// 	std::string(*serialize)(const char*&);
-	// 	void(*deserialize)(void*, const char*, const std::string&);
-	// 	std::string(*gen)(const generate_code&, void*);
-	// };
-
-	// widget_args_required& get_widget_args_required(widget_type type);
+	void widget_generate(generate_code code, widget* target, bool root, std::string& result);	
 }
 
 #endif

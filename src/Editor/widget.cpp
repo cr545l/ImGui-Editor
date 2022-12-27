@@ -1,8 +1,7 @@
 #include "Precompiled.h"
+#include "editor/widget.h"
 
 #include <unordered_map>
-
-#include "editor/widget.h"
 
 #include "command.h"
 #include "editor/extension.h"
