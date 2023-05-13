@@ -31,13 +31,16 @@ struct HostData {
 
     // glfw functions that imgui calls on guest side
     GLFWwindow *window = nullptr;
-    const char* (*get_clipboard_fn)(void* user_data);
-    void(*set_clipboard_fn)(void* user_data, const char* text);
-    void(*set_cursor_pos_fn)(GLFWwindow* handle, double xpos, double ypos);
-    void(*get_cursor_pos_fn)(GLFWwindow* handle, double* xpos, double* ypos);
-    int(*get_window_attrib_fn)(GLFWwindow* handle, int attrib);
-    int(*get_mouse_button_fn)(GLFWwindow* handle, int button);
-    void(*set_input_mode_fn)(GLFWwindow* handle, int mode, int value);
+    const char* (*ImGui_ImplGlfwGL3_GetClipboardText)(void* user_data);
+    void(*ImGui_ImplGlfwGL3_SetClipboardText)(void* user_data, const char* text);
+    void(*glfwSetCursorPos)(GLFWwindow* handle, double xpos, double ypos);
+    void(*glfwGetCursorPos)(GLFWwindow* handle, double* xpos, double* ypos);
+    int(*glfwGetWindowAttrib)(GLFWwindow* handle, int attrib);
+    int(*glfwGetMouseButton)(GLFWwindow* handle, int button);
+    void(*glfwSetInputMode)(GLFWwindow* handle, int mode, int value);
+    GLFWcursor* (*glfwCreateStandardCursor)(int shape);
+    int (*glfwGetInputMode)(GLFWwindow* handle, int mode);
+    void (*glfwSetCursor)(GLFWwindow* windowHandle, GLFWcursor* cursorHandle);
     
     imgui_editor::widget_editor* widget_editor = nullptr;
     imgui_editor::history* history= nullptr;
@@ -71,8 +74,8 @@ static unsigned int CR_STATE g_VboHandle = 0, g_VaoHandle = 0, g_ElementsHandle 
 
 // Use if you want to reset your rendering device without losing ImGui state.
 // ImGui 상태를 잃지 않고 렌더링 장치를 재설정하려는 경우 사용합니다.
-void ImGui_ImplGlfwGL3_InvalidateDeviceObjects();
-bool ImGui_ImplGlfwGL3_CreateDeviceObjects();
+static void ImGui_ImplGlfwGL3_InvalidateDeviceObjects();
+static bool ImGui_ImplGlfwGL3_CreateDeviceObjects();
 
 // This is the main rendering function that you have to implement and provide to ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
 // Note that this implementation is little overcomplicated because we are saving/setting up/restoring every OpenGL state explicitly, in order to be able to run within any OpenGL engine that doesn't do so.
@@ -80,7 +83,8 @@ bool ImGui_ImplGlfwGL3_CreateDeviceObjects();
 // ImGui에 구현하고 제공해야 하는 주요 렌더링 기능입니다(ImGuiIO 구조에서 'RenderDrawListsFn' 설정을 통해).
 // 이 구현은 모든 OpenGL 상태를 명시적으로 저장/설정/복원하므로 그렇게 하지 않는 모든 OpenGL 엔진 내에서 실행될 수 있기 때문에 약간 지나치게 복잡합니다.
 // ImGui를 엔진에 통합할 때 텍스트나 선이 흐릿한 경우: Render 기능에서 투영 행렬을 (0.5f,0.5f) 또는 (0.375f,0.375f)로 변환해 보십시오.
-void ImGui_ImplGlfwGL3_RenderDrawLists(ImDrawData* draw_data) {
+static void ImGui_ImplGlfwGL3_RenderDrawLists(ImDrawData* draw_data) 
+{
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     // 최소화할 때 렌더링을 피하고 망막 디스플레이의 좌표를 조정합니다(화면 좌표 != 프레임 버퍼 좌표).
     ImGuiIO& io = ImGui::GetIO();
@@ -180,7 +184,8 @@ void ImGui_ImplGlfwGL3_RenderDrawLists(ImDrawData* draw_data) {
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 }
 
-bool ImGui_ImplGlfwGL3_CreateFontsTexture() {
+static bool ImGui_ImplGlfwGL3_CreateFontsTexture() 
+{
     // Build texture atlas
     ImGuiIO& io = ImGui::GetIO();
     unsigned char* pixels;
@@ -204,7 +209,8 @@ bool ImGui_ImplGlfwGL3_CreateFontsTexture() {
     return true;
 }
 
-bool ImGui_ImplGlfwGL3_CreateDeviceObjects() {
+static bool ImGui_ImplGlfwGL3_CreateDeviceObjects() 
+{
     // Backup GL state
     GLint last_texture, last_array_buffer, last_vertex_array;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
@@ -280,7 +286,8 @@ bool ImGui_ImplGlfwGL3_CreateDeviceObjects() {
     return true;
 }
 
-void ImGui_ImplGlfwGL3_InvalidateDeviceObjects() {
+static void ImGui_ImplGlfwGL3_InvalidateDeviceObjects() 
+{
     if (g_VaoHandle) glDeleteVertexArrays(1, &g_VaoHandle);
     if (g_VboHandle) glDeleteBuffers(1, &g_VboHandle);
     if (g_ElementsHandle) glDeleteBuffers(1, &g_ElementsHandle);
@@ -303,6 +310,30 @@ void ImGui_ImplGlfwGL3_InvalidateDeviceObjects() {
         g_FontTexture = 0;
     }
 }
+
+static GLFWwindow* g_Window = nullptr;    // Main window
+static GLFWcursor* g_MouseCursors[ImGuiMouseCursor_COUNT] = { 0 };
+
+static void ImGui_ImplGlfw_UpdateMouseCursor()
+{
+    ImGuiIO& io = ImGui::GetIO();
+    if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) || g_data->glfwGetInputMode(g_Window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+        return;
+    ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+    if (imgui_cursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
+    {
+        // Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+        g_data->glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    }
+    else
+    {
+        // Show OS mouse cursor
+        // FIXME-PLATFORM: Unfocused windows seems to fail changing the mouse cursor with GLFW 3.2, but 3.3 works here.
+        g_data->glfwSetCursor(g_Window, g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
+        g_data->glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+}
+
 
 // Some customization to use data from host, call glfw functions
 // in the glfw case it is an internal static variable that indicates it
@@ -332,6 +363,8 @@ bool imui_init() {
     ImGui::SetCurrentContext(g_data->imgui_context);
 #endif
 
+    g_Window = g_data->window;
+
     ImGuiIO& io = ImGui::GetIO();
     io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB; // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
     io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
@@ -353,15 +386,40 @@ bool imui_init() {
     io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
     io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 
-    io.SetClipboardTextFn = g_data->set_clipboard_fn;
-    io.GetClipboardTextFn = g_data->get_clipboard_fn;
+    io.SetClipboardTextFn = g_data->ImGui_ImplGlfwGL3_SetClipboardText;
+    io.GetClipboardTextFn = g_data->ImGui_ImplGlfwGL3_GetClipboardText;
     io.ClipboardUserData = g_data->window;
     io.ImeWindowHandle = g_data->wndh;
+    
+    g_MouseCursors[ImGuiMouseCursor_Arrow] = g_data->glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_TextInput] = g_data->glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_ResizeNS] = g_data->glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_ResizeEW] = g_data->glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_Hand] = g_data->glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+
+#if GLFW_HAS_NEW_CURSORS
+    g_MouseCursors[ImGuiMouseCursor_ResizeAll] = g_data->glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = g_data->glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = g_data->glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_NotAllowed] = g_data->glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
+#else
+    g_MouseCursors[ImGuiMouseCursor_ResizeAll] = g_data->glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_ResizeNESW] = g_data->glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_ResizeNWSE] = g_data->glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+    g_MouseCursors[ImGuiMouseCursor_NotAllowed] = g_data->glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+#endif
 
     return true;
 }
 
-void imui_shutdown() {
+static void imui_shutdown() 
+{
+    for (ImGuiMouseCursor cursor_n = 0; cursor_n < ImGuiMouseCursor_COUNT; cursor_n++)
+    {
+        glfwDestroyCursor(g_MouseCursors[cursor_n]);
+        g_MouseCursors[cursor_n] = NULL;
+    }
+
     ImGui_ImplGlfwGL3_InvalidateDeviceObjects();
 #if !defined(IMGUI_GUEST_ONLY)
     ImGui::Shutdown();
@@ -379,7 +437,8 @@ void imui_shutdown() {
 #endif
 }
 
-void imui_frame_end() {
+static void imui_frame_end() 
+{
     glViewport(0, 0, g_data->display_w, g_data->display_h);
     glClearColor(g_clear_color.x, g_clear_color.y, g_clear_color.z, g_clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -387,7 +446,8 @@ void imui_frame_end() {
     ImGui_ImplGlfwGL3_RenderDrawLists(ImGui::GetDrawData());
 }
 
-void imui_frame_begin() {
+static void imui_frame_begin() 
+{
     if (!g_FontTexture)
         ImGui_ImplGlfwGL3_CreateDeviceObjects();
 
@@ -420,31 +480,34 @@ void imui_frame_begin() {
 
     // Setup inputs
     // (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
-    if (g_data->get_window_attrib_fn(g_data->window, GLFW_FOCUSED)) {
+    if (g_data->glfwGetWindowAttrib(g_data->window, GLFW_FOCUSED)) {
         if (io.WantSetMousePos) {
-            g_data->set_cursor_pos_fn(g_data->window, (double)io.MousePos.x, (double)io.MousePos.y);   // Set mouse position if requested by io.WantMoveMouse flag (used when io.NavMovesTrue is enabled by user and using directional navigation)
+            g_data->glfwSetCursorPos(g_data->window, (double)io.MousePos.x, (double)io.MousePos.y);   // Set mouse position if requested by io.WantMoveMouse flag (used when io.NavMovesTrue is enabled by user and using directional navigation)
         } else {
             double mouse_x, mouse_y;
-            g_data->get_cursor_pos_fn(g_data->window, &mouse_x, &mouse_y);
+            g_data->glfwGetCursorPos(g_data->window, &mouse_x, &mouse_y);
             io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);   // Get mouse position in screen coordinates (set to -1,-1 if no mouse / on another screen, etc.)
         }
     }
 
     for (int i = 0; i < 3; i++) {
-        io.MouseDown[i] = g_data->mousePressed[i] || g_data->get_mouse_button_fn(g_data->window, i) != 0;    // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
+        io.MouseDown[i] = g_data->mousePressed[i] || g_data->glfwGetMouseButton(g_data->window, i) != 0;    // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
         g_data->mousePressed[i] = false;
     }
 
     io.MouseWheel = g_data->mouseWheel;
     g_data->mouseWheel = 0.0f;
     // Hide OS mouse cursor if ImGui is drawing it
-    g_data->set_input_mode_fn(g_data->window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+    g_data->glfwSetInputMode(g_data->window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+
+    ImGui_ImplGlfw_UpdateMouseCursor();
 
     // Start the frame
     ImGui::NewFrame();
 }
 
-void test_crash() {
+static void test_crash() 
+{
     ImGui::EndFrame();
     int *addr = NULL; (void)addr; // warning
     int i = *addr;
@@ -456,7 +519,8 @@ namespace imgui_editor
     std::unordered_map<size_t, imgui_editor::widget*>* g_widget_table = nullptr;
 }
 
-CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) {
+CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) 
+{
     assert(ctx);
     g_data = (HostData *)ctx->userdata;
     g_version = ctx->version;
