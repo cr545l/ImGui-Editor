@@ -1,6 +1,8 @@
 #ifndef __IMGUI_EX_H__
 #define __IMGUI_EX_H__
 
+#define MAGIC_ENUM_RANGE_MAX 1024
+
 #include <algorithm>
 #include <magic_enum/magic_enum.hpp>
 #include <sstream>
@@ -240,15 +242,21 @@ namespace ImGui
 			case ImGuiWindowFlags_NoNavInputs: return "ImGuiWindowFlags_NoNavInputs";
 			case ImGuiWindowFlags_NoNavFocus: return "ImGuiWindowFlags_NoNavFocus";
 			case ImGuiWindowFlags_UnsavedDocument: return "ImGuiWindowFlags_UnsavedDocument";
+			case ImGuiWindowFlags_NoDocking: return "ImGuiWindowFlags_NoDocking";
+
 			case ImGuiWindowFlags_NoNav: return "ImGuiWindowFlags_NoNav";
 			case ImGuiWindowFlags_NoDecoration: return "ImGuiWindowFlags_NoDecoration";
 			case ImGuiWindowFlags_NoInputs: return "ImGuiWindowFlags_NoInputs";
+
 			case ImGuiWindowFlags_NavFlattened: return "ImGuiWindowFlags_NavFlattened";
 			case ImGuiWindowFlags_ChildWindow: return "ImGuiWindowFlags_ChildWindow";
 			case ImGuiWindowFlags_Tooltip: return "ImGuiWindowFlags_Tooltip";
 			case ImGuiWindowFlags_Popup: return "ImGuiWindowFlags_Popup";
 			case ImGuiWindowFlags_Modal: return "ImGuiWindowFlags_Modal";
 			case ImGuiWindowFlags_ChildMenu: return "ImGuiWindowFlags_ChildMenu";
+			case ImGuiWindowFlags_DockNodeHost: return "ImGuiWindowFlags_DockNodeHost";
+			
+			default: return "Unknown";
 		}
 	}
 	
