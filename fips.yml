@@ -9,6 +9,8 @@ imports:
         git: https://github.com/cr545l/fips-imgui.git
     fips-googletest:
         git: https://github.com/fips-libs/fips-googletest.git
+    fips-utils:
+        git: https://github.com/fips-libs/fips-utils
 #   exports:
 #       header-dirs:
 #           - RELATIVE HEADER SEARCH PATH

@@ -38,13 +38,22 @@ namespace imgui_editor
 		std::string input;
 	};
 
+	struct project_context
+	{
+		std::string absolutePath;
+		widget* root = nullptr;
+	};
+
 	struct widget_editor
 	{
 		widget* root;
+		project_context* project = nullptr;
 
 		widget_tool tool;
 		widget_hierarchy hirarchy;
 		widget_inspector inspector;
+
+		std::vector<std::string> last_open_paths;
 	};
 
 	void initialize(widget_editor* context, const char* init);

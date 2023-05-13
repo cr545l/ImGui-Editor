@@ -351,8 +351,10 @@ bool imui_init()
         g_default_font_atlas = new ImFontAtlas;
     }
     ImGui::SetCurrentContext(g_imgui_context);
-    ImGui::GetIO().Fonts = g_default_font_atlas;
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts = g_default_font_atlas;
 #else
+
     // This will use the imgui context created in the host side
     // this is needed because imgui has two statics (context and font atlas)
     // also ImVector has destructor that delete its contents, so we cannot
@@ -366,6 +368,8 @@ bool imui_init()
     g_Window = g_data->window;
 
     ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF("NotoSansKR-Light.otf", 16.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
+
     io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB; // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
     io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
     io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;

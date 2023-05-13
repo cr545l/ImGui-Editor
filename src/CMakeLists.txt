@@ -90,11 +90,12 @@ gtest_begin2(editor)
 	fips_deps(editor)
 gtest_end()
 
-fips_begin_app(entry cmdline)
+fips_begin_app(entry cmdline)    
+    fipsutil_copy(entry-res.yml)
+
     fips_files(
         entry/main.cpp
     )
-
     include_directories(.)
     include_directories(thirdparty)
 
