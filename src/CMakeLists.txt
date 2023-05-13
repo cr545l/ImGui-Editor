@@ -1,44 +1,46 @@
 fips_begin_sharedlib(editor cmdline)
-    fips_files(editor/main.cpp)
-    
-    fips_files(editor/imgui_ex.h)
-    fips_files(editor/imgui_ex.cpp)
-    
-    fips_files(editor/widget.h)
-    fips_files(editor/widget.cpp)
-    
-    fips_files(editor/widget/args_data.h)
-    fips_files(editor/widget/delete.cpp)
-    fips_files(editor/widget/deserialize.cpp)
-    fips_files(editor/widget/draw.cpp)
-    fips_files(editor/widget/enum_type.h)
-    fips_files(editor/widget/fixed_type.cpp)
-    fips_files(editor/widget/gen_code.cpp)
-    fips_files(editor/widget/inspector.cpp)
-    fips_files(editor/widget/new.cpp)
-    fips_files(editor/widget/pretty_name.cpp)
-    fips_files(editor/widget/serialize.cpp)
-    fips_files(editor/widget/to_enum_type.cpp)
-    
-    fips_files(editor/imgui_editor.h)
-    fips_files(editor/imgui_editor.cpp)   
-    
-    fips_files(editor/window/hierarchy.cpp)
-    fips_files(editor/window/inspector.cpp)
-    fips_files(editor/window/tool.cpp)
-    fips_files(editor/window/history.cpp)
-        
-    fips_files(editor/history.h)
-    fips_files(editor/history.cpp)
-        
-    fips_files(editor/command.h)
-    fips_files(editor/command.cpp)
-    
-    fips_files(editor/selection.h)
-    fips_files(editor/selection.cpp)
+
+    fips_dir(editor)
+    fips_files(
+        main.cpp
+        extension.h
+        extension.cpp
+        widget.h
+        widget.cpp
+        history.h
+        history.cpp
+        command.h
+        command.cpp
+        selection.h
+        selection.cpp
+        imgui_editor.h
+        imgui_editor.cpp
+    )
 	
-    fips_files(thirdparty/imgui/imgui_stdlib.cpp)
+    fips_dir(editor/widget)
+    fips_files(
+        args_data.h
+        delete.cpp
+        serialize.cpp
+        draw.cpp
+        enum_type.h
+        fixed_type.cpp
+        gen_code.cpp
+        inspector.cpp
+        new.cpp
+        pretty_name.cpp
+        to_enum_type.cpp
+    )
+    fips_dir(editor/window)
+    fips_files(
+        hierarchy.cpp
+        inspector.cpp
+        tool.cpp
+        history.cpp
+    )    
     
+    fips_dir(.)
+    fips_files(thirdparty/imgui/imgui_stdlib.cpp)
     include_directories(.)
     include_directories(thirdparty)
 
@@ -89,11 +91,14 @@ gtest_begin2(editor)
 gtest_end()
 
 fips_begin_app(entry cmdline)
-    fips_files(Entry/main.cpp)
+    fips_files(
+        entry/main.cpp
+    )
+
     include_directories(.)
     include_directories(thirdparty)
 
-    fips_src(GL GROUP_FOLDERS)
+    fips_src(thirdparty/GL GROUP_FOLDERS)
     fips_deps(imgui glfw3)
 
     if (FIPS_WINDOWS)

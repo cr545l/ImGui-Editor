@@ -11,28 +11,91 @@ namespace imgui_editor
 	{
 		for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
 		{
-			ImGui::PushID(ctx->children[i]->id);
 			draw_widget(ctx->children[i]);
-			ImGui::PopID();
 		}
 	}
-	
+
+	void draw_widget_args(widget* ctx, bool& begin_type, bool& invisible);
+
 	void draw_widget(widget* ctx)
 	{
-		for(size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+		ImGui::PushID(ctx->id);
+		for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
 		{
 			ImGui::PushStyleColor(ctx->style_colors[i].idx, (ImVec4)ctx->style_colors[i].col);
 		}
-		for(size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+		for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
 		{
 			ImGui::PushStyleVar(ctx->style_var_floats[i].idx, ctx->style_var_floats[i].val);
 		}
-		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+		for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
 		{
 			ImGui::PushStyleVar(ctx->style_var_vec2s[i].idx, ctx->style_var_vec2s[i].val);
 		}
 
 		bool begin_type = false;
+		bool invisible = false;
+
+		draw_widget_args(ctx, begin_type, invisible);
+
+		for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+		{
+			ImGui::PopStyleVar();
+		}
+		for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+		{
+			ImGui::PopStyleVar();
+		}
+		for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+		{
+			ImGui::PopStyleColor();
+		}
+
+		if (!invisible)
+		{
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+			{
+				command::select(ctx);
+			}
+
+			if (ImGui::IsItemHovered(ImGuiMouseButton_Left))
+			{
+				const auto& max = ImGui::GetItemRectMax();
+				ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), max, IM_COL32(255, 0, 0, 255));
+				const std::string info = string_format("%s[%zu]", ctx->label.c_str(), ctx->id);
+				ImGui::GetWindowDrawList()->AddText(max, IM_COL32(255, 0, 0, 255), info.c_str());
+			}
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+			{
+				ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
+				ImGui::Text(ctx->label.c_str());
+				ImGui::EndDragDropSource();
+			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
+				{
+					widget* source = *(widget**)payload->Data;
+					if (source != ctx)
+					{
+						command::attach_child(ctx, source);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+		}
+
+		if (!begin_type)
+		{
+			draw_children(ctx);
+		}
+		ImGui::PopID();
+	}
+
+	void draw_widget_args(widget* ctx, bool& begin_type, bool& invisible)
+	{
 		switch (ctx->type)
 		{
 		case widget_type::widget_type_none:	
@@ -58,10 +121,52 @@ namespace imgui_editor
 			{
 				draw_children(ctx);
 			}
-			ImGui::EndChild();
+			else
+			{
+				invisible = true;
+			}
+			ImGui::EndChild();			
 		}
 		break;
 #pragma endregion // Windows
+
+#pragma region // Window manipulation
+		case widget_type::widget_type_set_next_window_pos:
+		{
+			widget_set_next_window_pos* args = (widget_set_next_window_pos*)ctx->args;
+			ImGui::SetNextWindowPos(args->pos, args->cond, args->pivot);
+		}
+		break;
+		case widget_type::widget_type_set_next_window_size:
+		{
+			widget_set_next_window_size* args = (widget_set_next_window_size*)ctx->args;
+			ImGui::SetNextWindowSize(args->size, args->cond);
+		}
+		break;
+		case widget_type::widget_type_set_next_window_content_size:
+		{
+			widget_set_next_window_content_size* args = (widget_set_next_window_content_size*)ctx->args;
+			ImGui::SetNextWindowContentSize(args->size);
+		}
+		break;
+		case widget_type::widget_type_set_next_window_collapsed:
+		{
+			widget_set_next_window_collapsed* args = (widget_set_next_window_collapsed*)ctx->args;
+			ImGui::SetNextWindowCollapsed(args->collapsed, args->cond);
+		}
+		break;
+		case widget_type::widget_type_set_next_window_focus:
+		{
+			ImGui::SetNextWindowFocus();
+		}
+		break;
+		case widget_type::widget_type_set_next_window_bg_alpha:
+		{
+			widget_set_next_window_bg_alpha* args = (widget_set_next_window_bg_alpha*)ctx->args;
+			ImGui::SetNextWindowBgAlpha(args->alpha);
+		}
+		break;
+#pragma endregion // Window manipulation
 
 #pragma region // Parameters stacks (current window)
 		case widget_type::widget_type_push_pop_item_width:
@@ -469,6 +574,10 @@ namespace imgui_editor
 				draw_children(ctx);
 				ImGui::EndListBox();
 			}
+			else
+			{
+				invisible = true;
+			}
 		}
 		break;
 #pragma endregion // Widgets: List Boxes
@@ -477,13 +586,14 @@ namespace imgui_editor
 		case widget_type::widget_type_begin_end_menu_bar:
 		{
 			begin_type = true;
-			// ImGui::MenuItem("New");
-			ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
-
 			if (ImGui::BeginMenuBar())
 			{
 				draw_children(ctx);
 				ImGui::EndMenuBar();
+			}
+			else
+			{
+				invisible = true;
 			}
 		}
 		break;
@@ -495,6 +605,10 @@ namespace imgui_editor
 			{
 				draw_children(ctx);
 				ImGui::EndMenu();
+			}
+			else
+			{
+				invisible = true;
 			}
 		}
 		break;
@@ -515,6 +629,10 @@ namespace imgui_editor
 				draw_children(ctx);
 				ImGui::EndPopup();
 			}
+			else
+			{
+				invisible = true;
+			}
 		}
 		break;
 #pragma endregion // Popups, Modals
@@ -524,10 +642,14 @@ namespace imgui_editor
 		{
 			begin_type = true;
 			widget_begin_end_table* args = (widget_begin_end_table*)ctx->args;
-			if(ImGui::BeginTable(ctx->label.c_str(), args->columns, args->flags, args->outer_size, args->inner_width))
+			if (ImGui::BeginTable(ctx->label.c_str(), args->columns, args->flags, args->outer_size, args->inner_width))
 			{
 				draw_children(ctx);
 				ImGui::EndTable();
+			}
+			else
+			{
+				invisible = true;
 			}
 		}
 		break;
@@ -550,61 +672,14 @@ namespace imgui_editor
 		}
 		break;
 #pragma endregion // Tables
+		
+#pragma region // ImGui-Editor
+		case widget_type::widget_type_caller:		break;
+#pragma endregion // Tables
 
 		default:
 			debug_break();
 			break;
-		}
-
-		for(size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
-		{
-			ImGui::PopStyleVar();
-		}
-		for(size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
-		{
-			ImGui::PopStyleVar();
-		}
-		for(size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
-		{
-			ImGui::PopStyleColor();
-		}
-
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-		{
-			command::select(ctx);
-		}
-
-		if (ImGui::IsItemHovered(ImGuiMouseButton_Left))
-		{
-			const auto& max = ImGui::GetItemRectMax();
-			ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), max, IM_COL32(255, 0, 0, 255));
-			const std::string info = string_format("%s[%zx]",ctx->label.c_str(), ctx->id);
-			ImGui::GetWindowDrawList()->AddText(max, IM_COL32(255, 0, 0, 255), info.c_str());
-		}
-
-		if(ImGui::BeginDragDropSource( ImGuiDragDropFlags_SourceAllowNullID))
-		{
-			ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
-			ImGui::Text(ctx->label.c_str());
-			ImGui::EndDragDropSource();
-		}
-
-		if(ImGui::BeginDragDropTarget())
-		{
-			if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
-			{
-				widget* source = *(widget**)payload->Data;
-				if(source != ctx)
-				{
-					command::attach_child(ctx, source);
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
-
-		if (!begin_type)
-		{
-			draw_children(ctx);
 		}
 	}
 }

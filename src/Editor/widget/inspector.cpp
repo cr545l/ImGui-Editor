@@ -1,47 +1,11 @@
 #include "Precompiled.h"
 
-#include "editor/imgui_ex.h"
-
 #include "editor/widget.h"
 #include "editor/widget/args_data.h"
 #include "editor/selection.h"
 
-struct ImGuiStyleVarInfo
-{
-    ImGuiDataType   Type;
-    ImU32           Count;
-    ImU32           Offset;
-    void*           GetVarPtr(ImGuiStyle* style) const { return (void*)((unsigned char*)style + Offset); }
-};
+#include "editor/extension.h"
 
-static const ImGuiStyleVarInfo GStyleVarInfo[] =
-{
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, Alpha) },               // ImGuiStyleVar_Alpha
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, DisabledAlpha) },       // ImGuiStyleVar_DisabledAlpha
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowPadding) },       // ImGuiStyleVar_WindowPadding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowRounding) },      // ImGuiStyleVar_WindowRounding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowBorderSize) },    // ImGuiStyleVar_WindowBorderSize
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowMinSize) },       // ImGuiStyleVar_WindowMinSize
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, WindowTitleAlign) },    // ImGuiStyleVar_WindowTitleAlign
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, ChildRounding) },       // ImGuiStyleVar_ChildRounding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, ChildBorderSize) },     // ImGuiStyleVar_ChildBorderSize
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, PopupRounding) },       // ImGuiStyleVar_PopupRounding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, PopupBorderSize) },     // ImGuiStyleVar_PopupBorderSize
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, FramePadding) },        // ImGuiStyleVar_FramePadding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, FrameRounding) },       // ImGuiStyleVar_FrameRounding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, FrameBorderSize) },     // ImGuiStyleVar_FrameBorderSize
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, ItemSpacing) },         // ImGuiStyleVar_ItemSpacing
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, ItemInnerSpacing) },    // ImGuiStyleVar_ItemInnerSpacing
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, IndentSpacing) },       // ImGuiStyleVar_IndentSpacing
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, CellPadding) },         // ImGuiStyleVar_CellPadding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, ScrollbarSize) },       // ImGuiStyleVar_ScrollbarSize
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, ScrollbarRounding) },   // ImGuiStyleVar_ScrollbarRounding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, GrabMinSize) },         // ImGuiStyleVar_GrabMinSize
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, GrabRounding) },        // ImGuiStyleVar_GrabRounding
-    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, TabRounding) },         // ImGuiStyleVar_TabRounding
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, ButtonTextAlign) },     // ImGuiStyleVar_ButtonTextAlign
-    { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, SelectableTextAlign) }, // ImGuiStyleVar_SelectableTextAlign
-};
 
 namespace imgui_editor
 {
@@ -49,8 +13,11 @@ namespace imgui_editor
 
     void draw_inspector_widget(widget *ctx)
     {
-        ImGui::Text("ID : %zu / %s", ctx->id, get_pretty_name(ctx->type));
-        ImGui::InputText("label", &ctx->label);
+        if(nullptr == ctx->args)
+        {
+            ImGui::Text("ERROR");
+            return;
+        }
 
         switch (ctx->type)
         {
@@ -75,6 +42,48 @@ namespace imgui_editor
         }
         break;
 #pragma endregion // Windows
+
+#pragma region // Window manipulation
+        case widget_type::widget_type_set_next_window_pos:
+        {
+            widget_set_next_window_pos* args = (widget_set_next_window_pos*)ctx->args;
+
+            ImGui::DragFloat2("pos", &args->pos.x);
+            ImGui::Combo("cond", &args->cond);
+            ImGui::DragFloat2("pivot", &args->pivot.x);
+        }
+        break;
+        case widget_type::widget_type_set_next_window_size:
+        {
+            widget_set_next_window_size* args = (widget_set_next_window_size*)ctx->args;
+
+            ImGui::DragFloat2("size", &args->size.x);
+            ImGui::Combo("cond", &args->cond);
+        }
+        break;
+        case widget_type::widget_type_set_next_window_content_size:
+        {
+            widget_set_next_window_content_size* args = (widget_set_next_window_content_size*)ctx->args;
+
+            ImGui::DragFloat2("size", &args->size.x);
+        }
+        break;
+        case widget_type::widget_type_set_next_window_collapsed:
+        {
+            widget_set_next_window_collapsed* args = (widget_set_next_window_collapsed*)ctx->args;
+
+            ImGui::Checkbox("collapsed", &args->collapsed);
+            ImGui::Combo("cond", &args->cond);
+        }
+        break;
+        case widget_type::widget_type_set_next_window_focus: break;
+        case widget_type::widget_type_set_next_window_bg_alpha:
+        {
+            widget_set_next_window_bg_alpha* args = (widget_set_next_window_bg_alpha*)ctx->args;
+
+            ImGui::DragFloat("alpha", &args->alpha);
+        }
+        break;
 
 #pragma region // Parameters stacks (current window)
         case widget_type::widget_type_push_pop_item_width:
@@ -142,7 +151,12 @@ namespace imgui_editor
             ImGui::ColorEdit4("color", &args->color.Value.x);
         }
         break;
-        case widget_type::widget_type_label_text: break;
+        case widget_type::widget_type_label_text: 
+        {
+            widget_label_text* args = (widget_label_text*)ctx->args;
+            ImGui::InputText("text", &args->text);
+        }
+        break;
         case widget_type::widget_type_bullet_text: break;
 #pragma endregion // Widgets: Text
 
@@ -632,129 +646,13 @@ namespace imgui_editor
         }
         break;
 #pragma endregion // Tables
+
+#pragma region // ImGui-Editor
+        case widget_type::widget_type_caller: break;
+#pragma endregion // ImGui-Editor
 		default:
 			debug_break();
             break;
         }
-
-        ImGui::Separator();
-
-        ImGui::PushID("style_colors");
-        {
-            int size =ctx->style_colors.size();
-            if(ImGui::InputInt("style_colors", (int*)&size))
-            {
-                if (size < 0)
-                {
-                    size = 0;
-                }
-
-                if ((int)ctx->style_colors.size() < size)
-                {
-                    ctx->style_colors.push_back({});
-                }
-                else
-                {
-                    ctx->style_colors.resize(size);
-                }
-            }
-            for(size_t i =0, max = ctx->style_colors.size(); i < max; ++i)
-            {
-                ImGui::PushID(i);
-                ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_colors[i].idx, false);
-                ImGui::ColorEdit4(string_format("%s[%u]", "col", i).c_str(), &ctx->style_colors[i].col.Value.x);
-                ImGui::PopID();
-            }
-        }        
-        ImGui::PopID(); 
-
-
-        ImGui::PushID("style_var_floats");
-        {
-            int size =ctx->style_var_floats.size();
-            if(ImGui::InputInt("style_var_floats", (int*)&size))
-            {
-                if (size < 0)
-                {
-                    size = 0;
-                }
-
-                if ((int)ctx->style_var_floats.size() < size)
-                {
-                    ctx->style_var_floats.push_back({});
-                }
-                else
-                {
-                    ctx->style_var_floats.resize(size);
-                }
-            }
-
-            for(size_t i =0, max = ctx->style_var_floats.size(); i < max; ++i)
-            {
-                ImGui::PushID(i);
-                std::string preview = ImGui::GetEnumName(ctx->style_var_floats[i].idx, false);
-                if(ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
-                {
-                    for(int j = 0; j < ImGuiStyleVar_COUNT; ++j)
-                    {
-                        if(GStyleVarInfo[j].Count == 1)
-                        {
-                            if(ImGui::Selectable(ImGui::GetEnumName((ImGuiStyleVar_)j,false).c_str(), ctx->style_var_floats[i].idx == j))
-                            {
-                                ctx->style_var_floats[i].idx = (ImGuiStyleVar_)j;
-                            }
-                        }
-                    }
-                    ImGui::EndCombo();
-                }
-
-                ImGui::DragFloat(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_floats[i].val);
-                ImGui::PopID();
-            }
-        }      
-        ImGui::PopID();
-        
-        ImGui::PushID("style_var_vec2s");
-        {
-            int size =ctx->style_var_vec2s.size();
-            if(ImGui::InputInt("style_var_vec2s", (int*)&size))
-            {
-                if (size < 0)
-                {
-                    size = 0;
-                }
-
-                if ((int)ctx->style_var_vec2s.size() < size)
-                {
-                    ctx->style_var_vec2s.push_back({});
-                }
-                else
-                {
-                    ctx->style_var_vec2s.resize(size);
-                }
-            }
-            for(size_t i =0, max = ctx->style_var_vec2s.size(); i < max; ++i)
-            {
-                ImGui::PushID(i);
-                std::string preview = ImGui::GetEnumName(ctx->style_var_vec2s[i].idx, false);
-                if(ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
-                {
-                    for(int j = 0; j < ImGuiStyleVar_COUNT; ++j)
-                    {
-                        if(GStyleVarInfo[j].Count == 2)
-                        {
-                            if(ImGui::Selectable(ImGui::GetEnumName((ImGuiStyleVar_)j,false).c_str(), ctx->style_var_vec2s[i].idx == j))
-                            {
-                                ctx->style_var_vec2s[i].idx = (ImGuiStyleVar_)j;
-                            }
-                        }
-                    }
-                    ImGui::EndCombo();
-                }
-                ImGui::DragFloat2(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_vec2s[i].val.x);
-                ImGui::PopID();
-            }
-        }
-        ImGui::PopID();
     }
 }

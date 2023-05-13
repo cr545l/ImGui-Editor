@@ -95,6 +95,39 @@ namespace imgui_editor
 		return stream;
 	}    
 
+	inline void replace(std::string& str, const std::string& from, const std::string& to)
+	{
+		size_t pos = 0;
+		while ((pos = str.find(from, pos)) != std::string::npos)
+		{
+			str.replace(pos, from.length(), to);
+			pos += to.length();
+		}
+	}
+
+	/**
+	 * \brief %s to "%s", %b to %d
+	 */
+	template<typename ... Args>
+	std::string safe_string_format(const std::string& format, Args ... args)
+	{
+		std::string safe_format = format;
+		
+		replace(safe_format, "%s", "\"%s\"");
+		replace(safe_format, "%b", "%d");
+		
+		int size = snprintf(nullptr, 0, safe_format.c_str(), args ...) + 1; // Extra space for '\0'
+		assert( 0< size );
+		std::unique_ptr<char[]> buf(new char[size]);
+		snprintf(buf.get(), size, safe_format.c_str(), args ...);
+		return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+	}
+
+	/**
+	 * \brief "%s" style support sscanf, %b is bool
+	 */
+	IMGUI_EDITOR_EXPORT void sscanf2(const char* format, const char* data, void* value);
+
 	inline std::string to_safe_string(const std::string& v) 
 	{
 		std::string s = v;
@@ -111,66 +144,77 @@ namespace imgui_editor
 		return s;
 	}
 
-	inline std::string read_string(std::istringstream& stream)
+	IMGUI_EDITOR_EXPORT std::string read_string(std::istringstream& stream);
+
+	template <typename E, magic_enum::detail::enable_if_t<E, int> = 0>
+	void enum_for_each(std::function<void(E)>&& lambda)
 	{
-		std::string result;
-		char c;
-		bool isStart = false;
-		bool isEscape = false;
-		while(stream.get(c))
+		magic_enum::enum_for_each<E>(lambda);
+	}
+
+	template <>
+	inline void enum_for_each(std::function<void(ImGuiWindowFlags_)>&& lambda)
+	{
+		static const ImGuiWindowFlags_ enums[]=
 		{
-			if(c == '"')
-			{
-				if(isStart)
-				{
-					if(isEscape)
-					{
-						result += c;
-						isEscape = false;
-					}
-					else
-					{
-						break;
-					}
-				}
-				else
-				{
-					isStart = true;
-				}
-			}
-			else
-			{
-				if(isEscape)
-				{
-					result += '\\';
-					isEscape = false;
-				}
-				if(c == '\\')
-				{
-					isEscape = true;
-				}
-				else
-				{
-					result += c;
-				}
-			}
+			ImGuiWindowFlags_None,
+			ImGuiWindowFlags_NoTitleBar,
+			ImGuiWindowFlags_NoResize,
+			ImGuiWindowFlags_NoMove,
+			ImGuiWindowFlags_NoScrollbar,
+			ImGuiWindowFlags_NoScrollWithMouse,
+			ImGuiWindowFlags_NoCollapse,
+			ImGuiWindowFlags_AlwaysAutoResize,
+			ImGuiWindowFlags_NoBackground,
+			ImGuiWindowFlags_NoSavedSettings,
+			ImGuiWindowFlags_NoMouseInputs,
+			ImGuiWindowFlags_MenuBar,
+			ImGuiWindowFlags_HorizontalScrollbar,
+			ImGuiWindowFlags_NoFocusOnAppearing,
+			ImGuiWindowFlags_NoBringToFrontOnFocus,
+			ImGuiWindowFlags_AlwaysVerticalScrollbar,
+			ImGuiWindowFlags_AlwaysHorizontalScrollbar,
+			ImGuiWindowFlags_AlwaysUseWindowPadding,
+			ImGuiWindowFlags_NoNavInputs,
+			ImGuiWindowFlags_NoNavFocus,
+			ImGuiWindowFlags_UnsavedDocument,
+			ImGuiWindowFlags_NoDocking,
+
+			ImGuiWindowFlags_NoNav,
+			ImGuiWindowFlags_NoDecoration,
+			ImGuiWindowFlags_NoInputs,
+
+			// [Internal]
+			ImGuiWindowFlags_NavFlattened,
+			ImGuiWindowFlags_ChildWindow,
+			ImGuiWindowFlags_Tooltip,
+			ImGuiWindowFlags_Popup,
+			ImGuiWindowFlags_Modal,
+			ImGuiWindowFlags_ChildMenu,
+			ImGuiWindowFlags_DockNodeHost,
+		};
+
+		static const size_t size = std::size(enums);
+
+		for (size_t i = 0; i < size; ++i)
+		{
+			lambda(enums[i]);
 		}
-		return result;
 	}
 }
 
 namespace ImGui
 {
-    bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-    
-    template <typename T>
-	inline std::string ToString(T t)
+	bool InputTexts(const char* baseLabel, std::vector<std::string>& value, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+
+	template <typename T>
+	std::string ToString(T t)
 	{
-        std::string name = std::string(magic_enum::enum_name(t));
+		std::string name = std::string(magic_enum::enum_name(t));
 		return name;
 	}
 
-    template <>
+	template <>
 	inline std::string ToString(ImGuiWindowFlags_ t)
 	{
 		switch(t)
@@ -207,7 +251,7 @@ namespace ImGui
 			case ImGuiWindowFlags_ChildMenu: return "ImGuiWindowFlags_ChildMenu";
 		}
 	}
-
+	
     template <typename T>
     std::string GetEnumName(const T& value, bool bit_flag = true)
     {
@@ -216,8 +260,8 @@ namespace ImGui
         std::string name = "";
         if(bit_flag)
         {
-            magic_enum::enum_for_each<T>([&](T t) {
-                if (static_cast<int>(t) & static_cast<int>(value))
+            imgui_editor::enum_for_each<T>([&](T t) {
+                if ((0 == value && 0 == t) || static_cast<int>(t) & static_cast<int>(value))
                 {
                     if (name.length())
                     {

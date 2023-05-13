@@ -4,8 +4,9 @@
 #include <gtest/gtest.h>
 #include <magic_enum/magic_enum.hpp>
 
+#include "editor/widget/args_data.h"
 #include "editor/widget.h"
-#include "editor/imgui_ex.h"
+#include "editor/extension.h"
 
 using namespace imgui_editor;
 
@@ -89,4 +90,35 @@ TEST(parse, string_parse)
 
 		EXPECT_TRUE(data2 == result);
 	}
+}
+
+TEST(parse, string_parse2)
+{
+
+#pragma pack(push, 1)
+	struct test_struct
+	{
+		int a;
+		std::string b;
+		float c;
+	};
+#pragma pack(pop) 
+
+	test_struct test;
+	test.a = 123;
+	test.b = "123";
+	test.c = 123.123f;
+
+	const char* format = "%d,%s,%f";
+
+	std::string serialized = safe_string_format(format, test.a, test.b.c_str(), test.c);	
+	
+	std::istringstream stream(serialized);
+
+	test_struct result;	
+	sscanf2(format, serialized.c_str(), &result);
+
+	EXPECT_TRUE(test.a == result.a);
+	EXPECT_TRUE(test.b == result.b);
+	EXPECT_TRUE(test.c == result.c);
 }

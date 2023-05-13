@@ -1,6 +1,30 @@
 #ifndef __ARGS_DATA_H__
 #define __ARGS_DATA_H__
 
+#pragma pack(push, 1)
+
+//
+// # Logic required by the widget
+// 
+// - args_data.h
+// - delete.cpp
+// - deserialize.cpp
+// - draw.cpp
+// - enum_type.h
+// - fixed_type.cpp
+// - gen_code.cpp
+// - inspector.cpp
+// - new.cpp
+// - pretty_name.cpp
+// - to_enum_type.cpp
+//
+// # Files affected when the `args_data.h` struct field is changed
+// 
+// - deserialize.cpp
+// - draw.cpp
+// - gen code.cpp
+// - inspector.cpp
+//
 namespace imgui_editor
 {	
 	struct widget_none {};
@@ -19,6 +43,41 @@ namespace imgui_editor
 		ImGuiWindowFlags_ flags;
 	};
 #pragma endregion // Windows
+
+#pragma region // Window manipulation
+	struct widget_set_next_window_pos
+	{
+		ImVec2 pos;
+		ImGuiCond_ cond;
+		ImVec2 pivot;
+	};
+
+	struct widget_set_next_window_size
+	{
+		ImVec2 size;
+		ImGuiCond_ cond;
+	};
+
+	struct widget_set_next_window_content_size
+	{
+		ImVec2 size;
+	};
+
+	struct widget_set_next_window_collapsed
+	{
+		bool collapsed;
+		ImGuiCond_ cond;
+	};
+
+	struct widget_set_next_window_focus
+	{
+	};
+
+	struct widget_set_next_window_bg_alpha
+	{
+		float alpha;
+	};
+#pragma endregion // Window manipulation
 
 #pragma region // Parameters stacks (current window)	
 	struct widget_push_pop_item_width
@@ -480,6 +539,14 @@ namespace imgui_editor
 		int column_n;
 	};
 #pragma endregion // Tables
+
+#pragma region // ImGui-Editor
+	struct widget_caller
+	{
+	};
+#pragma endregion // ImGui-Editor
 }
 
 #endif
+
+#pragma pack(pop) 

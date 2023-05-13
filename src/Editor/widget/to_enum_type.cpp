@@ -13,6 +13,14 @@ namespace imgui_editor
 		case 1001: return widget_type::widget_type_begin_end_window			;
 		case 1002: return widget_type::widget_type_begin_end_child			;
 
+		// Window manipulation
+		case 17001: return widget_type::widget_type_set_next_window_pos			;
+		case 17002: return widget_type::widget_type_set_next_window_size		;
+		case 17003: return widget_type::widget_type_set_next_window_content_size;
+		case 17004: return widget_type::widget_type_set_next_window_collapsed	;
+		case 17005: return widget_type::widget_type_set_next_window_focus		;
+		case 17006: return widget_type::widget_type_set_next_window_bg_alpha	;
+
 		// Parameters stacks (current window)
 		case 2001: return widget_type::widget_type_push_pop_item_width		;
 		case 2002: return widget_type::widget_type_push_pop_text_wrap_pos	;
@@ -109,6 +117,9 @@ namespace imgui_editor
 		case 16002: return widget_type::widget_type_table_next_row			;
 		case 16003: return widget_type::widget_type_table_next_column		;
 		case 16004: return widget_type::widget_type_table_set_column_index	;
+
+		// ImGui-Editor
+		case 18001: return widget_type::widget_type_caller;
 		}
 	}
 }

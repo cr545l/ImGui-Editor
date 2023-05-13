@@ -15,6 +15,14 @@ namespace imgui_editor
 		case widget_type::widget_type_begin_end_window:			return new widget_begin_end_window();
 		case widget_type::widget_type_begin_end_child:			return new widget_begin_end_child();
 
+		// Window manipulation
+		case widget_type::widget_type_set_next_window_pos:			return new widget_set_next_window_pos();
+		case widget_type::widget_type_set_next_window_size:			return new widget_set_next_window_size();
+		case widget_type::widget_type_set_next_window_content_size: return new widget_set_next_window_content_size();
+		case widget_type::widget_type_set_next_window_collapsed:	return new widget_set_next_window_collapsed();
+		case widget_type::widget_type_set_next_window_focus:		return new widget_set_next_window_focus();
+		case widget_type::widget_type_set_next_window_bg_alpha:		return new widget_set_next_window_bg_alpha();
+
 		// Parameters stacks (current window)
 		case widget_type::widget_type_push_pop_item_width:		return new widget_push_pop_item_width();
 		case widget_type::widget_type_push_pop_text_wrap_pos:	return new widget_push_pop_text_wrap_pos();
@@ -111,6 +119,9 @@ namespace imgui_editor
 		case widget_type::widget_type_table_next_row:			return new widget_table_next_row();
 		case widget_type::widget_type_table_next_column:		return new widget_table_next_column();
 		case widget_type::widget_type_table_set_column_index:	return new widget_table_set_column_index();
+
+		// ImGui-Editor
+		case widget_type::widget_type_caller:					return new widget_caller();
 		}
 		return nullptr;
 	}

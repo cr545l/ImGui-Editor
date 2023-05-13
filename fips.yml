@@ -6,7 +6,7 @@ imports:
     fips-glfw:
         git: https://github.com/fips-libs/fips-glfw.git
     fips-imgui:
-        git: https://github.com/fips-libs/fips-imgui.git
+        git: https://github.com/cr545l/fips-imgui.git
     fips-googletest:
         git: https://github.com/fips-libs/fips-googletest.git
 #   exports:
