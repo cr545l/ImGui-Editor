@@ -457,7 +457,7 @@ static void imui_frame_begin()
 {
     if (!g_FontTexture)
         ImGui_ImplGlfwGL3_CreateDeviceObjects();
-
+    
     ImGuiIO& io = ImGui::GetIO();
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
@@ -548,6 +548,11 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
             // 필요한 경우 다음 인스턴스로 전달할 항목을 저장합니다.
             *g_data->root = widget_serialize(g_data->widget_editor->root);
             finalize_history(g_data->history);
+            if (g_FontTexture) {
+                glDeleteTextures(1, &g_FontTexture);
+                ImGui::GetIO().Fonts->TexID = 0;
+                g_FontTexture = 0;
+            }
             return 0;
 
         case CR_CLOSE:
