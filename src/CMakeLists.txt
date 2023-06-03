@@ -33,6 +33,7 @@ fips_begin_sharedlib(editor cmdline)
     )
     fips_dir(editor/window)
     fips_files(
+        start_page.cpp
         hierarchy.cpp
         inspector.cpp
         tool.cpp
@@ -100,7 +101,7 @@ fips_begin_app(entry cmdline)
     include_directories(thirdparty)
 
     fips_src(thirdparty/GL GROUP_FOLDERS)
-    fips_deps(imgui glfw3)
+    fips_deps(editor)
 
     if (FIPS_WINDOWS)
         fips_libs(opengl32)

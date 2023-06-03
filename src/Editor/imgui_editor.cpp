@@ -1,12 +1,7 @@
 #include "Precompiled.h"
 #include "editor/imgui_editor.h"
 
-#include <algorithm>
 #include <fstream>
-#include <sstream>
-
-#include <cpp-unicodelib/unicodelib.h>
-#include <cpp-unicodelib/unicodelib_encodings.h>
 
 #include <magic_enum/magic_enum.hpp>
 #include <portable-file-dialogs/portable-file-dialogs.h>
@@ -66,71 +61,7 @@ namespace imgui_editor
 		}
 	}
 
-	void open_path(widget_editor *ctx, const char *path)
-	{
-		std::ifstream ifs(path);
-		std::string content((std::istreambuf_iterator<char>(ifs)),
-							(std::istreambuf_iterator<char>()));
 
-		widget_deserialize(ctx->root, content.c_str());
-
-		ctx->last_open_paths.insert(ctx->last_open_paths.begin(), path);
-
-		// remove duplicate paths
-		std::vector<std::string> unique_paths;
-
-		for (size_t i = 0, max = ctx->last_open_paths.size(); i < max; ++i)
-		{
-			const auto &path = ctx->last_open_paths[i];
-			if (std::find(unique_paths.begin(), unique_paths.end(), path) == unique_paths.end())
-			{
-				unique_paths.push_back(path);
-			}
-
-			// limit 5, remove oldest path
-			if (5 < unique_paths.size())
-				break;
-		}
-
-		ctx->last_open_paths.assign(unique_paths.begin(), unique_paths.end());
-
-		CSimpleIniA ini;
-		ini.SetUnicode();
-		SI_Error rc = ini.LoadFile("imgui_editor.ini");
-		if (rc < 0)
-		{
-			rc = ini.SaveFile("imgui_editor.ini");
-			if (rc < 0)
-			{
-				printf("failed to save imgui_editor.ini");
-			}
-		}
-
-		ini.SetValue("last_open_paths", "count", std::to_string(ctx->last_open_paths.size()).c_str());
-		for (int i = 0; i < ctx->last_open_paths.size(); i++)
-		{
-			ini.SetValue("last_open_paths", std::to_string(i).c_str(), ctx->last_open_paths[i].c_str());
-		}
-
-		rc = ini.SaveFile("imgui_editor.ini");
-		if (rc < 0)
-		{
-			printf("failed to save imgui_editor.ini");
-		}
-	}
-
-
-	std::string normalizeUTF8(const std::string& input) 
-	{
-		std::string output;
-		auto w = unicode::to_wstring(input);
-		std::u32string nfd;
-		unicode::utf8::decode(input.c_str(), input.length(), nfd);
-		std::u32string nfc = unicode::to_nfc(nfd);
-		unicode::utf8::encode(nfc.c_str(), nfc.length(), output);
-		// std::wstring::to_wstring(input.c_str(), input.length())
-		return output;
-	}
 	void draw(widget_editor *ctx, history *history)
 	{
 		auto &io = ImGui::GetIO();
@@ -161,7 +92,9 @@ namespace imgui_editor
 					if (result.size())
 					{
 						std::string path = normalizeUTF8(result[0]);
-						open_path(ctx, path.c_str());
+						if(!open_project(ctx, path.c_str()))
+						{
+						}
 					}
 				}
 
@@ -174,6 +107,11 @@ namespace imgui_editor
 						std::ofstream ofs(result);
 						ofs << widget_serialize(ctx->root);
 					}
+				}
+
+				if (ImGui::MenuItem("Close Project"))
+				{
+					close_project(ctx);
 				}
 				ImGui::EndMenu();
 			}
@@ -194,7 +132,7 @@ namespace imgui_editor
 			ImGui::EndMainMenuBar();
 		}
 
-		if (ctx->project)
+		if (ctx->project.ready)
 		{
 			float mainMenuSizeY = ImGui::GetFrameHeight();
 			constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
@@ -234,50 +172,7 @@ namespace imgui_editor
 		}
 		else
 		{
-			// 창의 크기와 위치를 계산
-			ImVec2 windowSize(500, 350);
-			ImVec2 windowPos((ImGui::GetIO().DisplaySize.x - windowSize.x) * 0.5f,
-							(ImGui::GetIO().DisplaySize.y - windowSize.y) * 0.5f);
-
-			// center child window
-			ImGui::SetNextWindowPos(windowPos);
-			ImGui::SetNextWindowSize(windowSize);
-			if (ImGui::Begin("projeect", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
-			{
-				// show last open paths
-				ImGui::Text(u8"마지막 경로Last Open Paths");
-
-				for(size_t i =0, max = ctx->last_open_paths.size(); i < max; ++i)
-				{
-					const std::string& path = ctx->last_open_paths[i];
-					if (ImGui::Button(path.c_str()))
-					{
-						open_path(ctx, path.c_str());
-					}
-				}
-
-				static std::string utf8_string = u8"비어있음";
-				if (ImGui::Button("Open"))
-				{
-					// 파일을 열고 내용을 읽습니다.
-					std::ifstream file("utf8.txt");
-					if (!file) {
-						// 파일 열기 에러 핸들링
-						return;
-					}
-					std::stringstream buffer;
-					buffer << file.rdbuf();
-
-					// UTF-8로 인코딩된 문자열을 가져옵니다.
-					// 이 경우, 파일의 내용이 이미 UTF-8로 인코딩되어 있다고 가정하였습니다.
-					utf8_string = buffer.str();
-				}
-
-				// ImGui를 사용하여 문자열을 출력합니다.
-				ImGui::TextUnformatted(utf8_string.c_str());
-
-			}
-			ImGui::End();
+			draw_start_page(ctx);
 		}
 	}
 }
