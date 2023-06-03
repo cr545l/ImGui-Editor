@@ -234,10 +234,15 @@ namespace imgui_editor
 		}
 		else
 		{
+			// 창의 크기와 위치를 계산
+			ImVec2 windowSize(500, 350);
+			ImVec2 windowPos((ImGui::GetIO().DisplaySize.x - windowSize.x) * 0.5f,
+							(ImGui::GetIO().DisplaySize.y - windowSize.y) * 0.5f);
+
 			// center child window
-			ImGui::SetNextWindowPos({g_windowSize.x * 0.5f, g_windowSize.y * 0.5f}, ImGuiCond_Appearing, {0.5f, 0.5f});
-			ImGui::SetNextWindowSize({g_windowSize.x * 0.5f, g_windowSize.y * 0.5f}, ImGuiCond_Appearing);
-			if (ImGui::Begin("project", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
+			ImGui::SetNextWindowPos(windowPos);
+			ImGui::SetNextWindowSize(windowSize);
+			if (ImGui::Begin("projeect", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
 			{
 				// show last open paths
 				ImGui::Text(u8"마지막 경로Last Open Paths");
