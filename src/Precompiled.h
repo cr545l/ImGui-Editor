@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <functional>
+#include <memory>
 
 // Third Party 
 #include <CR/cr.h>

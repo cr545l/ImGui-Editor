@@ -15,6 +15,9 @@ get_filename_component(FIPS_ROOT_DIR "../fips" ABSOLUTE)
 include("${FIPS_ROOT_DIR}/cmake/fips.cmake")
 
 set (CMAKE_CXX_STANDARD 17)
+if(MSVC)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+endif(MSVC)
 
 # include_directories(src)
 fips_setup()
