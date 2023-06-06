@@ -71,14 +71,13 @@ namespace imgui_editor
 		g_unitSize = ImGui::CalcTextSize(" ");
 
 		const bool is_shortcut_key = io.ConfigMacOSXBehaviors ? (io.KeyMods & ImGuiModFlags_Super) : (io.KeyMods & ImGuiModFlags_Ctrl);
-		const bool is_undo = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Z)) && has_undo_command());
 		const bool is_redo = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Y)) || (is_shortcut_key && io.KeyMods & ImGuiModFlags_Shift && ImGui::IsKeyPressed(ImGuiKey_Z))) && has_redo_command();
+		const bool is_undo = !(io.KeyMods & ImGuiModFlags_Shift) && ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Z)) && has_undo_command());
 
-		if (is_undo)
-			undo();
 		if (is_redo)
 			redo();
-
+		else if (is_undo)
+			undo();
 
 		if (ctx->project.ready)
 		{
@@ -98,10 +97,20 @@ namespace imgui_editor
 						}
 					}
 
+					ImGui::BeginDisabled(!ctx->project.dirty);
 					if (ImGui::MenuItem("Save"))
 					{
+						std::ofstream ofs(ctx->project.absolutePath);
+						ofs << widget_serialize(ctx->root);
+						ctx->project.dirty = false;
+					}
+
+					ImGui::EndDisabled();
+
+					if (ImGui::MenuItem("Save As"))
+					{
 						pfd::save_file save("Save");
-						const auto &result = save.result();
+						const auto& result = save.result();
 						if (!result.empty())
 						{
 							std::ofstream ofs(result);

@@ -19,6 +19,7 @@ namespace imgui_editor
 		ctx->project.ready = false;
 		ctx->project.absolutePath = "";
 		ctx->project.root = nullptr;
+		ctx->project.dirty = false;
 	}
 
 	bool open_project(imgui_editor_context *ctx, const char *path)
@@ -37,6 +38,7 @@ namespace imgui_editor
 		ctx->project.absolutePath = path;
 		ctx->project.root = ctx->root;
 		ctx->project.ready = true;
+		ctx->project.dirty = false;
 
 		// remove duplicate paths
 		std::vector<std::string> unique_paths;

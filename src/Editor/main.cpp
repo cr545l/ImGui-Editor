@@ -42,7 +42,7 @@ struct HostData {
     int (*glfwGetInputMode)(GLFWwindow* handle, int mode);
     void (*glfwSetCursor)(GLFWwindow* windowHandle, GLFWcursor* cursorHandle);
     
-    imgui_editor::imgui_editor_context* widget_editor = nullptr;
+    imgui_editor::imgui_editor_context* imgui_editor = nullptr;
     imgui_editor::history* history= nullptr;
     imgui_editor::selection_context* selection= nullptr;
 
@@ -546,7 +546,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
         case CR_LOAD:
             imui_init();
             imgui_editor::g_widget_table = g_data->widgets;
-            imgui_editor::initialize_editor(g_data->widget_editor, g_data->root->c_str());
+            imgui_editor::initialize_editor(g_data->imgui_editor, g_data->root->c_str());
             init_history(g_data->history);
             init_selection(g_data->selection);
 			g_data->widget_deserialize = imgui_editor::widget_deserialize;
@@ -555,7 +555,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
         case CR_UNLOAD:
             // if needed, save stuff to pass over to next instance
             // 필요한 경우 다음 인스턴스로 전달할 항목을 저장합니다.
-            *g_data->root = widget_serialize(g_data->widget_editor->root);
+            *g_data->root = widget_serialize(g_data->imgui_editor->root);
             finalize_history(g_data->history);
             if (g_FontTexture) {
                 glDeleteTextures(1, &g_FontTexture);
@@ -570,7 +570,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
             
         case CR_STEP:
             imui_frame_begin();
-            imgui_editor::draw_editor_context(g_data->widget_editor, g_data->history);
+            imgui_editor::draw_editor_context(g_data->imgui_editor, g_data->history);
             imui_frame_end();
             return 0;
     }

@@ -165,10 +165,10 @@ namespace imgui_editor
             void undo(void* c)
             {
                 data* ctx = static_cast<data*>(c);
-
+                
                 widget* w = new_widget_by_id(widget_type::widget_type_none, 0);
                 widget_deserialize(w,ctx->widget.c_str());
-
+                w->parent = ctx->parent;
                 ctx->parent->children.insert(ctx->parent->children.begin() + ctx->index, w);
                 get_context()->project.dirty = ctx->dirty;
             }

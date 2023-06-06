@@ -15,7 +15,7 @@ namespace imgui_editor
 	struct history
 	{
 		std::vector<command_data*> commands;
-		size_t index = SIZE_MAX;
+		int32_t index = -1;
 	};
 
 	void init_history(history* history);

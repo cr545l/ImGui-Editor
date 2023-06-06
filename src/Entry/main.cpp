@@ -58,7 +58,7 @@ struct HostData {
     int (*glfwGetInputModeInvoke)(GLFWwindow* handle, int mode);
     void (*glfwSetCursorInvoke)(GLFWwindow* windowHandle, GLFWcursor* cursorHandle);
 
-    imgui_editor::imgui_editor_context* widget_editor = nullptr;
+    imgui_editor::imgui_editor_context* imgui_editor = nullptr;
     imgui_editor::history* history = nullptr;
     imgui_editor::selection_context* selection = nullptr;
 
@@ -194,7 +194,7 @@ int main(int argc, char** argv)
 	data.window = window;
 	data.imgui_context = ImGui::CreateContext();
 
-	data.widget_editor = &we;
+	data.imgui_editor = &we;
 	data.history = &history;
 	data.selection = &selection;
 
@@ -222,7 +222,6 @@ int main(int argc, char** argv)
 	ctx.userdata = &data;
 	cr_plugin_open(ctx, plugin);
 
-	char title[64];
 	int current_width = width;
 	int current_height = height;
 
@@ -239,8 +238,20 @@ int main(int argc, char** argv)
 		memset(data.inputCharacters, 0, sizeof(data.inputCharacters));
 
 		glfwSwapBuffers(window);
-		sprintf(title, "ImGui Editor %.1ffps", ImGui::GetIO().Framerate);
-		glfwSetWindowTitle(window, title);
+		
+		if (data.imgui_editor->project.ready)
+		{
+			std::string project_name;
+			if (data.imgui_editor->project.dirty) project_name.append("* ");
+			project_name.append(string_format("%s - ImGui Editor [%.1f fps]", std::filesystem::path(data.imgui_editor->project.absolutePath).filename().stem().string().c_str(), ImGui::GetIO().Framerate));
+			glfwSetWindowTitle(window, project_name.c_str());
+		}
+		else
+		{
+			char title[64];
+			sprintf(title, "ImGui Editor [%.1f fps]", ImGui::GetIO().Framerate);
+			glfwSetWindowTitle(window, title);
+		}
 		glfwSetDropCallback(window, drop_callback);
 
 		if (data.w != current_width || data.h != current_height)
