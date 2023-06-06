@@ -7,11 +7,11 @@ namespace imgui_editor
     extern ImVec2 g_unitSize;
 
     static size_t last_index = 0;
-    void draw_histroy(history* ctx)
+    void draw_history(history* ctx)
     {
         static bool auto_scroll = true;
-        
-        bool changed = last_index != ctx->index;
+
+        const bool changed = last_index != ctx->index;
         last_index = ctx->index;
         ImGui::Checkbox("Auto-scroll", &auto_scroll);
         if(ImGui::BeginListBox("History"))

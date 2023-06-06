@@ -396,7 +396,16 @@ bool imui_init()
     io.GetClipboardTextFn = g_data->ImGui_ImplGlfwGL3_GetClipboardText;
     io.ClipboardUserData = g_data->window;
     io.ImeWindowHandle = g_data->wndh;
-    
+
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(g_data->window, &windowWidth, &windowHeight);
+
+    int framebufferWidth, framebufferHeight;
+    glfwGetFramebufferSize(g_data->window, &framebufferWidth, &framebufferHeight);
+
+    float horizontalDPI = framebufferWidth / (windowWidth / 96.0f);
+    float verticalDPI = framebufferHeight / (windowHeight / 96.0f);
+
     g_MouseCursors[ImGuiMouseCursor_Arrow] = g_data->glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_TextInput] = g_data->glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
     g_MouseCursors[ImGuiMouseCursor_ResizeNS] = g_data->glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
@@ -537,7 +546,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
         case CR_LOAD:
             imui_init();
             imgui_editor::g_widget_table = g_data->widgets;
-            imgui_editor::initialize(g_data->widget_editor, g_data->root->c_str());
+            imgui_editor::initialize_editor(g_data->widget_editor, g_data->root->c_str());
             init_history(g_data->history);
             init_selection(g_data->selection);
 			g_data->widget_deserialize = imgui_editor::widget_deserialize;
@@ -561,7 +570,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
             
         case CR_STEP:
             imui_frame_begin();
-            imgui_editor::draw(g_data->widget_editor, g_data->history);
+            imgui_editor::draw_editor_context(g_data->widget_editor, g_data->history);
             imui_frame_end();
             return 0;
     }

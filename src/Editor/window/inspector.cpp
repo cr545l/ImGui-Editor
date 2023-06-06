@@ -49,9 +49,9 @@ namespace imgui_editor
 	void draw_inspector(widget_inspector* context)
 	{
 		auto selected = selection::get_targets();
-		ImGui::Text("Selected %lu", selected.size());
+		ImGui::Text("Selected %zu", selected.size());
 
-		if(selected.size())
+		if(!selected.empty())
 		{
 			widget* ctx = selection::get_targets()[0];
 
@@ -90,7 +90,7 @@ namespace imgui_editor
 
 			ImGui::Separator();
 			
-			for (auto ctx : selected)
+			for (widget* ctx : selected)
 			{
 				static size_t last_id = 0;
 				const bool refresh = last_id != ctx->id;
@@ -129,9 +129,9 @@ namespace imgui_editor
 				{
 					if(ImGui::Button("Add Default"))
 					{
-						for(size_t i =0, max = (size_t)ImGuiCol_COUNT; i < max; ++i)
+						for(size_t i =0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
 						{
-							ctx->style_colors.push_back({(ImGuiCol_)i, ImGui::GetStyle().Colors[i]});
+							ctx->style_colors.push_back({static_cast<ImGuiCol_>(i), ImGui::GetStyle().Colors[i]});
 						}
 					}
 					ImGui::SameLine();
@@ -140,9 +140,9 @@ namespace imgui_editor
 					{
 						ImGuiStyle style;
 						ImGui::StyleColorsLight(&style);
-						for(size_t i =0, max = (size_t)ImGuiCol_COUNT; i < max; ++i)
+						for(size_t i =0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
 						{
-							ctx->style_colors.push_back({(ImGuiCol_)i, style.Colors[i]});
+							ctx->style_colors.push_back({static_cast<ImGuiCol_>(i), style.Colors[i]});
 						}
 					}
 
@@ -151,9 +151,9 @@ namespace imgui_editor
 					{
 						ImGuiStyle style;
 						ImGui::StyleColorsDark(&style);
-						for(size_t i =0, max = (size_t)ImGuiCol_COUNT; i < max; ++i)
+						for(size_t i =0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
 						{
-							ctx->style_colors.push_back({(ImGuiCol_)i, style.Colors[i]});
+							ctx->style_colors.push_back({static_cast<ImGuiCol_>(i), style.Colors[i]});
 						}
 					}
 
@@ -162,9 +162,9 @@ namespace imgui_editor
 					{
 						ImGuiStyle style;
 						ImGui::StyleColorsClassic(&style);
-						for(size_t i =0, max = (size_t)ImGuiCol_COUNT; i < max; ++i)
+						for(size_t i =0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
 						{
-							ctx->style_colors.push_back({(ImGuiCol_)i, style.Colors[i]});
+							ctx->style_colors.push_back({static_cast<ImGuiCol_>(i), style.Colors[i]});
 						}
 					}
 
@@ -176,7 +176,7 @@ namespace imgui_editor
 							size = 0;
 						}
 
-						if ((int)ctx->style_colors.size() < size)
+						if (static_cast<int>(ctx->style_colors.size()) < size)
 						{
 							ctx->style_colors.push_back({});
 						}
@@ -199,16 +199,16 @@ namespace imgui_editor
 				{
 					if(ImGui::Button("Add Default"))
 					{
-						for(size_t i =0, max = (size_t)ImGuiStyleVar_COUNT; i < max; ++i)
+						for(size_t i =0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); i < max; ++i)
 						{
 							if(GStyleVarInfo[i].Count == 1)
 							{
-								float* value = (float*)GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle());
-								ctx->style_var_floats.push_back({(ImGuiStyleVar_)i, *value});
+								float* value = static_cast<float*>(GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle()));
+								ctx->style_var_floats.push_back({static_cast<ImGuiStyleVar_>(i), *value});
 							}
 						}
 					}
-					int size =ctx->style_var_floats.size();
+					int size = static_cast<int>(ctx->style_var_floats.size());
 					if(ImGui::InputInt("size", (int*)&size))
 					{
 						if (size < 0)
@@ -216,7 +216,7 @@ namespace imgui_editor
 							size = 0;
 						}
 
-						if ((int)ctx->style_var_floats.size() < size)
+						if (static_cast<int>(ctx->style_var_floats.size()) < size)
 						{
 							ctx->style_var_floats.push_back({});
 						}
@@ -228,7 +228,7 @@ namespace imgui_editor
 
 					for(size_t i =0, max = ctx->style_var_floats.size(); i < max; ++i)
 					{
-						ImGui::PushID(i);
+						ImGui::PushID(static_cast<int>(i));
 						std::string preview = ImGui::GetEnumName(ctx->style_var_floats[i].idx, false);
 						if(ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
 						{
@@ -236,9 +236,9 @@ namespace imgui_editor
 							{
 								if(GStyleVarInfo[j].Count == 1)
 								{
-									if(ImGui::Selectable(ImGui::GetEnumName((ImGuiStyleVar_)j,false).c_str(), ctx->style_var_floats[i].idx == j))
+									if(ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j),false).c_str(), ctx->style_var_floats[i].idx == j))
 									{
-										ctx->style_var_floats[i].idx = (ImGuiStyleVar_)j;
+										ctx->style_var_floats[i].idx = static_cast<ImGuiStyleVar_>(j);
 									}
 								}
 							}
@@ -255,24 +255,24 @@ namespace imgui_editor
 				{
 					if(ImGui::Button("Add Default"))
 					{
-						for(size_t i =0, max = (size_t)ImGuiStyleVar_COUNT; i < max; ++i)
+						for(size_t i =0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); i < max; ++i)
 						{
 							if(GStyleVarInfo[i].Count == 2)
 							{
-								ImVec2* value = (ImVec2*)GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle());
-								ctx->style_var_vec2s.push_back({(ImGuiStyleVar_)i, *value});
+								ImVec2* value = static_cast<ImVec2*>(GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle()));
+								ctx->style_var_vec2s.push_back({static_cast<ImGuiStyleVar_>(i), *value});
 							}
 						}
 					}
 					int size =ctx->style_var_vec2s.size();
-					if(ImGui::InputInt("size", (int*)&size))
+					if(ImGui::InputInt("size", &size))
 					{
 						if (size < 0)
 						{
 							size = 0;
 						}
 
-						if ((int)ctx->style_var_vec2s.size() < size)
+						if (static_cast<int>(ctx->style_var_vec2s.size()) < size)
 						{
 							ctx->style_var_vec2s.push_back({});
 						}
@@ -291,9 +291,9 @@ namespace imgui_editor
 							{
 								if(GStyleVarInfo[j].Count == 2)
 								{
-									if(ImGui::Selectable(ImGui::GetEnumName((ImGuiStyleVar_)j,false).c_str(), ctx->style_var_vec2s[i].idx == j))
+									if(ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j),false).c_str(), ctx->style_var_vec2s[i].idx == j))
 									{
-										ctx->style_var_vec2s[i].idx = (ImGuiStyleVar_)j;
+										ctx->style_var_vec2s[i].idx = static_cast<ImGuiStyleVar_>(j);
 									}
 								}
 							}

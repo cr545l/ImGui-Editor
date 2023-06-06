@@ -1,5 +1,5 @@
-#ifndef __WIDGET_EDITOR_H__
-#define __WIDGET_EDITOR_H__
+#ifndef __IMGUI_EDITOR_H__
+#define __IMGUI_EDITOR_H__
 
 #include "editor/widget.h"
 
@@ -41,6 +41,7 @@ namespace imgui_editor
 	struct project_context
 	{
 		bool ready = false;
+		bool dirty = false;
 		std::string absolutePath;
 		widget* root = nullptr;
 	};
@@ -51,14 +52,14 @@ namespace imgui_editor
 		project_context project;
 
 		widget_tool tool;
-		widget_hierarchy hirarchy;
+		widget_hierarchy hierarchy;
 		widget_inspector inspector;
 
 		std::vector<std::string> last_open_paths;
 	};
 	std::string normalize_utf8(const std::string& input);
 
-	void initialize(widget_editor* context, const char* init);
+	void initialize_editor(widget_editor* context, const char* init);
 	bool open_project(widget_editor *ctx, const char *path);
 	void close_project(widget_editor *ctx);
 
@@ -66,9 +67,9 @@ namespace imgui_editor
 	void draw_tool(widget_tool* context);
 	void draw_hierarchy(widget_hierarchy* context);
 	void draw_inspector(widget_inspector* context);
-	void draw_histroy(history* ctx);
+	void draw_history(history* ctx);
 
-	void draw(widget_editor* context, history* history);
+	void draw_editor_context(widget_editor* context, history* history);
 }
 
 #endif

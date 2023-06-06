@@ -20,14 +20,14 @@ namespace imgui_editor
 
             void undo(void* ctx)
             {
-                data* context = (data*)ctx;
+	            const data* context = static_cast<data*>(ctx);
                 delete_widget(context->parent->children[context->index]);
                 context->parent->children.erase(context->parent->children.begin() + context->index);
             }
 
             void redo(void* ctx)
             {
-                data* context = (data*)ctx;
+                data* context = static_cast<data*>(ctx);
                 widget* widget = nullptr;
                 if(-1 == context->id)
                 {
@@ -53,14 +53,14 @@ namespace imgui_editor
 
             void destructor(void* ctx)
             {
-                data* cmd = (data*)ctx;
+	            const data* cmd = static_cast<data*>(ctx);
                 delete cmd;
             } 
         }
         
 	    void create_widget(widget* parent, const widget_type& type, size_t index)
         {
-            imgui_editor::command_data* cmd = new imgui_editor::command_data();
+            command_data* cmd = new command_data();
             cmd->label = string_format("Create widget (%s)", get_pretty_name(type));
 
             create_widget_command::data* ctx = new create_widget_command::data();
@@ -90,7 +90,7 @@ namespace imgui_editor
 
             void undo(void* _context)
             {
-                data* ctx = (data*)_context;
+	            const data* ctx = static_cast<data*>(_context);
                 ctx->new_parent->children.erase(std::find(ctx->new_parent->children.begin(), ctx->new_parent->children.end(), ctx->target));
                 if(ctx->old_parent)
                 {
@@ -114,7 +114,7 @@ namespace imgui_editor
 
             void destructor(void* ctx)
             {
-                data* cmd = (data*)ctx;
+                data* cmd = static_cast<data*>(ctx);
                 delete cmd;
             } 
         }
@@ -150,7 +150,7 @@ namespace imgui_editor
 
             void undo(void* _context)
             {
-                data* ctx = (data*)_context;
+                data* ctx = static_cast<data*>(_context);
 
                 widget* w = new_widget_by_id(widget_type::widget_type_none, w->id);
                 widget_deserialize(w,ctx->widget.c_str());
@@ -160,14 +160,14 @@ namespace imgui_editor
 
             void redo(void* _context)
             {
-                data* ctx = (data*)_context;
+                data* ctx = static_cast<data*>(_context);
                 ctx->widget = widget_serialize(ctx->parent->children[ctx->index]);
                 ctx->parent->children.erase(ctx->parent->children.begin() + ctx->index);
             }
 
             void destructor(void* ctx)
             {
-                data* cmd = (data*)ctx;
+                data* cmd = static_cast<data*>(ctx);
                 delete cmd;
             }
         }

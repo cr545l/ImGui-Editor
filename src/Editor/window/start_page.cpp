@@ -22,7 +22,6 @@ namespace imgui_editor
 		unicode::utf8::decode(input.c_str(), input.length(), nfd);
 		std::u32string nfc = unicode::to_nfc(nfd);
 		unicode::utf8::encode(nfc.c_str(), nfc.length(), output);
-		// std::wstring::to_wstring(input.c_str(), input.length())
 		return output;
 	}
 	
@@ -39,8 +38,8 @@ namespace imgui_editor
         
     	if(!ifs.good()) return false;
 
-		std::string content((std::istreambuf_iterator<char>(ifs)),
-							(std::istreambuf_iterator<char>()));
+		const std::string content((std::istreambuf_iterator<char>(ifs)),
+		                          (std::istreambuf_iterator<char>()));
 
 		widget_deserialize(ctx->root, content.c_str());
 
@@ -95,16 +94,17 @@ namespace imgui_editor
 	}
     
 	void draw_start_page(widget_editor* ctx)
-    {
-        // 창의 크기와 위치를 계산
-        ImVec2 windowSize(500, 350);
-        ImVec2 windowPos((ImGui::GetIO().DisplaySize.x - windowSize.x) * 0.5f,
-                        (ImGui::GetIO().DisplaySize.y - windowSize.y) * 0.5f);
+	{
+		const float unit_size = ImGui::GetFontSize();
+
+		// 창의 크기와 위치를 계산
+		const ImVec2 window_size(unit_size * 30, unit_size * 20);
+		const ImVec2 window_pos((ImGui::GetIO().DisplaySize.x - window_size.x) * 0.5f, (ImGui::GetIO().DisplaySize.y - window_size.y) * 0.5f);
 
         // center child window
-        ImGui::SetNextWindowPos(windowPos);
-        ImGui::SetNextWindowSize(windowSize);
-        if (ImGui::Begin("projeect", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
+        ImGui::SetNextWindowPos(window_pos);
+        ImGui::SetNextWindowSize(window_size);
+        if (ImGui::Begin("project", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
         {
             // show last open paths
             ImGui::Text("Last Open Paths");
@@ -116,9 +116,9 @@ namespace imgui_editor
                 const std::string& path = paths[i];
                 if (ImGui::Button(path.c_str()))
                 {
-                    const bool opend = open_project(ctx, path.c_str());
-                    printf("%s", opend?"True":"False");
-                    if(!opend)
+                    const bool opened = open_project(ctx, path.c_str());
+                    printf("%s", opened?"True":"False");
+                    if(!opened)
 					{
 						failOpenIndex = i;
 					}

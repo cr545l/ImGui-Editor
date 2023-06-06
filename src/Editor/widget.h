@@ -23,7 +23,8 @@ namespace imgui_editor
 		ImGuiStyleVar_ idx = ImGuiStyleVar_WindowPadding;
 		ImVec2 val;
 	};
-	
+
+	// imgui의 그려지는 모든 위젯을 관리하기 위한 데이터
 	struct widget
 	{
 		widget_type type = widget_type::widget_type_none;
@@ -52,7 +53,7 @@ namespace imgui_editor
 	widget_type to_widget_type(int32_t fixed_type);
 
 	void draw_widget(widget* context);
-	void draw_inspector_widget(widget* context);
+	void draw_inspector_widget(const widget* context);
 
     IMGUI_EDITOR_EXPORT widget* new_widget(widget_type type);
     IMGUI_EDITOR_EXPORT widget* new_widget_by_id(widget_type type, size_t id);

@@ -16,13 +16,12 @@ namespace imgui_editor
 	ImVec2 g_unitSize;
 	size_t g_widget_id = 0;
 
-	void initialize(widget_editor *ctx, const char *init)
+	void initialize_editor(widget_editor *ctx, const char *init)
 	{
 		g_widget_id = 0;
 		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
 		ctx->root->label = "root";
-
-		// debug_break();
+		
 		if (0 != strcmp("", init))
 		{
 			widget_deserialize(ctx->root, init);
@@ -31,17 +30,17 @@ namespace imgui_editor
 		ctx->tool.editor = ctx;
 		ctx->tool.root = ctx->root;
 
-		ctx->hirarchy.editor = ctx;
-		ctx->hirarchy.root = ctx->root;
+		ctx->hierarchy.editor = ctx;
+		ctx->hierarchy.root = ctx->root;
 		ctx->inspector.editor = ctx;
 
 		CSimpleIniA ini;
 		ini.SetUnicode();
-		SI_Error rc = ini.LoadFile("imgui_editor.ini");
-		if (rc < 0)
+		SI_Error error = ini.LoadFile("imgui_editor.ini");
+		if (error < 0)
 		{
-			rc = ini.SaveFile("imgui_editor.ini");
-			if (rc < 0)
+			error = ini.SaveFile("imgui_editor.ini");
+			if (error < 0)
 			{
 				printf("failed to save imgui_editor.ini");
 			}
@@ -56,13 +55,13 @@ namespace imgui_editor
 			const char *path = ini.GetValue("last_open_paths", std::to_string(i).c_str());
 			if (path)
 			{
-				ctx->last_open_paths.push_back(path);
+				ctx->last_open_paths.emplace_back(path);
 			}
 		}
 	}
 
 
-	void draw(widget_editor *ctx, history *history)
+	void draw_editor_context(widget_editor *ctx, history *history)
 	{
 		auto &io = ImGui::GetIO();
 		g_windowSize = io.DisplaySize;
@@ -92,12 +91,10 @@ namespace imgui_editor
 						pfd::open_file open("Open");
 
 						const auto &result = open.result();
-						if (result.size())
+						if (!result.empty())
 						{
 							std::string path = normalize_utf8(result[0]);
-							if(!open_project(ctx, path.c_str()))
-							{
-							}
+							open_project(ctx, path.c_str());
 						}
 					}
 
@@ -105,7 +102,7 @@ namespace imgui_editor
 					{
 						pfd::save_file save("Save");
 						const auto &result = save.result();
-						if (0 < result.size())
+						if (!result.empty())
 						{
 							std::ofstream ofs(result);
 							ofs << widget_serialize(ctx->root);
@@ -152,7 +149,7 @@ namespace imgui_editor
 					ImGui::ShowDemoWindow(&demo);
 				}
 				draw_tool(&ctx->tool);
-				draw_hierarchy(&ctx->hirarchy);
+				draw_hierarchy(&ctx->hierarchy);
 			}
 			ImGui::End();
 
@@ -163,7 +160,7 @@ namespace imgui_editor
 			ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, mainMenuSizeY});
 			if (ImGui::Begin("inspector", nullptr, flag))
 			{
-				draw_histroy(history);
+				draw_history(history);
 
 				inspectorSize = ImGui::GetWindowSize();
 				inspectorSize.y = g_windowSize.y - mainMenuSizeY;
@@ -173,6 +170,7 @@ namespace imgui_editor
 		}
 		else
 		{
+			// 프로젝트를 열기 전
 			if (ImGui::BeginMainMenuBar())
 			{
 				if (ImGui::BeginMenu("File"))
