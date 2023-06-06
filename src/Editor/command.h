@@ -15,7 +15,7 @@ namespace imgui_editor
 
         void remove_widget(widget* target);
 
-		void select(widget* target);
+		void select(const widget* target);
         
 		void select(std::initializer_list<widget*> targets);
     }

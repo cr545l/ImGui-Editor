@@ -300,7 +300,7 @@ namespace imgui_editor
 
 			if (ImGui::IsItemActivated())
 			{
-
+				// before
 			}
 
 			if (ImGui::IsItemEdited() || changed)
@@ -310,7 +310,12 @@ namespace imgui_editor
 
 			if (ImGui::IsItemDeactivatedAfterEdit())
 			{
+				if (ImGui::IsItemActivated())
+				{
+					// next frame before
+				}
 
+				// before->after
 			}
 		}
 

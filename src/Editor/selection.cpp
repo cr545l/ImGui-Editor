@@ -15,17 +15,17 @@ namespace imgui_editor
 
 	namespace command
 	{
-		void push_back_widgets(std::vector<widget*>& widgets, std::vector<size_t> ids)
+		void push_back_widgets(std::vector<widget*>& widgets, const std::vector<size_t> ids)
 		{
-			for (auto id : ids)
+			for (const size_t id : ids)
 			{
 				widgets.push_back(find(id));
 			}
 		}
 
-		void push_back_ids(std::vector<size_t>& ids, std::vector<widget*> targets)
+		void push_back_ids(std::vector<size_t>& ids, const std::vector<widget*> targets)
 		{
-			for (auto target : targets)
+			for (const widget* target : targets)
 			{
 				ids.push_back(target->id);
 			}
@@ -44,28 +44,28 @@ namespace imgui_editor
 
 			void undo(void* _context)
 			{
-				data* ctx = (data*)_context;
+				data* ctx = static_cast<data*>(_context);
 				g_context->target = find(ctx->original);
-                g_context->targets.clear();
+				g_context->targets.clear();
 				push_back_widgets(g_context->targets, ctx->originals);
 			}
 
 			void redo(void* _context)
 			{
-				data* ctx = (data*)_context;
+				data* ctx = static_cast<data*>(_context);
 				g_context->target = find(ctx->select);
-                g_context->targets.clear();
+				g_context->targets.clear();
 				push_back_widgets(g_context->targets, ctx->selects);
 			}
 
 			void destructor(void* ctx)
 			{
-				data* cmd = (data*)ctx;
+				data* cmd = static_cast<data*>(ctx);
 				delete cmd;
 			}
 		}
 
-		void select(widget* target)
+		void select(const widget* target)
 		{
 			command_data* cmd = new imgui_editor::command_data();
 			cmd->label = string_format( "Select %s (ID : %d / %s)", target->label.c_str(),target->id, get_pretty_name(target->type));
@@ -85,13 +85,13 @@ namespace imgui_editor
 			commit(cmd);
 		}
 
-		void select(std::initializer_list<widget*> targets)
+		void select(const std::initializer_list<widget*> targets)
 		{
 			command_data* cmd = new imgui_editor::command_data();
 			select_context_command::data* ctx = new select_context_command::data();
 
 			assert(0 < targets.size());
-			for (auto target : targets)
+			for (const widget* target : targets)
 			{
 				if (-1 == ctx->select) ctx->select = target->id;
 				ctx->selects.push_back(target->id);
@@ -115,7 +115,7 @@ namespace imgui_editor
 			return g_context->target;
 		}
 
-		const std::vector<widget*> get_targets()
+		const std::vector<widget*>& get_targets()
 		{
 			return g_context->targets;
 		}

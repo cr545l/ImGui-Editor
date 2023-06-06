@@ -21,8 +21,7 @@ namespace imgui_editor
 		}
 
 		if (ctx)
-		{
-			
+		{			
 			ImGui::PushID(ctx->id);
 			bool showChildren = ImGui::TreeNodeEx(ctx->label.c_str(), flag, "%s (%s)", ctx->label.c_str(), get_pretty_name(ctx->type));
 
@@ -37,11 +36,17 @@ namespace imgui_editor
 			{
 				if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
 				{
-					widget* source = *(widget**)payload->Data;
+					widget* source = static_cast<widget*>(payload->Data);
 					if(source != ctx)
 					{
 						command::attach_child(ctx, source);
 					}
+				}
+
+				if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("create_widget"))
+				{
+					const widget_type* type = static_cast<widget_type*>(payload->Data);
+					command::create_widget(ctx, *type);
 				}
 				ImGui::EndDragDropTarget();
 			}

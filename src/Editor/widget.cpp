@@ -28,7 +28,7 @@ namespace imgui_editor
         assert(nullptr!= w->args); // Failed to create widget argument
         w->id = g_widget_id++;
 		w->string_id = std::to_string(w->id);
-
+		w->label = get_pretty_name(type);
         (*g_widget_table)[w->id] = w;
         return w;
     }

@@ -25,6 +25,13 @@ namespace imgui_editor
 						{
 							ctx->create_widget_type = t;
 						}
+
+                        if (ImGui::BeginDragDropSource())
+                        {
+                            ImGui::Text("Create %s", get_pretty_name(t));
+                            ImGui::SetDragDropPayload("create_widget", &t, sizeof(widget_type*));
+                            ImGui::EndDragDropSource();
+                        }
 					});
             }
             ImGui::EndChild();
