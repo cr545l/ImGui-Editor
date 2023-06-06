@@ -6,11 +6,11 @@
 
 namespace imgui_editor
 {
-	static selection_context* g_context = nullptr;
+	static selection_context* s_context = nullptr;
 
 	void init_selection(selection_context* ctx)
 	{
-		g_context = ctx;
+		s_context = ctx;
 	}
 
 	namespace command
@@ -44,23 +44,23 @@ namespace imgui_editor
 
 			void undo(void* _context)
 			{
-				data* ctx = static_cast<data*>(_context);
-				g_context->target = find(ctx->original);
-				g_context->targets.clear();
-				push_back_widgets(g_context->targets, ctx->originals);
+				const data* ctx = static_cast<data*>(_context);
+				s_context->target = find(ctx->original);
+				s_context->targets.clear();
+				push_back_widgets(s_context->targets, ctx->originals);
 			}
 
 			void redo(void* _context)
 			{
-				data* ctx = static_cast<data*>(_context);
-				g_context->target = find(ctx->select);
-				g_context->targets.clear();
-				push_back_widgets(g_context->targets, ctx->selects);
+				const data* ctx = static_cast<data*>(_context);
+				s_context->target = find(ctx->select);
+				s_context->targets.clear();
+				push_back_widgets(s_context->targets, ctx->selects);
 			}
 
 			void destructor(void* ctx)
 			{
-				data* cmd = static_cast<data*>(ctx);
+				const data* cmd = static_cast<data*>(ctx);
 				delete cmd;
 			}
 		}
@@ -75,7 +75,7 @@ namespace imgui_editor
 			ctx->select = target->id;
 			ctx->selects.push_back(target->id);
 			ctx->original = target->id;
-			push_back_ids(ctx->originals,g_context->targets);
+			push_back_ids(ctx->originals,s_context->targets);
 
 			cmd->argument_data = ctx;
 			cmd->undo = select_context_command::undo;
@@ -96,8 +96,8 @@ namespace imgui_editor
 				if (-1 == ctx->select) ctx->select = target->id;
 				ctx->selects.push_back(target->id);
 			}
-			ctx->original = g_context->target->id;
-			push_back_ids(ctx->originals,g_context->targets);
+			ctx->original = s_context->target->id;
+			push_back_ids(ctx->originals,s_context->targets);
 
 			cmd->argument_data = ctx;
 			cmd->undo = select_context_command::undo;
@@ -112,12 +112,12 @@ namespace imgui_editor
 	{
 		widget* get_target()
 		{
-			return g_context->target;
+			return s_context->target;
 		}
 
 		const std::vector<widget*>& get_targets()
 		{
-			return g_context->targets;
+			return s_context->targets;
 		}
 	}
 }

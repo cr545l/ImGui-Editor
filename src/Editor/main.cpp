@@ -47,7 +47,7 @@ struct HostData {
     imgui_editor::selection_context* selection= nullptr;
 
     std::string* root = nullptr;
-    void (*widget_deserialize)(imgui_editor::widget* target, const char* data);
+    bool (*widget_deserialize)(imgui_editor::widget* target, const char* data);
     std::unordered_map<size_t, imgui_editor::widget*>* widgets;
 };
 
@@ -532,7 +532,7 @@ static void test_crash()
 
 namespace imgui_editor
 {
-    std::unordered_map<size_t, imgui_editor::widget*>* g_widget_table = nullptr;
+    std::unordered_map<size_t, widget*>* g_widget_table = nullptr;
 }
 
 CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation) 

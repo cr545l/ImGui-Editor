@@ -164,9 +164,9 @@ namespace imgui_editor
 
             void undo(void* c)
             {
-                data* ctx = static_cast<data*>(c);
+	            const data* ctx = static_cast<data*>(c);
                 
-                widget* w = new_widget_by_id(widget_type::widget_type_none, 0);
+                widget* w = new_widget_by_id(widget_type::widget_type_none, ctx->id);
                 widget_deserialize(w,ctx->widget.c_str());
                 w->parent = ctx->parent;
                 ctx->parent->children.insert(ctx->parent->children.begin() + ctx->index, w);
@@ -177,7 +177,10 @@ namespace imgui_editor
             {
                 data* ctx = static_cast<data*>(c);
                 ctx->widget = widget_serialize(ctx->parent->children[ctx->index]);
+
+                delete_widget(ctx->parent->children[ctx->index]);
                 ctx->parent->children.erase(ctx->parent->children.begin() + ctx->index);
+
                 get_context()->project.dirty = true;
             }
 
@@ -193,7 +196,7 @@ namespace imgui_editor
             size_t index = std::find(target->parent->children.begin(), target->parent->children.end(), target)-target->parent->children.begin();
             if(index < target->parent->children.size())
             {
-                imgui_editor::command_data* cmd = new imgui_editor::command_data();
+                command_data* cmd = new command_data();
                 cmd->label = "Remove widget";
 
                 remove_widget_command::data* ctx = new remove_widget_command::data();

@@ -9,26 +9,26 @@
 
 namespace imgui_editor
 {
-	static bool draw_node(std::vector<widget*>& selected, widget* ctx, std::vector<widget*>& outRemove)
+	static bool draw_node(std::vector<widget*>& selected, widget* widget_context, std::vector<widget*>& outRemove)
 	{
 		bool remove = false;
 		ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 
 		if (std::ranges::any_of(selected, [&](const widget* w)
-		                        { return w == ctx; }))
+		                        { return w == widget_context; }))
 		{
 			flag |= ImGuiTreeNodeFlags_Selected;
 		}
 
-		if (ctx)
+		if (widget_context)
 		{			
-			ImGui::PushID(ctx->id);
-			bool showChildren = ImGui::TreeNodeEx(ctx->label.c_str(), flag, "%s (%s)", ctx->label.c_str(), get_pretty_name(ctx->type));
+			ImGui::PushID(static_cast<int>(widget_context->id));
+			const bool is_show_children = ImGui::TreeNodeEx(widget_context->label.c_str(), flag, "%s (%s)", widget_context->label.c_str(), get_pretty_name(widget_context->type));
 
 			if(ImGui::BeginDragDropSource( ImGuiDragDropFlags_SourceAllowNullID))
 			{
-				ImGui::SetDragDropPayload("widget", &ctx, sizeof(widget*));
-				ImGui::Text(ctx->label.c_str());
+				ImGui::SetDragDropPayload("widget", &widget_context, sizeof(widget*));
+				ImGui::TextUnformatted(widget_context->label.c_str());
 				ImGui::EndDragDropSource();
 			}
 
@@ -37,16 +37,16 @@ namespace imgui_editor
 				if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
 				{
 					widget* source = static_cast<widget*>(payload->Data);
-					if(source != ctx)
+					if(source != widget_context)
 					{
-						command::attach_child(ctx, source);
+						command::attach_child(widget_context, source);
 					}
 				}
 
 				if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("create_widget"))
 				{
 					const widget_type* type = static_cast<widget_type*>(payload->Data);
-					command::create_widget(ctx, *type);
+					command::create_widget(widget_context, *type);
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -54,22 +54,25 @@ namespace imgui_editor
 			ImGui::PopID();
 			if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 			{
-				command::select(ctx);
+				command::select(widget_context);
 			}
 			if (ImGui::BeginPopupContextItem())
 			{
-				ImGui::Text(ctx->label.c_str());
+				ImGui::TextUnformatted(widget_context->label.c_str());
 				ImGui::Separator();
+
+
 				if (ImGui::MenuItem("Delete"))
 				{
 					remove = true;
-					outRemove.emplace_back(ctx);
+					outRemove.emplace_back(widget_context);
 				}
 				ImGui::EndPopup();
 			}
-			if (showChildren)
+
+			if (is_show_children)
 			{
-				const auto& children = ctx->children;
+				const auto& children = widget_context->children;
 				const size_t max = children.size();
 				for (size_t i = 0; i < max; ++i)
 				{
@@ -82,18 +85,26 @@ namespace imgui_editor
 	};
 
 
-	void draw_hierarchy(imgui_editor_context* context)
+	void draw_hierarchy(const imgui_editor_context* editor_context)
 	{
 		std::vector<widget*> selected = selection::get_targets();
 
 		std::vector<widget*> remove;
 
-		if (draw_node(selected, context->root, remove))
+		if (draw_node(selected, editor_context->root, remove))
 		{
 			for (size_t i = 0, max = remove.size(); i < max; ++i)
 			{
 				command::remove_widget(remove[i]);
 			}
 		}
+
+		if(ImGui::IsKeyPressed(ImGuiKey_Delete))
+		{
+			for (size_t i = 0, max = selected.size(); i < max; ++i)
+			{
+				command::remove_widget(selected[i]);
+			}			
+		}		
 	}
 }

@@ -9,7 +9,6 @@
 namespace imgui_editor
 {
 	extern size_t g_widget_id;
-
 	extern std::unordered_map<size_t, widget*>* g_widget_table;
 
 	widget* find(size_t id)
@@ -21,30 +20,45 @@ namespace imgui_editor
 
     widget* new_widget(widget_type type)
     {
-        auto w = new widget();
-
-        w->type = type;
-        w->args = new_widget_arg(type);
-        assert(nullptr!= w->args); // Failed to create widget argument
-        w->id = g_widget_id++;
-		w->string_id = std::to_string(w->id);
-		w->label = get_pretty_name(type);
-        (*g_widget_table)[w->id] = w;
-        return w;
+		// auto w = new widget();
+		//
+		// w->type = type;
+		// w->args = new_widget_arg(type);
+		// assert(nullptr!= w->args); // Failed to create widget argument
+		// w->id = g_widget_id++;
+		// w->string_id = std::to_string(w->id);
+		// w->label = get_pretty_name(type);
+		// (*g_widget_table)[w->id] = w;
+		const size_t id = g_widget_id++;
+		return new_widget_by_id(type, id);
     }
 
     widget* new_widget_by_id(widget_type type, size_t id)
     {
-        auto w = new widget();
+  //       auto w = new widget();
+  //
+  //       w->type = type;
+  //       w->args = new_widget_arg(type);
+  //       assert(nullptr!= w->args); // Failed to create widget argument
+  //       w->id = id;
+		// w->string_id = std::to_string(w->id);
 
-        w->type = type;
-        w->args = new_widget_arg(type);
-        assert(nullptr!= w->args); // Failed to create widget argument
-        w->id = id;
-		w->string_id = std::to_string(w->id);
+        (*g_widget_table)[id] = new widget{
+			type,
+			new_widget_arg(type),
+			get_pretty_name(type),
+			{},
+			{},
+			{},
+			{},
+			std::to_string(id),
+			id,
+			nullptr,
+			nullptr,
+			nullptr,
 
-        (*g_widget_table)[w->id] = w;
-        return w;
+        };
+		return (*g_widget_table)[id];
     }
 
 	void delete_widget(widget* target)
@@ -163,9 +177,10 @@ namespace imgui_editor
 
 		return end + 1; // remove ,
 	}
-
-	void widget_deserialize(widget* target_widget, const char* data)
+	
+	bool widget_deserialize(widget* target_widget, const char* data)
 	{
+		bool success = true;
 		if (target_widget->children.size())
 		{
 			for (size_t i = target_widget->children.size() - 1;; --i)
@@ -190,6 +205,17 @@ namespace imgui_editor
 		std::getline(widget_stream, read, ',');
 
 		target_widget->string_id = read_string(widget_stream);
+
+		try 
+		{
+			target_widget->id = std::stoul(target_widget->string_id);
+		}
+		catch (const std::invalid_argument& e) 
+		{
+			LOG("Invalid id: %s", e.what());
+			success = false;
+		}
+
 		std::getline(widget_stream, read, ',');
 
         std::getline(widget_stream, read, '{');
@@ -218,9 +244,10 @@ namespace imgui_editor
 		for (size_t i = 0; i < children.size(); ++i)
 		{
 			widget* child_widget = new_widget(widget_type::widget_type_none);
-			widget_deserialize(child_widget, children[i].c_str());
-
-            target_widget->children.push_back(child_widget);
+			if (widget_deserialize(child_widget, children[i].c_str()))
+			{
+				target_widget->children.push_back(child_widget);
+			}
             child_widget->parent = target_widget;
 		}
 
@@ -272,5 +299,7 @@ namespace imgui_editor
 			stream >> dummy; // ,
 			stream >> target_widget->style_var_vec2s[i].val.y;
 		}
+
+		return success;
     }
 }

@@ -64,7 +64,7 @@ namespace imgui_editor
 	void parse_args_data(widget_type type, void* data, std::string& inout, std::string& version, bool is_read);
 	
 	std::string widget_serialize(widget* target);
-	IMGUI_EDITOR_EXPORT void widget_deserialize(widget* target, const char* data);
+	IMGUI_EDITOR_EXPORT bool widget_deserialize(widget* target, const char* data);
 
 	enum class generate_code
 	{
