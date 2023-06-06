@@ -14,6 +14,8 @@
 
 namespace imgui_editor
 {
+	extern ImVec2 g_unitSize;
+
 	std::string normalize_utf8(const std::string& input) 
 	{
 		std::string output;
@@ -75,7 +77,7 @@ namespace imgui_editor
 			rc = ini.SaveFile("imgui_editor.ini");
 			if (rc < 0)
 			{
-				printf("failed to save imgui_editor.ini");
+				LOG("failed to save imgui_editor.ini");
 			}
 		}
 
@@ -88,17 +90,15 @@ namespace imgui_editor
 		rc = ini.SaveFile("imgui_editor.ini");
 		if (rc < 0)
 		{
-			printf("failed to save imgui_editor.ini");
+			LOG("failed to save imgui_editor.ini");
 		}
         return true;
 	}
     
 	void draw_start_page(widget_editor* ctx)
 	{
-		const float unit_size = ImGui::GetFontSize();
-
 		// 창의 크기와 위치를 계산
-		const ImVec2 window_size(unit_size * 30, unit_size * 20);
+		const ImVec2 window_size(g_unitSize.x * 150, g_unitSize.y * 20);
 		const ImVec2 window_pos((ImGui::GetIO().DisplaySize.x - window_size.x) * 0.5f, (ImGui::GetIO().DisplaySize.y - window_size.y) * 0.5f);
 
         // center child window
@@ -117,7 +117,7 @@ namespace imgui_editor
                 if (ImGui::Button(path.c_str()))
                 {
                     const bool opened = open_project(ctx, path.c_str());
-                    printf("%s", opened?"True":"False");
+					LOG("%s", opened?"True":"False");
                     if(!opened)
 					{
 						failOpenIndex = i;
@@ -148,7 +148,7 @@ namespace imgui_editor
 					rc = ini.SaveFile("imgui_editor.ini");
 					if (rc < 0)
 					{
-						printf("failed to save imgui_editor.ini");
+						LOG("failed to save imgui_editor.ini");
 					}
 				}
 			}

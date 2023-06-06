@@ -13,6 +13,11 @@
 #include <imgui_internal.h>
 #include <misc/cpp/imgui_stdlib.h>
 
+#include <iostream>
+#include <format>
+#include <source_location>
+#include <filesystem>
+
 #if defined(_MSC_VER)
 #if defined(__cplusplus)
 #define IMGUI_EDITOR_EXPORT extern "C" __declspec(dllexport)
@@ -50,6 +55,18 @@ std::string string_format(const std::string& format, Args ... args)
 	snprintf(buf.get(), size, format.c_str(), args ...);
 	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
+
+template <typename... Args>
+void logImpl(const std::source_location& location, const std::string& formatStr, Args&&... args)
+{
+	std::cout << string_format(formatStr, args...);
+	std::cout << " (";
+	std::cout << std::filesystem::path(location.file_name()).filename().string();
+	std::cout << ":";
+	std::cout << location.line() << ")\n";
+}
+
+#define LOG(formatStr, ...) logImpl(std::source_location::current(), formatStr, ##__VA_ARGS__)
 
 #ifdef _MSC_VER
 

@@ -42,7 +42,7 @@ namespace imgui_editor
 			error = ini.SaveFile("imgui_editor.ini");
 			if (error < 0)
 			{
-				printf("failed to save imgui_editor.ini");
+				LOG("failed to save imgui_editor.ini");
 			}
 		}
 

@@ -137,7 +137,7 @@ void drop_callback(GLFWwindow* window, int count, const char** paths)
 {
 	for (int i = 0; i < count; i++)
 	{
-		printf("Dropped file %s", paths[i]);
+		LOG("Dropped file %s", paths[i]);
 	}
 
 	if (1 == count)
@@ -168,7 +168,7 @@ int main(int argc, char** argv)
 		rc = ini.SaveFile("imgui_editor.ini");
 		if (rc < 0)
 		{
-			printf("failed to save imgui_editor.ini");
+			LOG("failed to save imgui_editor.ini");
 		}
 	}
 
@@ -253,7 +253,7 @@ int main(int argc, char** argv)
 
 			if (rc < 0)
 			{
-				printf("failed to save imgui_editor.ini");
+				LOG("failed to save imgui_editor.ini");
 			}
 		}
 

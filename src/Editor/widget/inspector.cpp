@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 
 #include "editor/widget.h"
 #include "editor/widget/args_data.h"
@@ -11,6 +11,7 @@ namespace imgui_editor
 {
 	extern ImVec2 g_unitSize;
 
+	// 추후 인스펙터로 프리셋을 적용할 수 있는 형태의 구조가 추가된다면 값이 변경되었음을 제대로 바깥에 전달해주어야 한다.
 	void draw_inspector_widget(const widget* ctx)
 	{
 		if (nullptr == ctx->args)

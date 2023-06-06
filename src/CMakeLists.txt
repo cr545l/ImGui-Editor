@@ -65,7 +65,7 @@ fips_end_sharedlib()
 
 if (FIPS_MSVC)
     target_compile_options(editor PUBLIC "/Zc:__cplusplus")
-    set_target_properties(editor PROPERTIES COMPILE_FLAGS "/std:c++17")	
+    set_target_properties(editor PROPERTIES COMPILE_FLAGS "/std:c++20")	
 endif()
 
 fips_begin_app(entry cmdline)    
@@ -96,7 +96,7 @@ fips_end_app()
 
 if (FIPS_MSVC)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT entry)
-    set_target_properties(entry PROPERTIES COMPILE_FLAGS "/std:c++17")
+    set_target_properties(entry PROPERTIES COMPILE_FLAGS "/std:c++20")
 endif()
 
 macro(gtest_begin2 name)
