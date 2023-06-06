@@ -9,19 +9,19 @@
 
 namespace imgui_editor
 {
-	static void draw_node(std::vector<widget*>& selected, widget* ctx)
+	static bool draw_node(std::vector<widget*>& selected, widget* ctx, std::vector<widget*>& outRemove)
 	{
+		bool remove = false;
 		ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_DefaultOpen;
 
-		if (std::any_of(selected.begin(), selected.end(), [&](widget* w)
-			{ return w == ctx; }))
+		if (std::ranges::any_of(selected, [&](const widget* w)
+		                        { return w == ctx; }))
 		{
 			flag |= ImGuiTreeNodeFlags_Selected;
 		}
 
 		if (ctx)
 		{
-			bool remove = false;
 			
 			ImGui::PushID(ctx->id);
 			bool showChildren = ImGui::TreeNodeEx(ctx->label.c_str(), flag, "%s (%s)", ctx->label.c_str(), get_pretty_name(ctx->type));
@@ -58,38 +58,37 @@ namespace imgui_editor
 				if (ImGui::MenuItem("Delete"))
 				{
 					remove = true;
+					outRemove.emplace_back(ctx);
 				}
 				ImGui::EndPopup();
 			}
-
-			if (remove)
+			if (showChildren)
 			{
-				command::remove_widget(ctx);
-				
-				if (showChildren)
+				const auto& children = ctx->children;
+				const size_t max = children.size();
+				for (size_t i = 0; i < max; ++i)
 				{
-					ImGui::TreePop();
+					remove |= draw_node(selected, children[i], outRemove);
 				}
-			}
-			else
-			{
-				if (showChildren)
-				{
-					const auto& children = ctx->children;
-					for (size_t i = 0, max = children.size(); i < max; ++i)
-					{
-						draw_node(selected, children[i]);
-					}
-					ImGui::TreePop();
-				}
+				ImGui::TreePop();
 			}
 		}
+		return remove;
 	};
 
 
-	void draw_hierarchy(widget_hierarchy *context)
+	void draw_hierarchy(imgui_editor_context* context)
 	{
 		std::vector<widget*> selected = selection::get_targets();
-		draw_node(selected, context->root);
+
+		std::vector<widget*> remove;
+
+		if (draw_node(selected, context->root, remove))
+		{
+			for (size_t i = 0, max = remove.size(); i < max; ++i)
+			{
+				command::remove_widget(remove[i]);
+			}
+		}
 	}
 }

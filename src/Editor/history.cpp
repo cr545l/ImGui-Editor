@@ -67,5 +67,5 @@ namespace imgui_editor
     }
 
     bool has_undo_command(){ return SIZE_MAX != g_context->index; }
-    bool has_redo_command(){ return g_context->commands.size() && g_context->index + 1 < g_context->commands.size(); }
+    bool has_redo_command(){ return !g_context->commands.empty() && g_context->index + 1 < g_context->commands.size(); }
 }

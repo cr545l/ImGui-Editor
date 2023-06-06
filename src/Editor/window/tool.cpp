@@ -10,7 +10,7 @@ namespace imgui_editor
 {
     extern ImVec2 g_unitSize;
 
-    void draw_tool(widget_tool *ctx)
+    void draw_tool(imgui_editor_context* ctx)
     {
         if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unitSize.y * 25), true))
         {
@@ -21,9 +21,9 @@ namespace imgui_editor
                         if(t == widget_type::widget_type_none) return;
 
                         std::string name = get_pretty_name(t);
-						if (ImGui::Selectable(name.c_str(), t == ctx->type))
+						if (ImGui::Selectable(name.c_str(), t == ctx->create_widget_type))
 						{
-							ctx->type = t;
+							ctx->create_widget_type = t;
 						}
 					});
             }
@@ -32,7 +32,7 @@ namespace imgui_editor
             ImGui::Separator();
             const bool disable = nullptr == ctx->root;
             ImGui::BeginDisabled(disable);
-
+			
             auto selects = selection::get_targets();
             const bool selected = 0 < selects.size();
             const bool disabled= !selected || selected&& nullptr==selects[0]->parent;
@@ -46,7 +46,7 @@ namespace imgui_editor
                 if (it != parent->children.end())
                 {
                     auto index = std::distance(parent->children.begin(), it);
-                    command::create_widget(parent, ctx->type, index);
+                    command::create_widget(parent, ctx->create_widget_type, index);
                 }
             }
             ImGui::SameLine();
@@ -58,7 +58,7 @@ namespace imgui_editor
                 if (it != parent->children.end())
                 {
                     auto index = std::distance(parent->children.begin(), it);
-                    command::create_widget(parent, ctx->type, index+1);
+                    command::create_widget(parent, ctx->create_widget_type, index+1);
                 }
             }
             ImGui::EndDisabled();
@@ -70,12 +70,12 @@ namespace imgui_editor
                 {
                     for (auto i : selects)
                     {
-                        command::create_widget(i, ctx->type);
+                        command::create_widget(i, ctx->create_widget_type);
                     }
                 }
                 else
                 {
-                    command::create_widget(ctx->root, ctx->type);
+                    command::create_widget(ctx->root, ctx->create_widget_type);
                 }
             }
             ImGui::EndDisabled();

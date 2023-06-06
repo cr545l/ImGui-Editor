@@ -2,8 +2,22 @@
 
 #include "editor/extension.h"
 
+#include <cpp-unicodelib/unicodelib.h>
+#include <cpp-unicodelib/unicodelib_encodings.h>
+
 namespace imgui_editor
 {
+	std::string normalize_utf8(const std::string& input)
+	{
+		std::string output;
+		auto w = unicode::to_wstring(input);
+		std::u32string nfd;
+		unicode::utf8::decode(input.c_str(), input.length(), nfd);
+		std::u32string nfc = unicode::to_nfc(nfd);
+		unicode::utf8::encode(nfc.c_str(), nfc.length(), output);
+		return output;
+	}
+
 	void sscanf2(const char* format, const char* data, void* value)
 	{
 		std::istringstream stream(data);

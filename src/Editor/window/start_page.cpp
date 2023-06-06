@@ -5,8 +5,6 @@
 #include <fstream>
 #include <sstream>
 
-#include <cpp-unicodelib/unicodelib.h>
-#include <cpp-unicodelib/unicodelib_encodings.h>
 
 #include <magic_enum/magic_enum.hpp>
 #include <portable-file-dialogs/portable-file-dialogs.h>
@@ -16,25 +14,14 @@ namespace imgui_editor
 {
 	extern ImVec2 g_unitSize;
 
-	std::string normalize_utf8(const std::string& input) 
-	{
-		std::string output;
-		auto w = unicode::to_wstring(input);
-		std::u32string nfd;
-		unicode::utf8::decode(input.c_str(), input.length(), nfd);
-		std::u32string nfc = unicode::to_nfc(nfd);
-		unicode::utf8::encode(nfc.c_str(), nfc.length(), output);
-		return output;
-	}
-	
-	void close_project(widget_editor *ctx)
+	void close_project(imgui_editor_context *ctx)
 	{
 		ctx->project.ready = false;
 		ctx->project.absolutePath = "";
 		ctx->project.root = nullptr;
 	}
 
-	bool open_project(widget_editor *ctx, const char *path)
+	bool open_project(imgui_editor_context *ctx, const char *path)
 	{
 		std::ifstream ifs(path);
         
@@ -95,7 +82,7 @@ namespace imgui_editor
         return true;
 	}
     
-	void draw_start_page(widget_editor* ctx)
+	void draw_start_page(imgui_editor_context* ctx)
 	{
 		// 창의 크기와 위치를 계산
 		const ImVec2 window_size(g_unitSize.x * 150, g_unitSize.y * 20);

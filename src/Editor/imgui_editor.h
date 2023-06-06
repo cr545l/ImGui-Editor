@@ -16,28 +16,9 @@
 namespace imgui_editor
 {
 	struct widget;
-	struct widget_editor;
+	struct imgui_editor_context;
 	struct history;
-
-	struct widget_tool
-	{
-		widget_editor* editor = nullptr;
-		widget* root = nullptr;
-		widget_type type = widget_type::widget_type_none;
-	};
-
-	struct widget_hierarchy
-	{
-		widget_editor* editor = nullptr;
-		widget* root = nullptr;
-	};
-
-	struct widget_inspector
-	{
-		widget_editor* editor = nullptr;
-		std::string input;
-	};
-
+	
 	struct project_context
 	{
 		bool ready = false;
@@ -46,30 +27,30 @@ namespace imgui_editor
 		widget* root = nullptr;
 	};
 
-	struct widget_editor
+	struct imgui_editor_context
 	{
 		widget* root;
 		project_context project;
-
-		widget_tool tool;
-		widget_hierarchy hierarchy;
-		widget_inspector inspector;
-
+		
 		std::vector<std::string> last_open_paths;
+
+		widget_type create_widget_type = widget_type::widget_type_none;
+		std::string import_text;
 	};
-	std::string normalize_utf8(const std::string& input);
 
-	void initialize_editor(widget_editor* context, const char* init);
-	bool open_project(widget_editor *ctx, const char *path);
-	void close_project(widget_editor *ctx);
+	imgui_editor_context* get_context();
 
-	void draw_start_page(widget_editor* context);
-	void draw_tool(widget_tool* context);
-	void draw_hierarchy(widget_hierarchy* context);
-	void draw_inspector(widget_inspector* context);
+	void initialize_editor(imgui_editor_context* ctx, const char* init);
+	bool open_project(imgui_editor_context *ctx, const char *path);
+	void close_project(imgui_editor_context *ctx);
+
+	void draw_start_page(imgui_editor_context* context);
+	void draw_tool(imgui_editor_context* context);
+	void draw_hierarchy(imgui_editor_context* context);
+	void draw_inspector(imgui_editor_context* context);
 	void draw_history(history* ctx);
 
-	void draw_editor_context(widget_editor* context, history* history);
+	void draw_editor_context(imgui_editor_context* ctx, history* history);
 }
 
 #endif

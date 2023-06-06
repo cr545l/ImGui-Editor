@@ -7,6 +7,7 @@
 #include <portable-file-dialogs/portable-file-dialogs.h>
 #include <simpleini/SimpleIni.h>
 
+#include "extension.h"
 #include "editor/selection.h"
 #include "editor/history.h"
 
@@ -15,24 +16,26 @@ namespace imgui_editor
 	ImVec2 g_windowSize;
 	ImVec2 g_unitSize;
 	size_t g_widget_id = 0;
+	static imgui_editor_context* s_instance;
 
-	void initialize_editor(widget_editor *ctx, const char *init)
+	imgui_editor_context* get_context()
+	{
+		return s_instance;
+	}
+
+	void initialize_editor(imgui_editor_context* ctx, const char* init)
 	{
 		g_widget_id = 0;
+
+		s_instance = ctx;
+
 		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
 		ctx->root->label = "root";
-		
+
 		if (0 != strcmp("", init))
 		{
 			widget_deserialize(ctx->root, init);
 		}
-
-		ctx->tool.editor = ctx;
-		ctx->tool.root = ctx->root;
-
-		ctx->hierarchy.editor = ctx;
-		ctx->hierarchy.root = ctx->root;
-		ctx->inspector.editor = ctx;
 
 		CSimpleIniA ini;
 		ini.SetUnicode();
@@ -61,18 +64,15 @@ namespace imgui_editor
 	}
 
 
-	void draw_editor_context(widget_editor *ctx, history *history)
+	void draw_editor_context(imgui_editor_context *ctx, history *history)
 	{
 		auto &io = ImGui::GetIO();
 		g_windowSize = io.DisplaySize;
 		g_unitSize = ImGui::CalcTextSize(" ");
 
-		const bool is_shortcut_key = io.ConfigMacOSXBehaviors ? (io.KeyMods == ImGuiModFlags_Super) : (io.KeyMods == ImGuiModFlags_Ctrl);
+		const bool is_shortcut_key = io.ConfigMacOSXBehaviors ? (io.KeyMods & ImGuiModFlags_Super) : (io.KeyMods & ImGuiModFlags_Ctrl);
 		const bool is_undo = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Z)) && has_undo_command());
-
-		const bool is_osx = io.ConfigMacOSXBehaviors;
-		const bool is_osx_shift_shortcut = is_osx && (io.KeyMods == (ImGuiModFlags_Super | ImGuiModFlags_Shift));
-		const bool is_redo = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Y)) || (is_osx_shift_shortcut && ImGui::IsKeyPressed(ImGuiKey_Z))) && has_redo_command();
+		const bool is_redo = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Y)) || (is_shortcut_key && io.KeyMods & ImGuiModFlags_Shift && ImGui::IsKeyPressed(ImGuiKey_Z))) && has_redo_command();
 
 		if (is_undo)
 			undo();
@@ -148,8 +148,8 @@ namespace imgui_editor
 				{
 					ImGui::ShowDemoWindow(&demo);
 				}
-				draw_tool(&ctx->tool);
-				draw_hierarchy(&ctx->hierarchy);
+				draw_tool(ctx);
+				draw_hierarchy(ctx);
 			}
 			ImGui::End();
 
@@ -164,7 +164,7 @@ namespace imgui_editor
 
 				inspectorSize = ImGui::GetWindowSize();
 				inspectorSize.y = g_windowSize.y - mainMenuSizeY;
-				draw_inspector(&ctx->inspector);
+				draw_inspector(ctx);
 			}
 			ImGui::End();
 		}

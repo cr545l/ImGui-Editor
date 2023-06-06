@@ -47,7 +47,7 @@ namespace imgui_editor
 	};
 	// ReSharper restore All
 
-	void draw_inspector(widget_inspector* context)
+	void draw_inspector(imgui_editor_context* context)
 	{
 		auto selected = selection::get_targets();
 		ImGui::Text("Selected %zu", selected.size());
@@ -85,10 +85,10 @@ namespace imgui_editor
 
 			if (ImGui::TreeNode("Input"))
 			{
-				ImGui::InputTextMultiline("##data", &context->input, ImVec2(0, g_unitSize.y * 2));
+				ImGui::InputTextMultiline("##data", &context->import_text, ImVec2(0, g_unitSize.y * 2));
 				if (ImGui::Button("Apply"))
 				{
-					widget_deserialize(ctx, context->input.c_str());
+					widget_deserialize(ctx, context->import_text.c_str());
 					changed = true;
 				}
 			
@@ -305,7 +305,7 @@ namespace imgui_editor
 
 			if (ImGui::IsItemEdited() || changed)
 			{
-
+				context->project.dirty = true;
 			}
 
 			if (ImGui::IsItemDeactivatedAfterEdit())

@@ -58,7 +58,7 @@ struct HostData {
     int (*glfwGetInputModeInvoke)(GLFWwindow* handle, int mode);
     void (*glfwSetCursorInvoke)(GLFWwindow* windowHandle, GLFWcursor* cursorHandle);
 
-    imgui_editor::widget_editor* widget_editor = nullptr;
+    imgui_editor::imgui_editor_context* widget_editor = nullptr;
     imgui_editor::history* history = nullptr;
     imgui_editor::selection_context* selection = nullptr;
 
@@ -128,7 +128,7 @@ void ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c)
 	}
 }
 
-imgui_editor::widget_editor we;
+imgui_editor::imgui_editor_context we;
 imgui_editor::history history;
 imgui_editor::selection_context selection;
 std::unordered_map<size_t, imgui_editor::widget*> widgets;

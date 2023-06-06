@@ -42,7 +42,7 @@ struct HostData {
     int (*glfwGetInputMode)(GLFWwindow* handle, int mode);
     void (*glfwSetCursor)(GLFWwindow* windowHandle, GLFWcursor* cursorHandle);
     
-    imgui_editor::widget_editor* widget_editor = nullptr;
+    imgui_editor::imgui_editor_context* widget_editor = nullptr;
     imgui_editor::history* history= nullptr;
     imgui_editor::selection_context* selection= nullptr;
 

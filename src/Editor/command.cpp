@@ -2,6 +2,8 @@
 
 #include "editor/history.h"
 #include "editor/command.h"
+
+#include "imgui_editor.h"
 #include "editor/widget.h"
 
 namespace imgui_editor
@@ -12,43 +14,47 @@ namespace imgui_editor
         {
             struct data
             {
+                bool dirty = false;
+				
                 widget* parent = nullptr;
                 widget_type type = widget_type::widget_type_none;
                 size_t index = -1;
                 size_t id = -1;
             };
 
-            void undo(void* ctx)
+            void undo(void* c)
             {
-	            const data* context = static_cast<data*>(ctx);
-                delete_widget(context->parent->children[context->index]);
-                context->parent->children.erase(context->parent->children.begin() + context->index);
+	            const data* ctx = static_cast<data*>(c);
+                delete_widget(ctx->parent->children[ctx->index]);
+                ctx->parent->children.erase(ctx->parent->children.begin() + ctx->index);
+                get_context()->project.dirty = ctx->dirty;
             }
 
-            void redo(void* ctx)
+            void redo(void* c)
             {
-                data* context = static_cast<data*>(ctx);
+                data* ctx = static_cast<data*>(c);
                 widget* widget = nullptr;
-                if(-1 == context->id)
+                if(-1 == ctx->id)
                 {
-                    widget = new_widget(context->type);
-                    context->id = widget->id;
+                    widget = new_widget(ctx->type);
+                    ctx->id = widget->id;
                 }
                 else
                 {
-                    widget = new_widget_by_id(context->type, context->id);
+                    widget = new_widget_by_id(ctx->type, ctx->id);
                 }
 
-                if(context->index == -1)
+                if(ctx->index == -1)
                 {
-                    context->index = context->parent->children.size();     
-                    context->parent->children.push_back(widget);
+                    ctx->index = ctx->parent->children.size();     
+                    ctx->parent->children.push_back(widget);
                 }
                 else
                 {
-                    context->parent->children.insert(context->parent->children.begin() + context->index, widget);
+                    ctx->parent->children.insert(ctx->parent->children.begin() + ctx->index, widget);
                 }
-                widget->parent = context->parent;
+                widget->parent = ctx->parent;
+                get_context()->project.dirty = true;
             }
 
             void destructor(void* ctx)
@@ -64,6 +70,8 @@ namespace imgui_editor
             cmd->label = string_format("Create widget (%s)", get_pretty_name(type));
 
             create_widget_command::data* ctx = new create_widget_command::data();
+
+            ctx->dirty = get_context()->project.dirty;
 
             ctx->parent = parent;
             ctx->type = type;
@@ -81,6 +89,7 @@ namespace imgui_editor
         {
             struct data
             {
+                bool dirty = false;
                 widget* new_parent;
                 widget* target;
                 size_t index;
@@ -88,20 +97,21 @@ namespace imgui_editor
                 widget* old_parent;
             };
 
-            void undo(void* _context)
+            void undo(void* c)
             {
-	            const data* ctx = static_cast<data*>(_context);
+	            const data* ctx = static_cast<data*>(c);
                 ctx->new_parent->children.erase(std::find(ctx->new_parent->children.begin(), ctx->new_parent->children.end(), ctx->target));
                 if(ctx->old_parent)
                 {
                     ctx->old_parent->children.insert(ctx->old_parent->children.begin() + ctx->index, ctx->target);
                 }
                 ctx->target->parent = ctx->old_parent;
+                get_context()->project.dirty = ctx->dirty;
             }
 
-            void redo(void* _context)
+            void redo(void* c)
             {
-                data* ctx = (data*)_context;
+                data* ctx = (data*)c;
                 ctx->new_parent->children.push_back(ctx->target);
                 ctx->old_parent = ctx->target->parent;
                 if(ctx->old_parent)
@@ -110,6 +120,7 @@ namespace imgui_editor
                 }
                 ctx->target->parent = ctx->new_parent;
                 ctx->index = ctx->new_parent->children.size() - 1;
+                get_context()->project.dirty = true;
             }
 
             void destructor(void* ctx)
@@ -126,6 +137,8 @@ namespace imgui_editor
 
             attach_child_command::data* ctx = new attach_child_command::data();
 
+            ctx->dirty = get_context()->project.dirty;
+
             ctx->new_parent = parent;
             ctx->target = child;
 
@@ -141,6 +154,7 @@ namespace imgui_editor
         {
             struct data
             {
+                bool dirty = false;
                 widget* parent = nullptr;
                 size_t index = -1;
                 size_t id = -1;
@@ -148,21 +162,23 @@ namespace imgui_editor
                 std::string widget;
             };
 
-            void undo(void* _context)
+            void undo(void* c)
             {
-                data* ctx = static_cast<data*>(_context);
+                data* ctx = static_cast<data*>(c);
 
-                widget* w = new_widget_by_id(widget_type::widget_type_none, w->id);
+                widget* w = new_widget_by_id(widget_type::widget_type_none, 0);
                 widget_deserialize(w,ctx->widget.c_str());
 
                 ctx->parent->children.insert(ctx->parent->children.begin() + ctx->index, w);
+                get_context()->project.dirty = ctx->dirty;
             }
 
-            void redo(void* _context)
+            void redo(void* c)
             {
-                data* ctx = static_cast<data*>(_context);
+                data* ctx = static_cast<data*>(c);
                 ctx->widget = widget_serialize(ctx->parent->children[ctx->index]);
                 ctx->parent->children.erase(ctx->parent->children.begin() + ctx->index);
+                get_context()->project.dirty = true;
             }
 
             void destructor(void* ctx)
@@ -181,6 +197,8 @@ namespace imgui_editor
                 cmd->label = "Remove widget";
 
                 remove_widget_command::data* ctx = new remove_widget_command::data();
+
+                ctx->dirty = get_context()->project.dirty;
 
                 ctx->parent = target->parent;
                 ctx->index = index;

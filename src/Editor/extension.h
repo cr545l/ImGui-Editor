@@ -9,6 +9,8 @@
 
 namespace imgui_editor
 {
+	std::string normalize_utf8(const std::string& input);
+	
 	inline std::istringstream& operator>> (std::istringstream& stream, ImGuiSelectableFlags_& flags)
 	{
 		int i = 0;
