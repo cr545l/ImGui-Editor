@@ -40,11 +40,12 @@ fips_begin_sharedlib(editor cmdline)
         history.cpp
     )    
     
-    fips_dir(.)
-    fips_files(thirdparty/imgui/imgui_stdlib.cpp)
+    fips_dir(thirdparty/imgui)
+    fips_files(imgui_stdlib.cpp)
+
     include_directories(.)
     include_directories(thirdparty)
-
+	
     fips_src(thirdparty/GL GROUP_FOLDERS)
     fips_deps(imgui glfw3)
 
@@ -62,36 +63,7 @@ fips_begin_sharedlib(editor cmdline)
     endif()
 fips_end_sharedlib()
 
-#-------------------------------------------------------------------------------
-#   gtest_begin(name)
-#   Begin defining a unit test.
-#
-macro(gtest_begin2 name)
-    set(options NO_TEMPLATE)
-    set(oneValueArgs TEMPLATE)
-    set(multiValueArgs)
-    cmake_parse_arguments(_gt "${options}" "${oneValueArgs}" "" ${ARGN})
-
-    if (_gt_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "gtest_begin(): called with invalid args '${_gt_UNPARSED_ARGUMENTS}'")
-    endif()
-
-    set(FipsAddFilesEnabled 1)
-    fips_reset(${CurTargetName}Test)
-    set(CurAppType "cmdline")
-endmacro()
-
-gtest_begin2(editor)
-	fips_dir(tests)
-	fips_files(
-		test.cpp
-		enum_test.h
-		enum_test.cpp
-	)
-	fips_deps(editor)
-gtest_end()
-
-if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
+if (FIPS_MSVC)
     target_compile_options(editor INTERFACE "/Zc:__cplusplus")
     set_target_properties(editor PROPERTIES COMPILE_FLAGS "/std:c++17")	
 endif()
@@ -126,3 +98,28 @@ if (FIPS_MSVC)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT entry)
     set_target_properties(entry PROPERTIES COMPILE_FLAGS "/std:c++17")
 endif()
+
+macro(gtest_begin2 name)
+    set(options NO_TEMPLATE)
+    set(oneValueArgs TEMPLATE)
+    set(multiValueArgs)
+    cmake_parse_arguments(_gt "${options}" "${oneValueArgs}" "" ${ARGN})
+
+    if (_gt_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "gtest_begin(): called with invalid args '${_gt_UNPARSED_ARGUMENTS}'")
+    endif()
+
+    set(FipsAddFilesEnabled 1)
+    fips_reset(${CurTargetName}Test)
+    set(CurAppType "cmdline")
+endmacro()
+
+gtest_begin2(editor)
+	fips_dir(tests)
+	fips_files(
+		test.cpp
+		enum_test.h
+		enum_test.cpp
+	)
+	fips_deps(editor)
+gtest_end()
