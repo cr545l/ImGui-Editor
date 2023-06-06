@@ -64,7 +64,7 @@ fips_begin_sharedlib(editor cmdline)
 fips_end_sharedlib()
 
 if (FIPS_MSVC)
-    target_compile_options(editor INTERFACE "/Zc:__cplusplus")
+    target_compile_options(editor PUBLIC "/Zc:__cplusplus")
     set_target_properties(editor PROPERTIES COMPILE_FLAGS "/std:c++17")	
 endif()
 
