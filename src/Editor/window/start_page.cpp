@@ -14,7 +14,7 @@
 
 namespace imgui_editor
 {
-	std::string normalizeUTF8(const std::string& input) 
+	std::string normalize_utf8(const std::string& input) 
 	{
 		std::string output;
 		auto w = unicode::to_wstring(input);
@@ -107,7 +107,7 @@ namespace imgui_editor
         if (ImGui::Begin("projeect", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
         {
             // show last open paths
-            ImGui::Text(u8"마지막 경로 / Last Open Paths");
+            ImGui::Text("Last Open Paths");
 
 			int failOpenIndex = -1;
 			auto& paths= ctx->last_open_paths;

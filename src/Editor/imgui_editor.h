@@ -56,7 +56,7 @@ namespace imgui_editor
 
 		std::vector<std::string> last_open_paths;
 	};
-	std::string normalizeUTF8(const std::string& input);
+	std::string normalize_utf8(const std::string& input);
 
 	void initialize(widget_editor* context, const char* init);
 	bool open_project(widget_editor *ctx, const char *path);

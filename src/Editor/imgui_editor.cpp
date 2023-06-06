@@ -80,60 +80,61 @@ namespace imgui_editor
 		if (is_redo)
 			redo();
 
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("Open"))
-				{
-					pfd::open_file open("Open");
-
-					const auto &result = open.result();
-					if (result.size())
-					{
-						std::string path = normalizeUTF8(result[0]);
-						if(!open_project(ctx, path.c_str()))
-						{
-						}
-					}
-				}
-
-				if (ImGui::MenuItem("Save"))
-				{
-					pfd::save_file save("Save");
-					const auto &result = save.result();
-					if (result.size())
-					{
-						std::ofstream ofs(result);
-						ofs << widget_serialize(ctx->root);
-					}
-				}
-
-				if (ImGui::MenuItem("Close Project"))
-				{
-					close_project(ctx);
-				}
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Edit"))
-			{
-				if (ImGui::MenuItem("Undo", nullptr, nullptr, has_undo_command()))
-				{
-					undo();
-				}
-
-				if (ImGui::MenuItem("Redo", nullptr, nullptr, has_redo_command()))
-				{
-					redo();
-				}
-
-				ImGui::EndMenu();
-			}
-			ImGui::EndMainMenuBar();
-		}
 
 		if (ctx->project.ready)
 		{
+			if (ImGui::BeginMainMenuBar())
+			{
+				if (ImGui::BeginMenu("File"))
+				{
+					if (ImGui::MenuItem("Open"))
+					{
+						pfd::open_file open("Open");
+
+						const auto &result = open.result();
+						if (result.size())
+						{
+							std::string path = normalize_utf8(result[0]);
+							if(!open_project(ctx, path.c_str()))
+							{
+							}
+						}
+					}
+
+					if (ImGui::MenuItem("Save"))
+					{
+						pfd::save_file save("Save");
+						const auto &result = save.result();
+						if (0 < result.size())
+						{
+							std::ofstream ofs(result);
+							ofs << widget_serialize(ctx->root);
+						}
+					}
+
+					if (ImGui::MenuItem("Close Project"))
+					{
+						close_project(ctx);
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Edit"))
+				{
+					if (ImGui::MenuItem("Undo", nullptr, nullptr, has_undo_command()))
+					{
+						undo();
+					}
+
+					if (ImGui::MenuItem("Redo", nullptr, nullptr, has_redo_command()))
+					{
+						redo();
+					}
+
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
+
 			float mainMenuSizeY = ImGui::GetFrameHeight();
 			constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
 			static ImVec2 toolSize{g_unitSize.x * 50, g_windowSize.y};
@@ -172,6 +173,28 @@ namespace imgui_editor
 		}
 		else
 		{
+			if (ImGui::BeginMainMenuBar())
+			{
+				if (ImGui::BeginMenu("File"))
+				{
+					if (ImGui::MenuItem("Open"))
+					{
+						pfd::open_file open("Open");
+
+						const auto& result = open.result();
+						if (result.size())
+						{
+							std::string path = normalize_utf8(result[0]);
+							if (!open_project(ctx, path.c_str()))
+							{
+							}
+						}
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
+
 			draw_start_page(ctx);
 		}
 	}
