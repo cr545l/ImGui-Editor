@@ -45,7 +45,7 @@ namespace imgui_editor
 	void close_project(imgui_editor_context *ctx);
 
 	void draw_start_page(imgui_editor_context* context);
-	void draw_tool(imgui_editor_context* context);
+	void draw_tool(imgui_editor_context* editor_context);
 	void draw_hierarchy(const imgui_editor_context* editor_context);
 	void draw_inspector(imgui_editor_context* context);
 	void draw_history(history* ctx);

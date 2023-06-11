@@ -143,7 +143,7 @@ namespace imgui_editor
 
 			float mainMenuSizeY = ImGui::GetFrameHeight();
 			constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
-			static ImVec2 toolSize{g_unitSize.x * 50, g_windowSize.y};
+			static ImVec2 toolSize{g_unitSize.x * 150, g_windowSize.y};
 			ImGui::SetNextWindowSize(toolSize);
 			ImGui::SetNextWindowPos({0, mainMenuSizeY});
 			if (ImGui::Begin("tool", nullptr, flag))
@@ -164,7 +164,7 @@ namespace imgui_editor
 
 			draw_widget(ctx->root);
 
-			static ImVec2 inspectorSize{g_unitSize.x * 50, g_windowSize.y};
+			static ImVec2 inspectorSize{g_unitSize.x * 150, g_windowSize.y};
 			ImGui::SetNextWindowSize(inspectorSize);
 			ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, mainMenuSizeY});
 			if (ImGui::Begin("inspector", nullptr, flag))

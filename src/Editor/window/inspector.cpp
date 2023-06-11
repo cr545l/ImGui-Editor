@@ -17,6 +17,8 @@ namespace imgui_editor
 		ImU32           Offset;
 		void* GetVarPtr(ImGuiStyle* style) const { return (void*)((unsigned char*)style + Offset); }
 	};
+
+	// imgui.cpp:L3045
 	static const ImGuiStyleVarInfo GStyleVarInfo[] =
 	{
 		{ ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, Alpha) },               // ImGuiStyleVar_Alpha

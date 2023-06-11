@@ -87,24 +87,28 @@ namespace imgui_editor
 
 	void draw_hierarchy(const imgui_editor_context* editor_context)
 	{
-		std::vector<widget*> selected = selection::get_targets();
-
-		std::vector<widget*> remove;
-
-		if (draw_node(selected, editor_context->root, remove))
+		if (ImGui::BeginChild("hierarchy", ImVec2(0.f, 0.f), true))
 		{
-			for (size_t i = 0, max = remove.size(); i < max; ++i)
+			std::vector<widget*> selected = selection::get_targets();
+
+			std::vector<widget*> remove;
+
+			if (draw_node(selected, editor_context->root, remove))
 			{
-				command::remove_widget(remove[i]);
+				for (size_t i = 0, max = remove.size(); i < max; ++i)
+				{
+					command::remove_widget(remove[i]);
+				}
+			}
+
+			if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+			{
+				for (size_t i = 0, max = selected.size(); i < max; ++i)
+				{
+					command::remove_widget(selected[i]);
+				}
 			}
 		}
-
-		if(ImGui::IsKeyPressed(ImGuiKey_Delete))
-		{
-			for (size_t i = 0, max = selected.size(); i < max; ++i)
-			{
-				command::remove_widget(selected[i]);
-			}			
-		}		
+		ImGui::EndChild();
 	}
 }
