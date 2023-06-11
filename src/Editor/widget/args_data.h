@@ -1,4 +1,4 @@
-#ifndef __ARGS_DATA_H__
+﻿#ifndef __ARGS_DATA_H__
 #define __ARGS_DATA_H__
 
 #pragma pack(push, 1)
@@ -499,6 +499,7 @@ namespace imgui_editor
 	struct widget_begin_end_menu
 	{
 		bool enabled = true;
+		int dummy; // ﻿HEAP CORRUPTION DETECTED 회피용
 	};
 	struct widget_menu_item
 	{

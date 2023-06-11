@@ -5,11 +5,12 @@
 
 namespace imgui_editor
 {
-	void* new_widget_arg(widget_type type)
+	void* new_widget_arg(const widget_type type)
 	{
 		switch (type)
 		{
-		case widget_type::widget_type_none:						return new widget_none();
+		default:
+		case widget_type::widget_type_none:						return nullptr;
 
 		// Windows
 		case widget_type::widget_type_begin_end_window:			return new widget_begin_end_window();
@@ -123,6 +124,5 @@ namespace imgui_editor
 		// ImGui-Editor
 		case widget_type::widget_type_caller:					return new widget_caller();
 		}
-		return nullptr;
 	}
 }

@@ -64,8 +64,14 @@ namespace imgui_editor
             ++g_context->index;
             command_redo(g_context->commands[g_context->index]);
         }
-    }
+	}
 
-    bool has_undo_command(){ return SIZE_MAX != g_context->index; }
-    bool has_redo_command(){ return !g_context->commands.empty() && g_context->index + 1 < g_context->commands.size(); }
+	bool has_undo_command() { return SIZE_MAX != g_context->index; }
+	bool has_redo_command() { return !g_context->commands.empty() && g_context->index + 1 < g_context->commands.size(); }
+
+	void reset_history()
+	{
+		g_context->index = SIZE_MAX;
+		g_context->commands.clear();
+	}
 }

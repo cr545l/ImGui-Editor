@@ -6,9 +6,12 @@
 #include "editor/imgui_editor.h"
 #include "editor/widget.h"
 #include "editor/command.h"
+#include "editor/widget/args_data.h"
 
 namespace imgui_editor
 {
+	struct widget_menu_item;
+
 	static bool draw_node(std::vector<widget*>& selected, widget* widget_context, std::vector<widget*>& outRemove)
 	{
 		bool remove = false;

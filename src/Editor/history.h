@@ -28,6 +28,8 @@ namespace imgui_editor
 	void redo();
 	bool has_undo_command();
 	bool has_redo_command();
+
+	void reset_history();
 }
 
 #endif

@@ -47,7 +47,10 @@ struct HostData {
     imgui_editor::selection_context* selection= nullptr;
 
     std::string* root = nullptr;
+
     bool (*widget_deserialize)(imgui_editor::widget* target, const char* data);
+    bool (*open_project)(imgui_editor::imgui_editor_context* ctx, const char* path);
+
     std::unordered_map<size_t, imgui_editor::widget*>* widgets;
 };
 
@@ -546,10 +549,13 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
         case CR_LOAD:
             imui_init();
             imgui_editor::g_widget_table = g_data->widgets;
-            imgui_editor::initialize_editor(g_data->imgui_editor, g_data->root->c_str());
+            initialize_editor(g_data->imgui_editor, g_data->root->c_str());
             init_history(g_data->history);
             init_selection(g_data->selection);
+
 			g_data->widget_deserialize = imgui_editor::widget_deserialize;
+			g_data->open_project = imgui_editor::open_project;
+
             return 0;
 
         case CR_UNLOAD:

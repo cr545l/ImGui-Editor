@@ -38,10 +38,10 @@ namespace imgui_editor
 		std::string import_text;
 	};
 
-	imgui_editor_context* get_context();
+	IMGUI_EDITOR_EXPORT imgui_editor_context* get_context();
 
-	void initialize_editor(imgui_editor_context* ctx, const char* init);
-	bool open_project(imgui_editor_context *ctx, const char *path);
+	IMGUI_EDITOR_EXPORT void initialize_editor(imgui_editor_context* ctx, const char* init);
+	IMGUI_EDITOR_EXPORT bool open_project(imgui_editor_context *ctx, const char *path);
 	void close_project(imgui_editor_context *ctx);
 
 	void draw_start_page(imgui_editor_context* context);

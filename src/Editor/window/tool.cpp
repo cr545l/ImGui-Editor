@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+ï»¿#include "Precompiled.h"
 
 #include <magic_enum/magic_enum.hpp>
 
@@ -92,7 +92,7 @@ namespace imgui_editor
     {
         for (const auto& pair : categoryMap)
         {
-            // Ä«Å×°í¸® ¹®ÀÚ¿­À» '/'·Î ±¸ºĞÇÏ¿© ÅäÅ«À¸·Î ºĞ¸®
+            // ì¹´í…Œê³ ë¦¬ ë¬¸ìì—´ì„ '/'ë¡œ êµ¬ë¶„í•˜ì—¬ í† í°ìœ¼ë¡œ ë¶„ë¦¬
             std::vector<std::string> tokens;
             std::string category = pair.second;
             size_t startPos = 0;
@@ -105,7 +105,7 @@ namespace imgui_editor
             }
             tokens.push_back(category.substr(startPos));
 
-            // ¸Ş´º ¾ÆÀÌÅÛÀÇ ±íÀÌ¿¡ ¸Â°Ô ImGui::BeginMenu¿Í ImGui::MenuItem È£Ãâ
+            // ë©”ë‰´ ì•„ì´í…œì˜ ê¹Šì´ì— ë§ê²Œ ImGui::BeginMenuì™€ ImGui::MenuItem í˜¸ì¶œ
             int depth = 0;
             for (const auto& token : tokens)
             {
@@ -147,7 +147,7 @@ namespace imgui_editor
 				}
 			}
 
-			// ¸Ş´º ¾ÆÀÌÅÛÀÇ ±íÀÌ¿¡ ¸Â°Ô ImGui::EndMenu È£Ãâ
+			// ë©”ë‰´ ì•„ì´í…œì˜ ê¹Šì´ì— ë§ê²Œ ImGui::EndMenu í˜¸ì¶œ
 			for (int i = 0; i < depth; ++i)
 			{
 				ImGui::EndMenu();
@@ -177,13 +177,20 @@ namespace imgui_editor
 							editor_context->create_widget_type = t;
 						}
 
+						if (ImGui::BeginDragDropSource())
+						{
+							ImGui::Text("Create %s", get_pretty_name(t));
+							ImGui::SetDragDropPayload("create_widget", &t, sizeof(widget_type*));
+							ImGui::EndDragDropSource();
+						}
+
 						if (selected)
 						{
-							// ÇöÀç À©µµ¿ìÀÇ ³Êºñ¸¦ °¡Á®¿È
+							// í˜„ì¬ ìœˆë„ìš°ì˜ ë„ˆë¹„ë¥¼ ê°€ì ¸ì˜´
 							const float windowWidth = ImGui::GetWindowWidth();
 
-							// ¹öÆ°À» ¿À¸¥ÂÊ¿¡ À§Ä¡ÇÏ¿© Ãâ·Â
-							ImGui::SetCursorPosX(windowWidth - g_unitSize.x * 75); // ¹öÆ°ÀÇ ³Êºñ¸¦ °í·ÁÇÏ¿© À§Ä¡ Á¶Á¤
+							// ë²„íŠ¼ì„ ì˜¤ë¥¸ìª½ì— ìœ„ì¹˜í•˜ì—¬ ì¶œë ¥
+							ImGui::SetCursorPosX(windowWidth - g_unitSize.x * 75); // ë²„íŠ¼ì˜ ë„ˆë¹„ë¥¼ ê³ ë ¤í•˜ì—¬ ìœ„ì¹˜ ì¡°ì •
 
 							ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.5f, 0.5f));
 							ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 4));
@@ -236,13 +243,6 @@ namespace imgui_editor
 
 							ImGui::PopStyleVar(2);
 						}
-                
-                        if (ImGui::BeginDragDropSource())
-                        {
-                            ImGui::Text("Create %s", get_pretty_name(t));
-                            ImGui::SetDragDropPayload("create_widget", &t, sizeof(widget_type*));
-                            ImGui::EndDragDropSource();
-                        }
 					});
             }
             ImGui::EndChild();

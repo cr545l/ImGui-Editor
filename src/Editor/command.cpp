@@ -25,7 +25,10 @@ namespace imgui_editor
             void undo(void* c)
             {
 	            const data* ctx = static_cast<data*>(c);
+
+                unregist_widget(ctx->parent->children[ctx->index]);
                 delete_widget(ctx->parent->children[ctx->index]);
+
                 ctx->parent->children.erase(ctx->parent->children.begin() + ctx->index);
                 get_context()->project.dirty = ctx->dirty;
             }
@@ -37,6 +40,8 @@ namespace imgui_editor
                 if(-1 == ctx->id)
                 {
                     widget = new_widget(ctx->type);
+                    regist_widget(widget);
+
                     ctx->id = widget->id;
                 }
                 else
@@ -193,7 +198,7 @@ namespace imgui_editor
 
         void remove_widget(widget* target)
         {
-            size_t index = std::find(target->parent->children.begin(), target->parent->children.end(), target)-target->parent->children.begin();
+	        const size_t index = std::ranges::find(target->parent->children, target)-target->parent->children.begin();
             if(index < target->parent->children.size())
             {
                 command_data* cmd = new command_data();

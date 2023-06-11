@@ -63,7 +63,10 @@ struct HostData {
     imgui_editor::selection_context* selection = nullptr;
 
     std::string* root = nullptr;
+
 	void (*widget_deserialize)(imgui_editor::widget* target, const char* data);
+	bool (*open_project)(imgui_editor::imgui_editor_context* ctx, const char* path);
+
 	std::unordered_map<size_t, imgui_editor::widget*>* widgets;
 };
 
@@ -128,7 +131,7 @@ void ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c)
 	}
 }
 
-imgui_editor::imgui_editor_context we;
+imgui_editor::imgui_editor_context editor_context;
 imgui_editor::history history;
 imgui_editor::selection_context selection;
 std::unordered_map<size_t, imgui_editor::widget*> widgets;
@@ -146,7 +149,8 @@ void drop_callback(GLFWwindow* window, int count, const char** paths)
 		std::string content((std::istreambuf_iterator<char>(ifs)),
 		                    (std::istreambuf_iterator<char>()));
 
-		data.widget_deserialize(we.root, content.c_str());
+		data.open_project(&editor_context, paths[0]);
+		// data.widget_deserialize(we.root, content.c_str());
 	}
 }
 
@@ -194,7 +198,7 @@ int main(int argc, char** argv)
 	data.window = window;
 	data.imgui_context = ImGui::CreateContext();
 
-	data.imgui_editor = &we;
+	data.imgui_editor = &editor_context;
 	data.history = &history;
 	data.selection = &selection;
 
@@ -241,10 +245,17 @@ int main(int argc, char** argv)
 		
 		if (data.imgui_editor->project.ready)
 		{
-			std::string project_name;
-			if (data.imgui_editor->project.dirty) project_name.append("* ");
-			project_name.append(string_format("%s - ImGui Editor [%.1f fps]", std::filesystem::path(data.imgui_editor->project.absolutePath).filename().stem().string().c_str(), ImGui::GetIO().Framerate));
-			glfwSetWindowTitle(window, project_name.c_str());
+			std::string window_title;
+			if (data.imgui_editor->project.dirty) window_title.append("* ");
+
+			const char* project_name = std::filesystem::path(data.imgui_editor->project.absolutePath).filename().stem().string().c_str();
+			if(0== strcmp(project_name, ""))
+			{
+				project_name = "Untitled";
+			}
+
+			window_title.append(string_format("%s - ImGui Editor [%.1f fps]", project_name, ImGui::GetIO().Framerate));
+			glfwSetWindowTitle(window, window_title.c_str());
 		}
 		else
 		{

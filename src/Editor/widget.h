@@ -56,11 +56,13 @@ namespace imgui_editor
 	void draw_inspector_widget(const widget* context);
 
     IMGUI_EDITOR_EXPORT widget* new_widget( widget_type type);
-    IMGUI_EDITOR_EXPORT widget* new_widget_by_id(widget_type type, size_t id);
+	IMGUI_EDITOR_EXPORT widget* new_widget_by_id(widget_type type, size_t id);
+	IMGUI_EDITOR_EXPORT	void regist_widget(widget* w);
+	IMGUI_EDITOR_EXPORT	void unregist_widget(const widget* w);
 	IMGUI_EDITOR_EXPORT void* new_widget_arg(widget_type type);
 	IMGUI_EDITOR_EXPORT void delete_widget(widget* target);
 	IMGUI_EDITOR_EXPORT void delete_widget_args(widget_type type, void* target);
-
+	
 	void parse_args_data(widget_type type, void* data, std::string& inout, std::string& version, bool is_read);
 	
 	std::string widget_serialize(widget* target);

@@ -16,7 +16,7 @@ namespace imgui_editor
 	ImVec2 g_windowSize;
 	ImVec2 g_unitSize;
 	size_t g_widget_id = 0;
-	static imgui_editor_context* s_instance;
+	static imgui_editor_context* s_instance = nullptr;
 
 	imgui_editor_context* get_context()
 	{
@@ -30,6 +30,8 @@ namespace imgui_editor
 		s_instance = ctx;
 
 		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
+		regist_widget(ctx->root);
+
 		ctx->root->label = "root";
 
 		if (0 != strcmp("", init))
@@ -97,12 +99,24 @@ namespace imgui_editor
 						}
 					}
 
-					ImGui::BeginDisabled(!ctx->project.dirty);
+					bool canSave = ctx->project.dirty || ctx->project.absolutePath.empty();
+
+					ImGui::BeginDisabled(!canSave);
 					if (ImGui::MenuItem("Save"))
 					{
-						std::ofstream ofs(ctx->project.absolutePath);
-						ofs << widget_serialize(ctx->root);
-						ctx->project.dirty = false;
+						if (ctx->project.absolutePath.empty())
+						{
+							pfd::save_file save("Save");
+
+							ctx->project.absolutePath = save.result();
+						}
+
+						if (!ctx->project.absolutePath.empty())
+						{
+							std::ofstream ofs(ctx->project.absolutePath);
+							ofs << widget_serialize(ctx->root);
+							ctx->project.dirty = false;
+						}
 					}
 
 					ImGui::EndDisabled();
@@ -184,6 +198,11 @@ namespace imgui_editor
 			{
 				if (ImGui::BeginMenu("File"))
 				{
+					if (ImGui::MenuItem("New Project"))
+					{
+						ctx->project.ready = true;
+					}
+
 					if (ImGui::MenuItem("Open"))
 					{
 						pfd::open_file open("Open");

@@ -10,9 +10,14 @@
 #include <portable-file-dialogs/portable-file-dialogs.h>
 #include <simpleini/SimpleIni.h>
 
+#include "editor/history.h"
+#include "editor/selection.h"
+
 namespace imgui_editor
 {
 	extern ImVec2 g_unitSize;
+	extern size_t g_widget_id;
+	extern std::unordered_map<size_t, widget*>* g_widget_table;
 
 	void close_project(imgui_editor_context *ctx)
 	{
@@ -20,6 +25,19 @@ namespace imgui_editor
 		ctx->project.absolutePath = "";
 		ctx->project.root = nullptr;
 		ctx->project.dirty = false;
+
+		delete_widget(ctx->root);
+		selection::reset();
+		reset_history();
+
+		g_widget_id = 0;
+
+		assert(g_widget_table->empty());
+
+		ctx->root = new_widget(widget_type::widget_type_begin_end_window);
+		regist_widget(ctx->root);
+
+		ctx->root->label = "root";
 	}
 
 	bool open_project(imgui_editor_context *ctx, const char *path)
@@ -106,7 +124,7 @@ namespace imgui_editor
                 if (ImGui::Button(path.c_str()))
                 {
                     const bool opened = open_project(ctx, path.c_str());
-					LOG("%s", opened?"True":"False");
+					// LOG("%s", opened?"True":"False");
                     if(!opened)
 					{
 						failOpenIndex = i;
