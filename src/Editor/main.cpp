@@ -19,6 +19,7 @@
 // (예: imgui 컨텍스트, 다시 로드하는 동안 창을 플릭/재배치하지 않음)
 struct HostData {
     int w, h;
+    float high_dpi_factor;
     int display_w, display_h;
     ImGuiContext *imgui_context = nullptr;
     void *wndh = nullptr;
@@ -552,7 +553,6 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
             initialize_editor(g_data->imgui_editor, g_data->root->c_str());
             init_history(g_data->history);
             init_selection(g_data->selection);
-
 			g_data->widget_deserialize = imgui_editor::widget_deserialize;
 			g_data->open_project = imgui_editor::open_project;
 
@@ -576,6 +576,7 @@ CR_EXPORT int cr_main(cr_plugin *ctx, cr_op operation)
             
         case CR_STEP:
             imui_frame_begin();
+			ImGui::GetIO().FontGlobalScale = g_data->high_dpi_factor;
             imgui_editor::draw_editor_context(g_data->imgui_editor, g_data->history);
             imui_frame_end();
             return 0;

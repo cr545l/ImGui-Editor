@@ -33,8 +33,10 @@ const char* plugin = DEPLOY_PATH "/" CR_PLUGIN("editor");
 // glfw의 경우 문제는 "초기화" 플래그이므로 guest에 연결된 glfw는 "초기화되지 않음"입니다.
 // imgui는 문제를 해결하기 위해 많은 상용구가 필요한 ImVector 소멸자에 문제가 있습니다.
 
-struct HostData {
+struct HostData
+{
     int w, h;
+	float high_dpi_factor;
     int display_w, display_h;
     ImGuiContext *imgui_context = nullptr;
     void *wndh = nullptr; 
@@ -163,7 +165,7 @@ int main(int argc, char** argv)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+	
 	CSimpleIniA ini;
 	ini.SetUnicode();
 	SI_Error rc = ini.LoadFile("imgui_editor.ini");
@@ -237,12 +239,27 @@ int main(int argc, char** argv)
 		glfwGetFramebufferSize(window, &data.display_w, &data.display_h);
 		data.timestep = glfwGetTime();
 
+#ifdef _WIN32
+		// if it's a HighDPI monitor, try to scale everything
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		float x_scale, y_scale;
+		glfwGetMonitorContentScale(monitor, &x_scale, &y_scale);
+		if (1.f < x_scale || 1.f < y_scale)
+		{
+			data.high_dpi_factor = x_scale;
+			glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+		}
+#elif __APPLE__
+		// to prevent 1200x800 from becoming 2400x1600
+		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+#endif
+
 		cr_plugin_update(ctx);
 
 		memset(data.inputCharacters, 0, sizeof(data.inputCharacters));
 
 		glfwSwapBuffers(window);
-		
+
 		if (data.imgui_editor->project.ready)
 		{
 			std::string window_title;
