@@ -3,7 +3,6 @@
 
 #include <fstream>
 
-#include <magic_enum/magic_enum.hpp>
 #include <portable-file-dialogs/portable-file-dialogs.h>
 #include <simpleini/SimpleIni.h>
 
@@ -13,7 +12,7 @@
 namespace imgui_editor
 {
 	ImVec2 g_windowSize;
-	ImVec2 g_unitSize;
+	ImVec2 g_unit_size;
 	size_t g_widget_id = 0;
 	static imgui_editor_context* s_instance = nullptr;
 
@@ -72,7 +71,7 @@ namespace imgui_editor
 	{
 		auto &io = ImGui::GetIO();
 		g_windowSize = io.DisplaySize;
-		g_unitSize = ImGui::CalcTextSize(" ");
+		g_unit_size = ImGui::CalcTextSize(" ");
 
 		const bool is_shortcut_key = io.ConfigMacOSXBehaviors ? (io.KeyMods & ImGuiModFlags_Super) : (io.KeyMods & ImGuiModFlags_Ctrl);
 		const bool is_redo = ((is_shortcut_key && ImGui::IsKeyPressed(ImGuiKey_Y)) || (is_shortcut_key && io.KeyMods & ImGuiModFlags_Shift && ImGui::IsKeyPressed(ImGuiKey_Z))) && has_redo_command();
@@ -85,6 +84,7 @@ namespace imgui_editor
 
 		if (ctx->project.ready)
 		{
+			ImGuiID id = ImGui::GetID("Save?");
 			if (ImGui::BeginMainMenuBar())
 			{
 				if (ImGui::BeginMenu(F("common.file")))
@@ -98,6 +98,19 @@ namespace imgui_editor
 						{
 							std::string path = normalize_utf8(result[0]);
 							open_project(ctx, path.c_str());
+						}
+					}
+
+					if (ImGui::MenuItem(F("common.new_project")))
+					{
+						if (ctx->project.dirty && !ctx->project.absolutePath.empty())
+						{
+							ImGui::OpenPopup(id);
+						}
+						else
+						{
+							close_project(ctx);
+							ctx->project.ready = true;
 						}
 					}
 
@@ -159,7 +172,7 @@ namespace imgui_editor
 
 			float mainMenuSizeY = ImGui::GetFrameHeight();
 			constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
-			static ImVec2 toolSize{g_unitSize.x * 150, g_windowSize.y};
+			static ImVec2 toolSize{g_unit_size.x * 150, g_windowSize.y};
 			ImGui::SetNextWindowSize(toolSize);
 			ImGui::SetNextWindowPos({0, mainMenuSizeY});
 			if (ImGui::Begin("tool", nullptr, flag))
@@ -180,7 +193,7 @@ namespace imgui_editor
 
 			draw_widget(ctx->root);
 
-			static ImVec2 inspectorSize{g_unitSize.x * 150, g_windowSize.y};
+			static ImVec2 inspectorSize{g_unit_size.x * 150, g_windowSize.y};
 			ImGui::SetNextWindowSize(inspectorSize);
 			ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, mainMenuSizeY});
 			if (ImGui::Begin("inspector", nullptr, flag))
@@ -192,6 +205,47 @@ namespace imgui_editor
 				draw_inspector(ctx);
 			}
 			ImGui::End();
+
+			if (ImGui::BeginPopupModal("Save?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::Text(F("common.save_changes"));
+				ImGui::Separator();
+				bool invoke = false;
+				if (ImGui::Button(F("common.yes")))
+				{
+					invoke = true;
+					std::ofstream ofs(ctx->project.absolutePath);
+					ofs << widget_serialize(ctx->root);
+					ctx->project.dirty = false;
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button(F("common.no")))
+				{
+					invoke = true;
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::SameLine();
+
+				bool cancel = false;
+				if (ImGui::Button(F("common.cancel")))
+				{
+					invoke = true;
+					cancel = true;
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (invoke && !cancel)
+				{
+					close_project(ctx);
+					ctx->project.ready = true;
+				}
+
+				ImGui::EndPopup();
+			}
 		}
 		else
 		{

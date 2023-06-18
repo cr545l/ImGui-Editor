@@ -26,7 +26,7 @@ namespace imgui_editor
 		if (widget_context)
 		{			
 			ImGui::PushID(static_cast<int>(widget_context->id));
-			const bool is_show_children = ImGui::TreeNodeEx(widget_context->label.c_str(), flag, "%s (%s)", widget_context->label.c_str(), get_pretty_name(widget_context->type));
+			const bool is_show_children = ImGui::TreeNodeEx(widget_context->label.c_str(), flag, "%s (%s)", widget_context->label.c_str(), get_widget_name(widget_context->type));
 
 			if(ImGui::BeginDragDropSource( ImGuiDragDropFlags_SourceAllowNullID))
 			{

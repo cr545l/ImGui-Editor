@@ -13,7 +13,7 @@
 
 namespace imgui_editor
 {
-	extern ImVec2 g_unitSize;
+	extern ImVec2 g_unit_size;
 	extern size_t g_widget_id;
 	extern std::unordered_map<size_t, widget*>* g_widget_table;
 
@@ -103,7 +103,7 @@ namespace imgui_editor
 	void draw_start_page(imgui_editor_context* ctx)
 	{
 		// 창의 크기와 위치를 계산
-		const ImVec2 window_size(g_unitSize.x * 150, g_unitSize.y * 20);
+		const ImVec2 window_size(g_unit_size.x * 150, g_unit_size.y * 20);
 		const ImVec2 window_pos((ImGui::GetIO().DisplaySize.x - window_size.x) * 0.5f, (ImGui::GetIO().DisplaySize.y - window_size.y) * 0.5f);
 
         // center child window

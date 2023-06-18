@@ -29,7 +29,7 @@ namespace imgui_editor
 		auto w =  new widget{
 			type,
 			new_widget_arg(type),
-			get_pretty_name(type),
+			get_widget_name(type),
 			{},
 			{},
 			{},
@@ -40,7 +40,7 @@ namespace imgui_editor
 			nullptr,
 			nullptr,
 		};
-		// LOG("NewArgs %s %x", get_pretty_name(w->type), w->args);
+		// LOG("NewArgs %s %x", get_widget_name(w->type), w->args);
 		return w;
 	}
 
@@ -224,7 +224,7 @@ namespace imgui_editor
 		if (nullptr == target_widget->args)
 		{
 			target_widget->args = new_widget_arg(target_widget->type);
-			// LOG("NewArgs %s %x", get_pretty_name(target_widget->type), target_widget->args);
+			// LOG("NewArgs %s %x", get_widget_name(target_widget->type), target_widget->args);
 		}
 
 		parse_args_data(target_widget->type, target_widget->args, read, version, true);

@@ -46,6 +46,7 @@ namespace imgui_editor
 #define F(key) imgui_editor::get_language_text(key)
 
 	void set_language(const char* key);
+	const std::string& get_language();
 
 	void close_project(imgui_editor_context *ctx);
 

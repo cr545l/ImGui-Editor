@@ -262,13 +262,13 @@ int main(int argc, char** argv)
 			std::string window_title;
 			if (data.imgui_editor->project.dirty) window_title.append("* ");
 
-			const char* project_name = std::filesystem::path(data.imgui_editor->project.absolutePath).filename().stem().string().c_str();
-			if(0== strcmp(project_name, ""))
+			std::string project_name = std::filesystem::path(data.imgui_editor->project.absolutePath).stem().string();
+			if(project_name.empty())
 			{
 				project_name = "Untitled";
 			}
 
-			window_title.append(string_format("%s - ImGui Editor [%.1f fps]", project_name, ImGui::GetIO().Framerate));
+			window_title.append(string_format("%s - ImGui Editor [%.1f fps]", project_name.c_str(), ImGui::GetIO().Framerate));
 			glfwSetWindowTitle(window, window_title.c_str());
 		}
 		else

@@ -47,7 +47,8 @@ namespace imgui_editor
 	};	
 
 	widget* find(size_t id);
-	const char* get_pretty_name(widget_type type);
+	const char* get_widget_name(widget_type type);
+	const char* get_widget_description(widget_type type);
 
 	int32_t to_fixed_type(widget_type type);
 	widget_type to_widget_type(int32_t fixed_type);

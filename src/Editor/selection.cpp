@@ -72,7 +72,7 @@ namespace imgui_editor
 			if (s_context->target == target) return;
 
 			command_data* cmd = new command_data();
-			cmd->label = string_format( "Select %s (ID : %d / %s)", target->label.c_str(),target->id, get_pretty_name(target->type));
+			cmd->label = string_format( "Select %s (ID : %d / %s)", target->label.c_str(),target->id, get_widget_name(target->type));
 
 			select_context_command::data* ctx = new select_context_command::data();
 

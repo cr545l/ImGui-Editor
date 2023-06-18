@@ -13,7 +13,7 @@
 #include "editor/widget.h"
 
 // imgui 100% 게스트 측을 테스트하려면 이것을 활성화하십시오.
-//#define IMGUI_GUEST_ONLY
+// #define IMGUI_GUEST_ONLY
 
 // 호스트에서 오는 데이터, 대부분 호스트에서 관리하거나 소유하지 않은 것이므로 데이터가 살아 있는지 확인합니다
 // (예: imgui 컨텍스트, 다시 로드하는 동안 창을 플릭/재배치하지 않음)
@@ -351,8 +351,8 @@ bool imui_init()
 
 #if defined(IMGUI_GUEST_ONLY)
     if (!g_imgui_context) {
-        g_imgui_context = new ImGuiContext;
         g_default_font_atlas = new ImFontAtlas;
+        g_imgui_context = new ImGuiContext(g_default_font_atlas);
     }
     ImGui::SetCurrentContext(g_imgui_context);
     ImGuiIO& io = ImGui::GetIO();
@@ -369,9 +369,11 @@ bool imui_init()
     ImGui::SetCurrentContext(g_data->imgui_context);
 #endif
 
-    g_Window = g_data->window;
-
+#ifndef IMGUI_GUEST_ONLY
     ImGuiIO& io = ImGui::GetIO();
+#endif
+    g_Window = g_data->window;
+    
     io.Fonts->AddFontFromFileTTF("NotoSansKR-Light.otf", 16.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
 
     io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB; // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
@@ -444,7 +446,7 @@ static void imui_shutdown()
     ImGui::Shutdown();
     ImGui::DestroyContext(g_data->imgui_context);
 #else
-    ImGui::Shutdown(g_imgui_context);
+    ImGui::Shutdown();
 
     // Trying to get imgui to be 100% in guest context, not working right now.
     // imgui가 게스트 컨텍스트에서 100%가 되도록 하려고 하지만 지금은 작동하지 않습니다.

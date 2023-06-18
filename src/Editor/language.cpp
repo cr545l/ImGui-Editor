@@ -14,12 +14,14 @@ namespace imgui_editor
 		{
 			return s_texts[key].c_str();
 		}
-		return "";
+		return key;
 	}
 
+	static std::string s_current_language_key = "en";
 	void set_language(const char* language_key)
 	{
-		const std::string path = "lang/" + std::string(language_key) + ".ini";
+		s_current_language_key = language_key;
+		const std::string path = "lang/" + s_current_language_key + ".ini";
 
 		CSimpleIniA ini;
 		ini.SetUnicode();
@@ -33,6 +35,8 @@ namespace imgui_editor
 				return;
 			}
 		}
+
+		s_texts.clear();	
 		CSimpleIniA::TNamesDepend sections;
 		ini.GetAllSections(sections);
 		for(const auto& i : sections)
@@ -49,5 +53,10 @@ namespace imgui_editor
 				s_texts[key] = ini.GetValue(i.pItem, j.pItem);
 			}
 		}
+	}
+
+	const std::string& get_language()
+	{
+		return s_current_language_key;
 	}
 }

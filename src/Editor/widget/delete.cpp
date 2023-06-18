@@ -6,7 +6,7 @@ namespace imgui_editor
 {
 	void delete_widget_args(const widget_type type, void* target)
 	{
-		// LOG("DeleArg %s %x", get_pretty_name(type), target);
+		// LOG("DeleArg %s %x", get_widget_name(type), target);
 		switch (type)
 		{
 		default:

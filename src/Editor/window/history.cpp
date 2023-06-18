@@ -4,7 +4,7 @@
 
 namespace imgui_editor
 {
-    extern ImVec2 g_unitSize;
+    extern ImVec2 g_unit_size;
 
     static size_t last_index = 0;
     void draw_history(history* ctx)
@@ -32,6 +32,6 @@ namespace imgui_editor
             ImGui::EndListBox();
         }
         ImGui::Separator();
-        ImGui::Dummy(ImVec2(0.f, g_unitSize.y));
+        ImGui::Dummy(ImVec2(0.f, g_unit_size.y));
     }
 }

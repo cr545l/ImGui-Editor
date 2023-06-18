@@ -7,7 +7,7 @@
 
 namespace imgui_editor
 {
-	extern ImVec2 g_unitSize;
+	extern ImVec2 g_unit_size;
 
 	// ReSharper disable All
 	struct ImGuiStyleVarInfo
@@ -52,12 +52,10 @@ namespace imgui_editor
 	void draw_inspector(imgui_editor_context* context)
 	{
 		auto selected = selection::get_targets();
-		ImGui::Text("Selected %zu", selected.size());
+		ImGui::Text(F("inspector.seleceted"), selected.size());
 
 		if (selected.empty()) return;
-
-		ImGui::Separator();
-
+		
 		ImGui::Separator();
 
 		for (size_t i = 0, max = selected.size(); i < max; ++i)
@@ -65,30 +63,30 @@ namespace imgui_editor
 			widget* ctx = selected[i];
 			bool changed = false;
 
-			if (ImGui::TreeNode("Gen c++"))
+			if (ImGui::TreeNode(F("inspector.gen_cpp")))
 			{
 				std::string s;
 				widget_generate(generate_code::cpp, ctx, true, s);
-				ImGui::InputTextMultiline("##data", &s, ImVec2(0, g_unitSize.y * 50), ImGuiInputTextFlags_ReadOnly);
+				ImGui::InputTextMultiline("##data", &s, ImVec2(0, g_unit_size.y * 50), ImGuiInputTextFlags_ReadOnly);
 				ImGui::TreePop();
 
-				if (ImGui::Button("Copy"))
+				if (ImGui::Button(F("inspector.copy")))
 				{
 					ImGui::SetClipboardText(s.c_str());
 				}
 			}
 
-			if (ImGui::TreeNode("Output"))
+			if (ImGui::TreeNode(F("inspector.export_text")))
 			{
 				std::string s = widget_serialize(ctx);
-				ImGui::InputTextMultiline("##data", &s, ImVec2(0, g_unitSize.y * 2), ImGuiInputTextFlags_ReadOnly);
+				ImGui::InputTextMultiline("##data", &s, ImVec2(0, g_unit_size.y * 2), ImGuiInputTextFlags_ReadOnly);
 				ImGui::TreePop();
 			}
 
-			if (ImGui::TreeNode("Input"))
+			if (ImGui::TreeNode(F("inspector.import_text")))
 			{
-				ImGui::InputTextMultiline("##data", &context->import_text, ImVec2(0, g_unitSize.y * 2));
-				if (ImGui::Button("Apply"))
+				ImGui::InputTextMultiline("##data", &context->import_text, ImVec2(0, g_unit_size.y * 2));
+				if (ImGui::Button(F("common.apply")))
 				{
 					widget_deserialize(ctx, context->import_text.c_str());
 					changed = true;
@@ -97,207 +95,221 @@ namespace imgui_editor
 				ImGui::TreePop();
 			}
 
+			ImGui::Separator();
+
 			ImGui::BeginGroup();
-			ImGui::Text("%s", get_pretty_name(ctx->type));
+			ImGui::Text("%s", get_widget_name(ctx->type));
 
 			ImGui::InputText("ID", &ctx->string_id);
 			ImGui::SameLine();
 
 			const std::string default_id = std::to_string(ctx->id);
 			ImGui::BeginDisabled(default_id == ctx->string_id);
-			if (ImGui::Button("Reset"))
+			if (ImGui::Button(F("common.reset")))
 			{
 				ctx->string_id = default_id;
 				changed = true;
 			}
 			ImGui::EndDisabled();			
 
-			ImGui::InputText("label", &ctx->label);			
+			ImGui::InputText(F("inspector.label"), &ctx->label);			
+
+			ImGui::Separator();
+
+			ImGui::Text(F("inspector.parameters"));
 
 			draw_inspector_widget(ctx);
 
 			ImGui::Separator();
 
-			if (ImGui::TreeNodeEx("style_colors", ImGuiTreeNodeFlags_DefaultOpen))
+			ImGui::Text(F("inspector.style"));
+			if (ImGui::BeginChild("##style", ImVec2(0, 0), true))
 			{
-				if (ImGui::Button("Add Default"))
+				if (ImGui::TreeNodeEx(F("inspector.style_colors"), ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
+					if (ImGui::Button(F("inspector.add_default")))
 					{
-						ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), ImGui::GetStyle().Colors[i] });
-					}
-				}
-				ImGui::SameLine();
-
-				if (ImGui::Button("Light"))
-				{
-					ImGuiStyle style;
-					ImGui::StyleColorsLight(&style);
-					for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
-					{
-						ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), style.Colors[i] });
-					}
-				}
-
-				ImGui::SameLine();
-				if (ImGui::Button("Dark"))
-				{
-					ImGuiStyle style;
-					ImGui::StyleColorsDark(&style);
-					for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
-					{
-						ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), style.Colors[i] });
-					}
-				}
-
-				ImGui::SameLine();
-				if (ImGui::Button("Classic"))
-				{
-					ImGuiStyle style;
-					ImGui::StyleColorsClassic(&style);
-					for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
-					{
-						ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), style.Colors[i] });
-					}
-				}
-
-				int size = ctx->style_colors.size();
-				if (ImGui::InputInt("size", (int*)&size))
-				{
-					if (size < 0)
-					{
-						size = 0;
-					}
-
-					if (static_cast<int>(ctx->style_colors.size()) < size)
-					{
-						ctx->style_colors.push_back({});
-					}
-					else
-					{
-						ctx->style_colors.resize(size);
-					}
-				}
-				for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
-				{
-					ImGui::PushID(i);
-					ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_colors[i].idx, false);
-					ImGui::ColorEdit4(string_format("%s[%u]", "col", i).c_str(), &ctx->style_colors[i].col.Value.x);
-					ImGui::PopID();
-				}
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNodeEx("style_var_floats", ImGuiTreeNodeFlags_DefaultOpen))
-			{
-				if (ImGui::Button("Add Default"))
-				{
-					for (size_t i = 0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); i < max; ++i)
-					{
-						if (GStyleVarInfo[i].Count == 1)
+						for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
 						{
-							float* value = static_cast<float*>(GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle()));
-							ctx->style_var_floats.push_back({ static_cast<ImGuiStyleVar_>(i), *value });
+							ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), ImGui::GetStyle().Colors[i] });
 						}
 					}
-				}
-				int size = static_cast<int>(ctx->style_var_floats.size());
-				if (ImGui::InputInt("size", (int*)&size))
-				{
-					if (size < 0)
-					{
-						size = 0;
-					}
+					ImGui::SameLine();
 
-					if (static_cast<int>(ctx->style_var_floats.size()) < size)
-					{
-						ctx->style_var_floats.push_back({});
-					}
-					else
-					{
-						ctx->style_var_floats.resize(size);
-					}
-				}
+					ImGui::Text(F("inspector.select_theme"));
 
-				for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
-				{
-					ImGui::PushID(static_cast<int>(i));
-					std::string preview = ImGui::GetEnumName(ctx->style_var_floats[i].idx, false);
-					if (ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
+					ImGui::SameLine();
+
+					if (ImGui::Button(F("inspector.light")))
 					{
-						for (int j = 0; j < ImGuiStyleVar_COUNT; ++j)
+						ImGuiStyle style;
+						ImGui::StyleColorsLight(&style);
+						for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
 						{
-							if (GStyleVarInfo[j].Count == 1)
+							ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), style.Colors[i] });
+						}
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button(F("inspector.dark")))
+					{
+						ImGuiStyle style;
+						ImGui::StyleColorsDark(&style);
+						for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
+						{
+							ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), style.Colors[i] });
+						}
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button(F("inspector.classic")))
+					{
+						ImGuiStyle style;
+						ImGui::StyleColorsClassic(&style);
+						for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
+						{
+							ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), style.Colors[i] });
+						}
+					}
+
+					int size = ctx->style_colors.size();
+					if (ImGui::InputInt(F("inspector.size"), (int*)&size))
+					{
+						if (size < 0)
+						{
+							size = 0;
+						}
+
+						if (static_cast<int>(ctx->style_colors.size()) < size)
+						{
+							ctx->style_colors.push_back({});
+						}
+						else
+						{
+							ctx->style_colors.resize(size);
+						}
+					}
+					for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+					{
+						ImGui::PushID(i);
+						ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_colors[i].idx, false);
+						ImGui::ColorEdit4(string_format("%s[%u]", "col", i).c_str(), &ctx->style_colors[i].col.Value.x);
+						ImGui::PopID();
+					}
+					ImGui::TreePop();
+				}
+
+				if (ImGui::TreeNodeEx(F("inspector.style_var_floats"), ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					if (ImGui::Button(F("inspector.add_default")))
+					{
+						for (size_t i = 0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); i < max; ++i)
+						{
+							if (GStyleVarInfo[i].Count == 1)
 							{
-								if (ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j), false).c_str(), ctx->style_var_floats[i].idx == j))
-								{
-									ctx->style_var_floats[i].idx = static_cast<ImGuiStyleVar_>(j);
-								}
+								float* value = static_cast<float*>(GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle()));
+								ctx->style_var_floats.push_back({ static_cast<ImGuiStyleVar_>(i), *value });
 							}
 						}
-						ImGui::EndCombo();
 					}
-
-					ImGui::DragFloat(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_floats[i].val);
-					ImGui::PopID();
-				}
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNodeEx("style_var_vec2s", ImGuiTreeNodeFlags_DefaultOpen))
-			{
-				if (ImGui::Button("Add Default"))
-				{
-					for (size_t i = 0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); i < max; ++i)
+					int size = static_cast<int>(ctx->style_var_floats.size());
+					if (ImGui::InputInt(F("inspector.size"), (int*)&size))
 					{
-						if (GStyleVarInfo[i].Count == 2)
+						if (size < 0)
 						{
-							ImVec2* value = static_cast<ImVec2*>(GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle()));
-							ctx->style_var_vec2s.push_back({ static_cast<ImGuiStyleVar_>(i), *value });
+							size = 0;
+						}
+
+						if (static_cast<int>(ctx->style_var_floats.size()) < size)
+						{
+							ctx->style_var_floats.push_back({});
+						}
+						else
+						{
+							ctx->style_var_floats.resize(size);
 						}
 					}
-				}
-				int size = ctx->style_var_vec2s.size();
-				if (ImGui::InputInt("size", &size))
-				{
-					if (size < 0)
-					{
-						size = 0;
-					}
 
-					if (static_cast<int>(ctx->style_var_vec2s.size()) < size)
+					for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
 					{
-						ctx->style_var_vec2s.push_back({});
-					}
-					else
-					{
-						ctx->style_var_vec2s.resize(size);
-					}
-				}
-				for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
-				{
-					ImGui::PushID(i);
-					std::string preview = ImGui::GetEnumName(ctx->style_var_vec2s[i].idx, false);
-					if (ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
-					{
-						for (int j = 0; j < ImGuiStyleVar_COUNT; ++j)
+						ImGui::PushID(static_cast<int>(i));
+						std::string preview = ImGui::GetEnumName(ctx->style_var_floats[i].idx, false);
+						if (ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
 						{
-							if (GStyleVarInfo[j].Count == 2)
+							for (int j = 0; j < ImGuiStyleVar_COUNT; ++j)
 							{
-								if (ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j), false).c_str(), ctx->style_var_vec2s[i].idx == j))
+								if (GStyleVarInfo[j].Count == 1)
 								{
-									ctx->style_var_vec2s[i].idx = static_cast<ImGuiStyleVar_>(j);
+									if (ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j), false).c_str(), ctx->style_var_floats[i].idx == j))
+									{
+										ctx->style_var_floats[i].idx = static_cast<ImGuiStyleVar_>(j);
+									}
 								}
 							}
+							ImGui::EndCombo();
 						}
-						ImGui::EndCombo();
+
+						ImGui::DragFloat(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_floats[i].val);
+						ImGui::PopID();
 					}
-					ImGui::DragFloat2(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_vec2s[i].val.x);
-					ImGui::PopID();
+					ImGui::TreePop();
 				}
-				ImGui::TreePop();
+
+				if (ImGui::TreeNodeEx(F("inspector.style_var_vec2s"), ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					if (ImGui::Button(F("inspector.add_default")))
+					{
+						for (size_t i = 0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); i < max; ++i)
+						{
+							if (GStyleVarInfo[i].Count == 2)
+							{
+								ImVec2* value = static_cast<ImVec2*>(GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle()));
+								ctx->style_var_vec2s.push_back({ static_cast<ImGuiStyleVar_>(i), *value });
+							}
+						}
+					}
+					int size = ctx->style_var_vec2s.size();
+					if (ImGui::InputInt(F("inspector.size"), &size))
+					{
+						if (size < 0)
+						{
+							size = 0;
+						}
+
+						if (static_cast<int>(ctx->style_var_vec2s.size()) < size)
+						{
+							ctx->style_var_vec2s.push_back({});
+						}
+						else
+						{
+							ctx->style_var_vec2s.resize(size);
+						}
+					}
+					for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+					{
+						ImGui::PushID(i);
+						std::string preview = ImGui::GetEnumName(ctx->style_var_vec2s[i].idx, false);
+						if (ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
+						{
+							for (int j = 0; j < ImGuiStyleVar_COUNT; ++j)
+							{
+								if (GStyleVarInfo[j].Count == 2)
+								{
+									if (ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j), false).c_str(), ctx->style_var_vec2s[i].idx == j))
+									{
+										ctx->style_var_vec2s[i].idx = static_cast<ImGuiStyleVar_>(j);
+									}
+								}
+							}
+							ImGui::EndCombo();
+						}
+						ImGui::DragFloat2(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_vec2s[i].val.x);
+						ImGui::PopID();
+					}
+					ImGui::TreePop();
+				}
 			}
-			
+			ImGui::EndChild();
 			ImGui::EndGroup();
 
 			if (ImGui::IsItemActivated())
