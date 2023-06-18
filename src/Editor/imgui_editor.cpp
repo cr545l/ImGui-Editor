@@ -8,7 +8,6 @@
 #include <simpleini/SimpleIni.h>
 
 #include "extension.h"
-#include "editor/selection.h"
 #include "editor/history.h"
 
 namespace imgui_editor
@@ -63,6 +62,9 @@ namespace imgui_editor
 				ctx->last_open_paths.emplace_back(path);
 			}
 		}
+
+		const char* current_language = ini.GetValue("common", "language");
+		set_language(nullptr == current_language || 0 == strcmp("", current_language) ? "en" : current_language);
 	}
 
 
@@ -85,11 +87,11 @@ namespace imgui_editor
 		{
 			if (ImGui::BeginMainMenuBar())
 			{
-				if (ImGui::BeginMenu("File"))
+				if (ImGui::BeginMenu(F("common.file")))
 				{
-					if (ImGui::MenuItem("Open"))
+					if (ImGui::MenuItem(F("common.open")))
 					{
-						pfd::open_file open("Open");
+						pfd::open_file open(F("common.open"));
 
 						const auto &result = open.result();
 						if (!result.empty())
@@ -102,11 +104,11 @@ namespace imgui_editor
 					bool canSave = ctx->project.dirty || ctx->project.absolutePath.empty();
 
 					ImGui::BeginDisabled(!canSave);
-					if (ImGui::MenuItem("Save"))
+					if (ImGui::MenuItem(F("common.save")))
 					{
 						if (ctx->project.absolutePath.empty())
 						{
-							pfd::save_file save("Save");
+							pfd::save_file save(F("common.save"));
 
 							ctx->project.absolutePath = save.result();
 						}
@@ -121,9 +123,9 @@ namespace imgui_editor
 
 					ImGui::EndDisabled();
 
-					if (ImGui::MenuItem("Save As"))
+					if (ImGui::MenuItem(F("common.save_as")))
 					{
-						pfd::save_file save("Save");
+						pfd::save_file save(F("common.save"));
 						const auto& result = save.result();
 						if (!result.empty())
 						{
@@ -132,20 +134,20 @@ namespace imgui_editor
 						}
 					}
 
-					if (ImGui::MenuItem("Close Project"))
+					if (ImGui::MenuItem(F("common.close_project")))
 					{
 						close_project(ctx);
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::BeginMenu("Edit"))
+				if (ImGui::BeginMenu(F("common.edit")))
 				{
-					if (ImGui::MenuItem("Undo", nullptr, nullptr, has_undo_command()))
+					if (ImGui::MenuItem(F("common.undo"), nullptr, nullptr, has_undo_command()))
 					{
 						undo();
 					}
 
-					if (ImGui::MenuItem("Redo", nullptr, nullptr, has_redo_command()))
+					if (ImGui::MenuItem(F("common.redo"), nullptr, nullptr, has_redo_command()))
 					{
 						redo();
 					}
@@ -196,19 +198,19 @@ namespace imgui_editor
 			// 프로젝트를 열기 전
 			if (ImGui::BeginMainMenuBar())
 			{
-				if (ImGui::BeginMenu("File"))
+				if (ImGui::BeginMenu(F("common.file")))
 				{
-					if (ImGui::MenuItem("New Project"))
+					if (ImGui::MenuItem(F("common.new_project")))
 					{
 						ctx->project.ready = true;
 					}
 
-					if (ImGui::MenuItem("Open"))
+					if (ImGui::MenuItem(F("common.open")))
 					{
-						pfd::open_file open("Open");
+						pfd::open_file open(F("common.open"));
 
 						const auto& result = open.result();
-						if (result.size())
+						if (!result.empty())
 						{
 							std::string path = normalize_utf8(result[0]);
 							if (!open_project(ctx, path.c_str()))

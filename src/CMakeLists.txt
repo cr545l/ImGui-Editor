@@ -15,6 +15,7 @@ fips_begin_sharedlib(editor cmdline)
         selection.cpp
         imgui_editor.h
         imgui_editor.cpp
+        language.cpp
     )
 	
     fips_dir(editor/widget)

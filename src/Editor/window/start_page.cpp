@@ -3,8 +3,6 @@
 
 #include <algorithm>
 #include <fstream>
-#include <sstream>
-
 
 #include <magic_enum/magic_enum.hpp>
 #include <portable-file-dialogs/portable-file-dialogs.h>
@@ -114,7 +112,7 @@ namespace imgui_editor
         if (ImGui::Begin("project", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar))
         {
             // show last open paths
-            ImGui::Text("Last Open Paths");
+            ImGui::Text(F("start_page.last_opened"));
 
 			int failOpenIndex = -1;
 			auto& paths= ctx->last_open_paths;

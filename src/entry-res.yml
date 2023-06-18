@@ -1,2 +1,6 @@
 ---
-files: [ "NotoSansKR-Light.otf" ]
+files: [
+  "NotoSansKR-Light.otf",
+  "lang/en.ini",
+  "lang/ko.ini",
+]

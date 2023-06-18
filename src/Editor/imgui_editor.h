@@ -3,7 +3,6 @@
 
 #include "editor/widget.h"
 
-//
 // # TODO
 // 
 // - font size의 상대값을 가지고 사이즈 처리
@@ -42,6 +41,12 @@ namespace imgui_editor
 
 	IMGUI_EDITOR_EXPORT void initialize_editor(imgui_editor_context* ctx, const char* init);
 	IMGUI_EDITOR_EXPORT bool open_project(imgui_editor_context *ctx, const char *path);
+
+	const char* get_language_text(const char* key);
+#define F(key) imgui_editor::get_language_text(key)
+
+	void set_language(const char* key);
+
 	void close_project(imgui_editor_context *ctx);
 
 	void draw_start_page(imgui_editor_context* context);
