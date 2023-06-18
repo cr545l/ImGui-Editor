@@ -47,7 +47,7 @@ namespace imgui_editor
 			void undo(void* _context)
 			{
 				const data* ctx = static_cast<data*>(_context);
-				s_context->target = find(ctx->original);
+				s_context->target = -1 != ctx->original ? find(ctx->original) : nullptr;
 				s_context->targets.clear();
 				push_back_widgets(s_context->targets, ctx->originals);
 			}
@@ -55,7 +55,7 @@ namespace imgui_editor
 			void redo(void* _context)
 			{
 				const data* ctx = static_cast<data*>(_context);
-				s_context->target = find(ctx->select);
+				s_context->target = -1 != ctx->select ? find(ctx->select) : nullptr;
 				s_context->targets.clear();
 				push_back_widgets(s_context->targets, ctx->selects);
 			}
@@ -69,17 +69,22 @@ namespace imgui_editor
 
 		void select(const widget* target)
 		{
-			if (s_context->target == target) return;
+			if (1 == s_context->targets.size() && s_context->target == target) return;
 
 			command_data* cmd = new command_data();
-			cmd->label = string_format( "Select %s (ID : %d / %s)", target->label.c_str(),target->id, get_widget_name(target->type));
-
 			select_context_command::data* ctx = new select_context_command::data();
-
-			ctx->select = target->id;
-			ctx->selects.push_back(target->id);
-			ctx->original = target->id;
-			push_back_ids(ctx->originals,s_context->targets);
+			if (target)
+			{
+				cmd->label = string_format("Select %s (ID : %d / %s)", target->label.c_str(), target->id, get_widget_name(target->type));
+				ctx->select = target->id;
+				ctx->selects.push_back(target->id);
+				ctx->original = target->id;
+			}
+			else
+			{
+				cmd->label = string_format("Clear Selects");
+			}
+			push_back_ids(ctx->originals, s_context->targets);
 
 			cmd->argument_data = ctx;
 			cmd->undo = select_context_command::undo;

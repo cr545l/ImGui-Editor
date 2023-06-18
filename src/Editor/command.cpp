@@ -172,6 +172,8 @@ namespace imgui_editor
 	            const data* ctx = static_cast<data*>(c);
                 
                 widget* w = new_widget_by_id(widget_type::widget_type_none, ctx->id);
+                regist_widget(w);
+
                 widget_deserialize(w,ctx->widget.c_str());
                 w->parent = ctx->parent;
                 ctx->parent->children.insert(ctx->parent->children.begin() + ctx->index, w);
@@ -183,7 +185,9 @@ namespace imgui_editor
                 data* ctx = static_cast<data*>(c);
                 ctx->widget = widget_serialize(ctx->parent->children[ctx->index]);
 
+                unregist_widget(ctx->parent->children[ctx->index]);
                 delete_widget(ctx->parent->children[ctx->index]);
+
                 ctx->parent->children.erase(ctx->parent->children.begin() + ctx->index);
 
                 get_context()->project.dirty = true;
