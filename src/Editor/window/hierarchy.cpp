@@ -93,11 +93,17 @@ namespace imgui_editor
 		if (ImGui::BeginChild("hierarchy", ImVec2(0.f, 0.f), true))
 		{
 			std::vector<widget*> selected = selection::get_targets();
-
 			std::vector<widget*> remove;
 
 			if (draw_node(selected, editor_context->root, remove))
 			{
+				selected.erase(std::ranges::remove_if(selected, [&](const widget* elem)
+					{
+						return std::find(remove.begin(), remove.end(), elem) != remove.end();
+					}).begin(), selected.end());
+
+				command::select(selected);
+
 				for (size_t i = 0, max = remove.size(); i < max; ++i)
 				{
 					command::remove_widget(remove[i]);
@@ -106,6 +112,7 @@ namespace imgui_editor
 
 			if (ImGui::IsKeyPressed(ImGuiKey_Delete))
 			{
+				selection::clear();
 				for (size_t i = 0, max = selected.size(); i < max; ++i)
 				{
 					command::remove_widget(selected[i]);

@@ -102,7 +102,7 @@ namespace imgui_editor
 
 			select_context_command::data* ctx = new select_context_command::data();
 
-			assert(0 < targets.size());
+			// assert(0 < targets.size());
 			for (const widget* target : targets)
 			{
 				if (-1 == ctx->select) ctx->select = target->id;
@@ -110,6 +110,36 @@ namespace imgui_editor
 			}
 			ctx->original = s_context->target->id;
 			push_back_ids(ctx->originals,s_context->targets);
+
+			cmd->argument_data = ctx;
+			cmd->undo = select_context_command::undo;
+			cmd->redo = select_context_command::redo;
+			cmd->destructor = select_context_command::destructor;
+
+			commit(cmd);
+		}
+
+		void select(const std::vector<widget*>& targets)
+		{
+			const std::set<widget*> targets_set(targets.begin(), targets.end());
+			const std::set<widget*> context_targets_set(s_context->targets.begin(), s_context->targets.end());
+
+			if (targets_set == context_targets_set)
+			{
+				return;
+			}
+			command_data* cmd = new command_data();
+
+			select_context_command::data* ctx = new select_context_command::data();
+
+			// assert(0 < targets.size());
+			for (const widget* target : targets)
+			{
+				if (-1 == ctx->select) ctx->select = target->id;
+				ctx->selects.push_back(target->id);
+			}
+			ctx->original = s_context->target->id;
+			push_back_ids(ctx->originals, s_context->targets);
 
 			cmd->argument_data = ctx;
 			cmd->undo = select_context_command::undo;
@@ -136,6 +166,11 @@ namespace imgui_editor
 		{
 			s_context->target = nullptr;
 			s_context->targets.clear();
+		}
+
+		void clear()
+		{
+			command::select(nullptr);
 		}
 	}
 }

@@ -18,6 +18,8 @@ namespace imgui_editor
 		void select(const widget* target);
         
 		void select(std::initializer_list<widget*> targets);
+        
+		void select(const std::vector<widget*>& targets);
     }
 }
 

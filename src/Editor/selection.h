@@ -16,8 +16,8 @@ namespace imgui_editor
 	{
 		widget* get_target();
 		const std::vector<widget*>& get_targets();
-
 		void reset();
+		void clear();
 	}
 }
 
