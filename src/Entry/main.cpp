@@ -244,11 +244,8 @@ int main(int argc, char** argv)
 		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 		float x_scale, y_scale;
 		glfwGetMonitorContentScale(monitor, &x_scale, &y_scale);
-		if (1.f < x_scale || 1.f < y_scale)
-		{
-			data.high_dpi_factor = x_scale;
-			glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-		}
+		data.high_dpi_factor = x_scale;
+		glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 #elif __APPLE__
 		// to prevent 1200x800 from becoming 2400x1600
 		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
