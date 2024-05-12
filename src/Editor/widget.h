@@ -50,6 +50,12 @@ namespace imgui_editor
 	const char* get_widget_name(widget_type type);
 	const char* get_widget_description(widget_type type);
 
+	const char* get_col_name(ImGuiCol_ type);
+	const char* get_col_description(ImGuiCol_ type);
+
+	const char* get_style_var_name(ImGuiStyleVar_ type);
+	const char* get_style_var_description(ImGuiStyleVar_ type);
+
 	int32_t to_fixed_type(widget_type type);
 	widget_type to_widget_type(int32_t fixed_type);
 

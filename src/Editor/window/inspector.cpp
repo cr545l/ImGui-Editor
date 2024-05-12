@@ -58,7 +58,7 @@ namespace imgui_editor
 		
 		ImGui::Separator();
 
-		for (size_t i = 0, max = selected.size(); i < max; ++i)
+		for (size_t i = 0, maxi = selected.size(); i < maxi; ++i)
 		{
 			widget* ctx = selected[i];
 			bool changed = false;
@@ -148,6 +148,10 @@ namespace imgui_editor
                             {
                                 ctx->style_colors.push_back({ static_cast<ImGuiCol_>(j), ImGui::GetStyle().Colors[j] });
                             }
+							if (ImGui::IsItemHovered())
+							{
+								ImGui::SetTooltip(get_col_description(static_cast<ImGuiCol_>(j)));
+							}
                         }
                         ImGui::EndPopup();
 					}
@@ -212,6 +216,7 @@ namespace imgui_editor
 						ImGui::PushID(i);
 						ImGui::Combo(string_format("%s[%u]", "idx", i).c_str(), &ctx->style_colors[i].idx, false);
 						ImGui::ColorEdit4(string_format("%s[%u]", "col", i).c_str(), &ctx->style_colors[i].col.Value.x);
+						ImGui::Text(get_col_description(static_cast<ImGuiCol_>(i)));
 						ImGui::PopID();
 					}
 					ImGui::TreePop();
@@ -248,6 +253,10 @@ namespace imgui_editor
                                     float* value = static_cast<float*>(GStyleVarInfo[j].GetVarPtr(&ImGui::GetStyle()));
                                     ctx->style_var_floats.push_back({ static_cast<ImGuiStyleVar_>(j), *value });
                                 }
+								if (ImGui::IsItemHovered())
+								{
+									ImGui::SetTooltip(get_style_var_description(static_cast<ImGuiStyleVar_>(j)));
+								}
                             }
                         }
                         ImGui::EndPopup();
@@ -270,26 +279,27 @@ namespace imgui_editor
 						}
 					}
 
-					for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+					for (size_t j = 0, maxj = ctx->style_var_floats.size(); j < maxj; ++j)
 					{
-						ImGui::PushID(static_cast<int>(i));
-						std::string preview = ImGui::GetEnumName(ctx->style_var_floats[i].idx, false);
-						if (ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
+						ImGui::PushID(static_cast<int>(j));
+						std::string preview = ImGui::GetEnumName(ctx->style_var_floats[j].idx, false);
+						if (ImGui::BeginCombo(string_format("%s[%u]", "idx", j).c_str(), preview.c_str()))
 						{
-							for (int j = 0; j < ImGuiStyleVar_COUNT; ++j)
+							for (int k = 0; k < ImGuiStyleVar_COUNT; ++k)
 							{
-								if (GStyleVarInfo[j].Count == 1)
+								if (GStyleVarInfo[k].Count == 1)
 								{
-									if (ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j), false).c_str(), ctx->style_var_floats[i].idx == j))
+									if (ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(k), false).c_str(), ctx->style_var_floats[j].idx == k))
 									{
-										ctx->style_var_floats[i].idx = static_cast<ImGuiStyleVar_>(j);
+										ctx->style_var_floats[j].idx = static_cast<ImGuiStyleVar_>(k);
 									}
 								}
 							}
 							ImGui::EndCombo();
 						}
 
-						ImGui::DragFloat(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_floats[i].val);
+						ImGui::DragFloat(string_format("%s[%u]", "val", j).c_str(), &ctx->style_var_floats[j].val);
+						ImGui::Text(get_style_var_description(ctx->style_var_floats[j].idx));
 						ImGui::PopID();
 					}
 					ImGui::TreePop();
@@ -325,6 +335,10 @@ namespace imgui_editor
                                     ImVec2* value = static_cast<ImVec2*>(GStyleVarInfo[j].GetVarPtr(&ImGui::GetStyle()));
                                     ctx->style_var_vec2s.push_back({ static_cast<ImGuiStyleVar_>(j), *value });
                                 }
+								if (ImGui::IsItemHovered())
+								{
+									ImGui::SetTooltip(get_style_var_description(static_cast<ImGuiStyleVar_>(j)));
+								}
                             }
                         }
                         ImGui::EndPopup();
@@ -346,7 +360,7 @@ namespace imgui_editor
 							ctx->style_var_vec2s.resize(size);
 						}
 					}
-					for (size_t j = 0, max = ctx->style_var_vec2s.size(); j < max; ++j)
+					for (size_t j = 0, maxj = ctx->style_var_vec2s.size(); j < maxj; ++j)
 					{
 						ImGui::PushID(j);
 						std::string preview = ImGui::GetEnumName(ctx->style_var_vec2s[j].idx, false);
@@ -365,6 +379,7 @@ namespace imgui_editor
 							ImGui::EndCombo();
 						}
 						ImGui::DragFloat2(string_format("%s[%u]", "val", j).c_str(), &ctx->style_var_vec2s[j].val.x);
+						ImGui::Text(get_style_var_description(ctx->style_var_vec2s[j].idx));
 						ImGui::PopID();
 					}
 					ImGui::TreePop();
