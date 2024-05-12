@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+﻿#include "Precompiled.h"
 #include "editor/widget.h"
 #include "editor/imgui_editor.h"
 #include "editor/selection.h"
@@ -122,24 +122,42 @@ namespace imgui_editor
 
 			ImGui::Separator();
 
+			// 스타일 설정
 			ImGui::Text(F("inspector.style"));
 			if (ImGui::BeginChild("##style", ImVec2(0, 0), true))
 			{
 				if (ImGui::TreeNodeEx(F("inspector.style_colors"), ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					if (ImGui::Button(F("inspector.add_default")))
+					if (ImGui::Button(F("inspector.add_value")))
 					{
-						for (size_t i = 0, max = static_cast<size_t>(ImGuiCol_COUNT); i < max; ++i)
+						ImGui::OpenPopup("add_value_color");
+					}
+					if (ImGui::BeginPopup("add_value_color"))
+					{
+						if(ImGui::Selectable(F("inspector.add_defaults")))
 						{
-							ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), ImGui::GetStyle().Colors[i] });
-						}
+						    for (size_t j = 0, max = ImGuiCol_COUNT; j < max; ++j)
+						    {
+                                ctx->style_colors.push_back({ static_cast<ImGuiCol_>(j), ImGui::GetStyle().Colors[j] });
+                            }
+                        }
+						ImGui::Separator();
+                        for (size_t j = 0, max = ImGuiCol_COUNT; j < max; ++j)
+                        {
+                            if (ImGui::Selectable(ImGui::GetStyleColorName(j), false))
+                            {
+                                ctx->style_colors.push_back({ static_cast<ImGuiCol_>(j), ImGui::GetStyle().Colors[j] });
+                            }
+                        }
+                        ImGui::EndPopup();
 					}
 					ImGui::SameLine();
 
-					ImGui::Text(F("inspector.select_theme"));
-
 					ImGui::SameLine();
 
+					ImGui::Text(F("inspector.select_theme"));
+					
+					ImGui::SameLine();
 					if (ImGui::Button(F("inspector.light")))
 					{
 						ImGuiStyle style;
@@ -149,7 +167,7 @@ namespace imgui_editor
 							ctx->style_colors.push_back({ static_cast<ImGuiCol_>(i), style.Colors[i] });
 						}
 					}
-
+					
 					ImGui::SameLine();
 					if (ImGui::Button(F("inspector.dark")))
 					{
@@ -201,16 +219,38 @@ namespace imgui_editor
 
 				if (ImGui::TreeNodeEx(F("inspector.style_var_floats"), ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					if (ImGui::Button(F("inspector.add_default")))
+					if (ImGui::Button(F("inspector.add_value")))
 					{
-						for (size_t i = 0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); i < max; ++i)
+						ImGui::OpenPopup("add_value_style");
+					}
+
+					if (ImGui::BeginPopup("add_value_style"))
+					{
+						if (ImGui::Selectable(F("inspector.add_defaults")))
 						{
-							if (GStyleVarInfo[i].Count == 1)
+							for (size_t j = 0, max = ImGuiStyleVar_COUNT; j < max; ++j)
 							{
-								float* value = static_cast<float*>(GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle()));
-								ctx->style_var_floats.push_back({ static_cast<ImGuiStyleVar_>(i), *value });
+								if (GStyleVarInfo[j].Count == 1)
+								{
+									float* value = static_cast<float*>(GStyleVarInfo[j].GetVarPtr(&ImGui::GetStyle()));
+									ctx->style_var_floats.push_back({ static_cast<ImGuiStyleVar_>(j), *value });
+								}
 							}
 						}
+						ImGui::Separator();
+						for (size_t j = 0, max = ImGuiStyleVar_COUNT; j < max; ++j)
+						{
+                            if (GStyleVarInfo[j].Count == 1)
+                            {
+                                std::string name = ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j), false);
+                                if (ImGui::Selectable(name.c_str(), false))
+                                {
+                                    float* value = static_cast<float*>(GStyleVarInfo[j].GetVarPtr(&ImGui::GetStyle()));
+                                    ctx->style_var_floats.push_back({ static_cast<ImGuiStyleVar_>(j), *value });
+                                }
+                            }
+                        }
+                        ImGui::EndPopup();
 					}
 					int size = static_cast<int>(ctx->style_var_floats.size());
 					if (ImGui::InputInt(F("inspector.size"), (int*)&size))
@@ -257,18 +297,39 @@ namespace imgui_editor
 
 				if (ImGui::TreeNodeEx(F("inspector.style_var_vec2s"), ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					if (ImGui::Button(F("inspector.add_default")))
+					if (ImGui::Button(F("inspector.add_value")))
 					{
-						for (size_t i = 0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); i < max; ++i)
-						{
-							if (GStyleVarInfo[i].Count == 2)
-							{
-								ImVec2* value = static_cast<ImVec2*>(GStyleVarInfo[i].GetVarPtr(&ImGui::GetStyle()));
-								ctx->style_var_vec2s.push_back({ static_cast<ImGuiStyleVar_>(i), *value });
-							}
-						}
+						ImGui::OpenPopup("add_value_var");
 					}
-					int size = ctx->style_var_vec2s.size();
+					if (ImGui::BeginPopup("add_value_var"))
+					{
+						if (ImGui::Selectable(F("inspector.add_defaults")))
+						{
+							for (size_t j = 0, max = static_cast<size_t>(ImGuiStyleVar_COUNT); j < max; ++j)
+							{
+								if (GStyleVarInfo[j].Count == 2)
+								{
+									ImVec2* value = static_cast<ImVec2*>(GStyleVarInfo[j].GetVarPtr(&ImGui::GetStyle()));
+									ctx->style_var_vec2s.push_back({ static_cast<ImGuiStyleVar_>(j), *value });
+								}
+							}
+                        }
+                        ImGui::Separator();
+                        for (size_t j = 0, max = ImGuiStyleVar_COUNT; j < max; ++j)
+                        {
+                            if (GStyleVarInfo[j].Count == 2)
+                            {
+                                std::string name = ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j), false);
+                                if (ImGui::Selectable(name.c_str(), false))
+                                {
+                                    ImVec2* value = static_cast<ImVec2*>(GStyleVarInfo[j].GetVarPtr(&ImGui::GetStyle()));
+                                    ctx->style_var_vec2s.push_back({ static_cast<ImGuiStyleVar_>(j), *value });
+                                }
+                            }
+                        }
+                        ImGui::EndPopup();
+                    }
+                    int size = ctx->style_var_vec2s.size();
 					if (ImGui::InputInt(F("inspector.size"), &size))
 					{
 						if (size < 0)
@@ -285,25 +346,25 @@ namespace imgui_editor
 							ctx->style_var_vec2s.resize(size);
 						}
 					}
-					for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
+					for (size_t j = 0, max = ctx->style_var_vec2s.size(); j < max; ++j)
 					{
-						ImGui::PushID(i);
-						std::string preview = ImGui::GetEnumName(ctx->style_var_vec2s[i].idx, false);
-						if (ImGui::BeginCombo(string_format("%s[%u]", "idx", i).c_str(), preview.c_str()))
+						ImGui::PushID(j);
+						std::string preview = ImGui::GetEnumName(ctx->style_var_vec2s[j].idx, false);
+						if (ImGui::BeginCombo(string_format("%s[%u]", "idx", j).c_str(), preview.c_str()))
 						{
-							for (int j = 0; j < ImGuiStyleVar_COUNT; ++j)
+							for (int k = 0; k < ImGuiStyleVar_COUNT; ++k)
 							{
-								if (GStyleVarInfo[j].Count == 2)
+								if (GStyleVarInfo[k].Count == 2)
 								{
-									if (ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(j), false).c_str(), ctx->style_var_vec2s[i].idx == j))
+									if (ImGui::Selectable(ImGui::GetEnumName(static_cast<ImGuiStyleVar_>(k), false).c_str(), ctx->style_var_vec2s[j].idx == k))
 									{
-										ctx->style_var_vec2s[i].idx = static_cast<ImGuiStyleVar_>(j);
+										ctx->style_var_vec2s[j].idx = static_cast<ImGuiStyleVar_>(ImGuiConfigFlags_NavEnableKeyboard);
 									}
 								}
 							}
 							ImGui::EndCombo();
 						}
-						ImGui::DragFloat2(string_format("%s[%u]", "val", i).c_str(), &ctx->style_var_vec2s[i].val.x);
+						ImGui::DragFloat2(string_format("%s[%u]", "val", j).c_str(), &ctx->style_var_vec2s[j].val.x);
 						ImGui::PopID();
 					}
 					ImGui::TreePop();

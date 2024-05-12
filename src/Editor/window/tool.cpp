@@ -125,7 +125,7 @@ namespace imgui_editor
 
     void draw_tool(imgui_editor_context* editor_context)
     {
-        if (ImGui::BeginChild("add widget", ImVec2(0.f, g_unit_size.y * 20), true))
+        if (ImGui::BeginChild("add widget", ImVec2(0.f, 0.f), true))
         {
             if (ImGui::BeginChild("Types"))
             {

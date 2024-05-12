@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+ï»¿#include "Precompiled.h"
 #include "editor/imgui_editor.h"
 
 #include <fstream>
@@ -66,6 +66,23 @@ namespace imgui_editor
 		set_language(nullptr == current_language || 0 == strcmp("", current_language) ? "en" : current_language);
 	}
 
+	void draw_language_menu()
+	{
+		if (ImGui::BeginMenu(F("common.language")))
+		{
+			if (ImGui::Selectable(F("language.ko"), get_language() == "ko"))
+			{
+				set_language("ko");
+			}
+
+			if (ImGui::Selectable(F("language.en"), get_language() == "en"))
+			{
+				set_language("en");
+			}
+
+			ImGui::EndMenu();
+		}
+	}
 
 	void draw_editor_context(imgui_editor_context *ctx, history *history)
 	{
@@ -80,12 +97,56 @@ namespace imgui_editor
 		if (is_redo)
 			redo();
 		else if (is_undo)
-			undo();
+            undo();
 
-		if (ctx->project.ready)
-		{
-			ImGuiID id = ImGui::GetID("Save?");
-			if (ImGui::BeginMainMenuBar())
+        if (ImGui::IsMouseDragging(0) && ::ImGui::IsKeyPressed(ImGuiKey_Escape))
+        {
+            ImGui::ResetMouseDragDelta(0);
+            ImGui::GetCurrentContext()->DragDropActive = false;
+            ImGui::GetCurrentContext()->DragDropTargetId = 0;
+            // ImGui::BeginDragDropTarget()
+        }
+
+        if (!ctx->project.ready)
+        {
+            // í”„ë¡œì íŠ¸ë¥¼ ì—´ê¸° ì „
+            if (ImGui::BeginMainMenuBar())
+            {
+                if (ImGui::BeginMenu(F("common.file")))
+                {
+                    if (ImGui::MenuItem(F("common.new_project")))
+                    {
+                        ctx->project.ready = true;
+                    }
+
+                    if (ImGui::MenuItem(F("common.open")))
+                    {
+                        pfd::open_file open(F("common.open"));
+
+                        const auto& result = open.result();
+                        if (!result.empty())
+                        {
+                            std::string path = normalize_utf8(result[0]);
+                            if (!open_project(ctx, path.c_str()))
+                            {
+                            }
+                        }
+                    }
+                    ImGui::EndMenu();
+                }
+
+                draw_language_menu();
+
+                ImGui::EndMainMenuBar();
+            }
+
+            draw_start_page(ctx);
+        }
+        else
+        {
+            // í”„ë¡œì íŠ¸ê°€ ì—´ë¦° í›„
+            ImGuiID id = ImGui::GetID("Save?");
+            if (ImGui::BeginMainMenuBar())
 			{
 				if (ImGui::BeginMenu(F("common.file")))
 				{
@@ -165,44 +226,56 @@ namespace imgui_editor
 						redo();
 					}
 
-					ImGui::EndMenu();
-				}
+                    ImGui::EndMenu();
+                }
+
+			    draw_language_menu();
+
 				ImGui::EndMainMenuBar();
 			}
 
 			float mainMenuSizeY = ImGui::GetFrameHeight();
-			constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
-			static ImVec2 toolSize{g_unit_size.x * 150, g_windowSize.y};
-			ImGui::SetNextWindowSize(toolSize);
-			ImGui::SetNextWindowPos({0, mainMenuSizeY});
-			if (ImGui::Begin("tool", nullptr, flag))
-			{
-				toolSize = ImGui::GetWindowSize();
-				toolSize.y = g_windowSize.y - mainMenuSizeY;
+            constexpr static ImGuiWindowFlags flag = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
+            static ImVec2 toolSize{g_unit_size.x * 150, g_windowSize.y};
+            ImGui::SetNextWindowSize(toolSize);
+            ImGui::SetNextWindowPos({ 0, mainMenuSizeY });
+            if (ImGui::Begin("left", nullptr, flag))
+            {
+                toolSize = ImGui::GetWindowSize();
+                toolSize.y = g_windowSize.y - mainMenuSizeY;
 
-				static CR_STATE bool demo = false;
-				ImGui::Checkbox("Demo", &demo);
-				if (demo)
+                static CR_STATE bool demo = false;
+                ImGui::Checkbox(F("common.demo"), &demo);
+                if (demo)
+                {
+                    ImGui::ShowDemoWindow(&demo);
+                }
+                draw_tool(ctx);
+            }
+            ImGui::End();
+
+            draw_widget(ctx->root);
+
+            static ImVec2 inspectorSize{g_unit_size.x * 300, g_windowSize.y};
+            ImGui::SetNextWindowSize(inspectorSize);
+            ImGui::SetNextWindowPos({ g_windowSize.x - inspectorSize.x, mainMenuSizeY });
+            if (ImGui::Begin("right", nullptr, flag))
+            {
+				if (ImGui::BeginTable("Begin End Table", 2, ImGuiTableFlags_Resizable))
 				{
-					ImGui::ShowDemoWindow(&demo);
+					if(ImGui::TableNextColumn())
+					{
+						draw_hierarchy(ctx);
+					}
+					if(ImGui::TableNextColumn())
+					{
+						draw_history(history);
+						inspectorSize = ImGui::GetWindowSize();
+						inspectorSize.y = g_windowSize.y - mainMenuSizeY;
+						draw_inspector(ctx);
+					}
+					ImGui::EndTable();
 				}
-				draw_tool(ctx);
-				draw_hierarchy(ctx);
-			}
-			ImGui::End();
-
-			draw_widget(ctx->root);
-
-			static ImVec2 inspectorSize{g_unit_size.x * 150, g_windowSize.y};
-			ImGui::SetNextWindowSize(inspectorSize);
-			ImGui::SetNextWindowPos({g_windowSize.x - inspectorSize.x, mainMenuSizeY});
-			if (ImGui::Begin("inspector", nullptr, flag))
-			{
-				draw_history(history);
-
-				inspectorSize = ImGui::GetWindowSize();
-				inspectorSize.y = g_windowSize.y - mainMenuSizeY;
-				draw_inspector(ctx);
 			}
 			ImGui::End();
 
@@ -246,38 +319,6 @@ namespace imgui_editor
 
 				ImGui::EndPopup();
 			}
-		}
-		else
-		{
-			// ÇÁ·ÎÁ§Æ®¸¦ ¿­±â Àü
-			if (ImGui::BeginMainMenuBar())
-			{
-				if (ImGui::BeginMenu(F("common.file")))
-				{
-					if (ImGui::MenuItem(F("common.new_project")))
-					{
-						ctx->project.ready = true;
-					}
-
-					if (ImGui::MenuItem(F("common.open")))
-					{
-						pfd::open_file open(F("common.open"));
-
-						const auto& result = open.result();
-						if (!result.empty())
-						{
-							std::string path = normalize_utf8(result[0]);
-							if (!open_project(ctx, path.c_str()))
-							{
-							}
-						}
-					}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMainMenuBar();
-			}
-
-			draw_start_page(ctx);
 		}
 	}
 }

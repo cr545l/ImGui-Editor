@@ -7,27 +7,30 @@
 
 namespace imgui_editor
 {
-	void draw_children(widget* ctx)
-	{
-		for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
-		{
-			draw_widget(ctx->children[i]);
-		}
-	}
+    void draw_children(widget* ctx)
+    {
+        for (size_t i = 0, max = ctx->children.size(); i < max; ++i)
+        {
+            if (0 != ctx->children[i]->id)
+            {
+                draw_widget(ctx->children[i]);
+            }
+        }
+    }
 
-	void draw_widget_args(widget* ctx, bool& begin_type, bool& invisible);
+    void draw_widget_args(widget* ctx, bool& begin_type, bool& invisible);
 
-	void draw_widget(widget* ctx)
-	{
-		ImGui::PushID(ctx->id);
-		for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
-		{
-			ImGui::PushStyleColor(ctx->style_colors[i].idx, (ImVec4)ctx->style_colors[i].col);
-		}
-		for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
-		{
-			ImGui::PushStyleVar(ctx->style_var_floats[i].idx, ctx->style_var_floats[i].val);
-		}
+    void draw_widget(widget* ctx)
+    {
+        ImGui::PushID(ctx->id);
+        for (size_t i = 0, max = ctx->style_colors.size(); i < max; ++i)
+        {
+            ImGui::PushStyleColor(ctx->style_colors[i].idx, (ImVec4)ctx->style_colors[i].col);
+        }
+        for (size_t i = 0, max = ctx->style_var_floats.size(); i < max; ++i)
+        {
+            ImGui::PushStyleVar(ctx->style_var_floats[i].idx, ctx->style_var_floats[i].val);
+        }
 		for (size_t i = 0, max = ctx->style_var_vec2s.size(); i < max; ++i)
 		{
 			ImGui::PushStyleVar(ctx->style_var_vec2s[i].idx, ctx->style_var_vec2s[i].val);
@@ -77,6 +80,7 @@ namespace imgui_editor
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("widget"))
 				{
+					LOG("Drag drop widget");
 					widget* source = *static_cast<widget**>(payload->Data);
 					if (source != ctx)
 					{
@@ -86,6 +90,7 @@ namespace imgui_editor
 
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("create_widget"))
 				{
+					LOG("Drag drop create_widget");
 					const widget_type* type = static_cast<widget_type*>(payload->Data);
 					command::create_widget(ctx, *type);
 				}

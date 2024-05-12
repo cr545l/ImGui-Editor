@@ -60,39 +60,42 @@ namespace imgui_editor
 				command::select(widget_context);
 			}
 			if (ImGui::BeginPopupContextItem())
-			{
-				ImGui::TextUnformatted(widget_context->label.c_str());
-				ImGui::Separator();
+            {
+                ImGui::TextUnformatted(widget_context->label.c_str());
+                ImGui::Separator();
 
 
-				if (ImGui::MenuItem("Delete"))
-				{
-					remove = true;
-					outRemove.emplace_back(widget_context);
-				}
-				ImGui::EndPopup();
-			}
+                if (ImGui::MenuItem("Delete"))
+                {
+                    remove = true;
+                    outRemove.emplace_back(widget_context);
+                }
+                ImGui::EndPopup();
+            }
 
-			if (is_show_children)
-			{
-				const auto& children = widget_context->children;
-				const size_t max = children.size();
-				for (size_t i = 0; i < max; ++i)
-				{
-					remove |= draw_node(selected, children[i], outRemove);
-				}
-				ImGui::TreePop();
-			}
-		}
-		return remove;
-	};
+            if (is_show_children)
+            {
+                const auto& children = widget_context->children;
+                const size_t max = children.size();
+                for (size_t i = 0; i < max; ++i)
+                {
+                    if (0 != children[i]->id)
+                    {
+                        remove |= draw_node(selected, children[i], outRemove);
+                    }
+                }
+                ImGui::TreePop();
+            }
+        }
+        return remove;
+    };
 
 
-	void draw_hierarchy(const imgui_editor_context* editor_context)
-	{
-		if (ImGui::BeginChild("hierarchy", ImVec2(0.f, 0.f), true))
-		{
-			std::vector<widget*> selected = selection::get_targets();
+    void draw_hierarchy(const imgui_editor_context* editor_context)
+    {
+        if (ImGui::BeginChild("hierarchy", ImVec2(0.f, 0.f), true))
+        {
+            std::vector<widget*> selected = selection::get_targets();
 			std::vector<widget*> remove;
 
 			if (draw_node(selected, editor_context->root, remove))
