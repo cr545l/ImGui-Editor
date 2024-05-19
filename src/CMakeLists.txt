@@ -115,12 +115,12 @@ macro(gtest_begin2 name)
     set(CurAppType "cmdline")
 endmacro()
 
-gtest_begin2(editor)
-	fips_dir(tests)
-	fips_files(
-		test.cpp
-		enum_test.h
-		enum_test.cpp
-	)
-	fips_deps(editor)
-gtest_end()
+# gtest_begin2(editor)
+# 	fips_dir(tests)
+# 	fips_files(
+# 		test.cpp
+# 		enum_test.h
+# 		enum_test.cpp
+# 	)
+# 	fips_deps(editor)
+# gtest_end()

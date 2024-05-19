@@ -16,6 +16,8 @@
 
 #include <simpleini/SimpleIni.h>
 
+#include "Precompiled.h"
+
 #include "editor/history.h"
 #include "editor/selection.h"
 #include "editor/imgui_editor.h"

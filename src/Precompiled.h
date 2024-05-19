@@ -18,6 +18,9 @@
 #include <source_location>
 #include <filesystem>
 
+#define BEGIN_NS_IMGUI_EDITOR namespace imgui_editor {
+#define END_NS_IMGUI_EDITOR }
+
 #if defined(_MSC_VER)
 #if defined(__cplusplus)
 #define IMGUI_EDITOR_EXPORT extern "C" __declspec(dllexport)
